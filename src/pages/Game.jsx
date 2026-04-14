@@ -296,6 +296,7 @@ export default function Game() {
               towerMap={towerMapRef.current}
               onCellClick={handleCellClick}
               selectedTowerId={selectedTowerId}
+              wave={wave}
             />
             {selectedTowerType && (
               <p className="text-center text-xs text-red-900/60 mt-2 tracking-wide">

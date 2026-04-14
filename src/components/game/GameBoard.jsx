@@ -1,42 +1,38 @@
 import { useRef, useEffect, useCallback } from "react";
 import {
-  CELL_SIZE, GRID_COLS, GRID_ROWS, PATH, PATH_SET, TOWER_TYPES
+  CELL_SIZE, GRID_COLS, GRID_ROWS, PATH, PATH_SET, TOWER_TYPES, getStageTheme
 } from "../../lib/gameEngine";
 
 const BOARD_W = GRID_COLS * CELL_SIZE;
 const BOARD_H = GRID_ROWS * CELL_SIZE;
 
-function drawGrid(ctx) {
-  // Background — near black with crimson tint
-  ctx.fillStyle = "#0c0505";
+function drawGrid(ctx, theme) {
+  // Background
+  ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, BOARD_W, BOARD_H);
 
-  // Dark ground tiles
+  // Ground tiles
   for (let x = 0; x < GRID_COLS; x++) {
     for (let y = 0; y < GRID_ROWS; y++) {
       const isPath = PATH_SET.has(`${x},${y}`);
       if (!isPath) {
-        const shade = ((x + y) % 2 === 0) ? "#111010" : "#130e0e";
-        ctx.fillStyle = shade;
+        ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
         ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
   }
 
-  // Blood-stained dirt path
+  // Path
   PATH.forEach(([x, y], i) => {
-    const shade = i % 2 === 0 ? "#1e1410" : "#1a1210";
-    ctx.fillStyle = shade;
+    ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-
-    // Subtle red border
-    ctx.strokeStyle = "rgba(80,20,20,0.4)";
+    ctx.strokeStyle = theme.pathBorder;
     ctx.lineWidth = 1;
     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   });
 
-  // Grid lines (very subtle crimson tint)
-  ctx.strokeStyle = "rgba(80,20,20,0.06)";
+  // Grid lines
+  ctx.strokeStyle = theme.gridLine;
   ctx.lineWidth = 0.5;
   for (let x = 0; x <= GRID_COLS; x++) {
     ctx.beginPath();
@@ -185,7 +181,7 @@ function drawHoverPreview(ctx, hoverCell, selectedTowerType) {
 
 export default function GameBoard({
   towers, enemies, projectiles, selectedTowerType,
-  towerMap, onCellClick, selectedTowerId
+  towerMap, onCellClick, selectedTowerId, wave
 }) {
   const canvasRef = useRef(null);
   const hoverRef = useRef(null);
@@ -197,14 +193,15 @@ export default function GameBoard({
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, BOARD_W, BOARD_H);
 
-    drawGrid(ctx);
+    const theme = getStageTheme(wave || 1);
+    drawGrid(ctx, theme);
     drawTowers(ctx, towers, selectedTowerId);
     drawEnemies(ctx, enemies);
     drawProjectiles(ctx, projectiles);
     drawHoverPreview(ctx, hoverRef.current, selectedTowerType);
 
     animFrameRef.current = requestAnimationFrame(render);
-  }, [towers, enemies, projectiles, selectedTowerType, selectedTowerId]);
+  }, [towers, enemies, projectiles, selectedTowerType, selectedTowerId, wave]);
 
   useEffect(() => {
     animFrameRef.current = requestAnimationFrame(render);
@@ -251,8 +248,18 @@ export default function GameBoard({
     hoverRef.current = null;
   };
 
+  const theme = getStageTheme(wave || 1);
+
   return (
-    <div className="relative w-full overflow-hidden rounded-xl border-2 border-stone-700/60 shadow-2xl shadow-black/50">
+    <div className="relative w-full overflow-hidden rounded-xl border-2 shadow-2xl shadow-black/60"
+      style={{ borderColor: theme.borderColor }}>
+      {/* Stage banner */}
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold tracking-widest uppercase pointer-events-none"
+        style={{ background: 'rgba(0,0,0,0.55)', border: `1px solid ${theme.borderColor}`, color: '#ccc', backdropFilter: 'blur(4px)' }}>
+        <span>{theme.emoji}</span>
+        <span>{theme.name}</span>
+        <span style={{ opacity: 0.5 }}>— {theme.label}</span>
+      </div>
       <canvas
         ref={canvasRef}
         width={BOARD_W}

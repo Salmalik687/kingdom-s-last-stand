@@ -4,6 +4,73 @@ export const CELL_SIZE = 48;
 export const GRID_COLS = 16;
 export const GRID_ROWS = 10;
 
+// Stage themes — wave ranges map to a visual theme
+export const STAGE_THEMES = {
+  meadow: {
+    name: "The Meadow",
+    waveRange: [1, 5],
+    bg: "#071a07",
+    grassA: "#0e2b0e",
+    grassB: "#0c270c",
+    pathA: "#3b2a14",
+    pathB: "#342515",
+    pathBorder: "rgba(60,40,10,0.45)",
+    gridLine: "rgba(20,60,20,0.07)",
+    borderColor: "#1a4a1a",
+    label: "Waves 1–5",
+    emoji: "🌿",
+  },
+  dungeon: {
+    name: "The Dark Dungeon",
+    waveRange: [6, 12],
+    bg: "#080810",
+    grassA: "#0d0d18",
+    grassB: "#0a0a14",
+    pathA: "#1c1c14",
+    pathB: "#181810",
+    pathBorder: "rgba(60,60,20,0.4)",
+    gridLine: "rgba(40,40,80,0.07)",
+    borderColor: "#1a1a40",
+    label: "Waves 6–12",
+    emoji: "🪨",
+  },
+  volcano: {
+    name: "Volcanic Wastes",
+    waveRange: [13, 20],
+    bg: "#100303",
+    grassA: "#1a0505",
+    grassB: "#160404",
+    pathA: "#2a1000",
+    pathB: "#240d00",
+    pathBorder: "rgba(150,40,0,0.45)",
+    gridLine: "rgba(120,20,0,0.07)",
+    borderColor: "#5a1a00",
+    label: "Waves 13–20",
+    emoji: "🌋",
+  },
+  abyss: {
+    name: "The Abyss",
+    waveRange: [21, 999],
+    bg: "#020208",
+    grassA: "#05050f",
+    grassB: "#040410",
+    pathA: "#0e0e20",
+    pathB: "#0c0c1c",
+    pathBorder: "rgba(80,0,150,0.4)",
+    gridLine: "rgba(60,0,120,0.08)",
+    borderColor: "#1a0044",
+    label: "Wave 21+",
+    emoji: "💀",
+  },
+};
+
+export function getStageTheme(wave) {
+  for (const theme of Object.values(STAGE_THEMES)) {
+    if (wave >= theme.waveRange[0] && wave <= theme.waveRange[1]) return theme;
+  }
+  return STAGE_THEMES.abyss;
+}
+
 export const PATH = [
   [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [4, 3], [4, 2], [4, 1],
   [5, 1], [6, 1], [7, 1], [8, 1], [8, 2], [8, 3], [8, 4], [8, 5],
