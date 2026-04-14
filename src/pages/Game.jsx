@@ -11,6 +11,7 @@ import TowerInfoPanel from "../components/game/TowerInfoPanel";
 import WaveButton from "../components/game/WaveButton";
 import GameOverModal from "../components/game/GameOverModal";
 import ComboDisplay from "../components/game/ComboDisplay";
+import ComboSuggestions from "../components/game/ComboSuggestions";
 import { Shield } from "lucide-react";
 
 const INITIAL_GOLD = 150;
@@ -327,6 +328,7 @@ export default function Game() {
                 onStartWave={startWave}
                 wave={wave}
               />
+              <ComboSuggestions />
               <div className="mt-4 text-[10px] text-stone-700 space-y-1">
                 <p>• Click tower then click board to place</p>
                 <p>• Click placed towers to upgrade/sell</p>
