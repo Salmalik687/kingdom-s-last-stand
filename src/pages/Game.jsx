@@ -79,20 +79,19 @@ export default function Game() {
       const newTowers = [...towersRef.current, tower];
       towerMapRef.current.set(key, tower.id);
 
-      // Check for archer+cannon merge
+      // Check for any merge
       const pair = findMergePair(newTowers);
       if (pair) {
-        const [archer, cannon] = pair;
-        const ballista = mergeTowers(archer, cannon);
-        // Remove archer and cannon, add ballista
-        const merged = newTowers.filter(t => t.id !== archer.id && t.id !== cannon.id);
-        merged.push(ballista);
-        towerMapRef.current.delete(`${archer.gridX},${archer.gridY}`);
-        towerMapRef.current.delete(`${cannon.gridX},${cannon.gridY}`);
-        towerMapRef.current.set(`${ballista.gridX},${ballista.gridY}`, ballista.id);
+        const [t1, t2, resultType] = pair;
+        const merged2 = mergeTowers(t1, t2, resultType);
+        const merged = newTowers.filter(t => t.id !== t1.id && t.id !== t2.id);
+        merged.push(merged2);
+        towerMapRef.current.delete(`${t1.gridX},${t1.gridY}`);
+        towerMapRef.current.delete(`${t2.gridX},${t2.gridY}`);
+        towerMapRef.current.set(`${merged2.gridX},${merged2.gridY}`, merged2.id);
         towersRef.current = merged;
-        setMergeFlash(true);
-        setTimeout(() => setMergeFlash(false), 1500);
+        setMergeFlash(TOWER_TYPES[resultType]);
+        setTimeout(() => setMergeFlash(false), 1800);
       } else {
         towersRef.current = newTowers;
       }
@@ -367,7 +366,7 @@ export default function Game() {
 
       {mergeFlash && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-xl border border-amber-600/70 bg-amber-950/90 text-amber-300 font-bold tracking-widest uppercase text-sm shadow-2xl shadow-amber-900/60 animate-bounce">
-          🎯 Siege Ballista Forged! Archer + Cannon merged!
+          {mergeFlash.emoji} {mergeFlash.name} Forged!
         </div>
       )}
       <ComboDisplay combo={combo} multiplier={comboMultiplier} />

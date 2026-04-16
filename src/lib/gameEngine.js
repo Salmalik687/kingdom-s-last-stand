@@ -107,7 +107,7 @@ export const TOWER_TYPES = {
   },
   ballista: {
     name: "Siege Ballista",
-    cost: 0, // created by merging, not purchased
+    cost: 0,
     damage: 45,
     range: 4,
     fireRate: 600,
@@ -116,6 +116,32 @@ export const TOWER_TYPES = {
     description: "Archer + Cannon merge. Fast & devastating",
     upgradeCost: 100,
     comboType: "siege",
+    isMerged: true,
+  },
+  warcannon: {
+    name: "War Cannon",
+    cost: 0,
+    damage: 80,
+    range: 3.5,
+    fireRate: 1400,
+    color: "#7f1d1d",
+    emoji: "🔴",
+    description: "Cannon + Cannon merge. Brutal heavy fire",
+    upgradeCost: 150,
+    comboType: "heavy",
+    isMerged: true,
+  },
+  doomcannon: {
+    name: "Doomsday Cannon",
+    cost: 0,
+    damage: 160,
+    range: 5,
+    fireRate: 1000,
+    color: "#450a0a",
+    emoji: "💥",
+    description: "War Cannon + Ballista. The ultimate destroyer",
+    upgradeCost: 250,
+    comboType: "doom",
     isMerged: true,
   },
   mage: {
@@ -300,30 +326,41 @@ export function areAdjacent(t1, t2) {
     && !(t1.gridX === t2.gridX && t1.gridY === t2.gridY);
 }
 
-// Returns the IDs of an archer+cannon pair that should merge, or null
+// Merge recipes: [typeA, typeB] → resultType (order-insensitive)
+const MERGE_RECIPES = [
+  { a: "warcannon", b: "ballista", result: "doomcannon" },
+  { a: "cannon",    b: "cannon",   result: "warcannon"  },
+  { a: "archer",    b: "cannon",   result: "ballista"   },
+];
+
+// Returns [t1, t2, resultType] for the first mergeable adjacent pair, or null
 export function findMergePair(towers) {
-  for (const t1 of towers) {
-    if (t1.type !== "archer" && t1.type !== "cannon") continue;
-    for (const t2 of towers) {
-      if (t2.id === t1.id) continue;
-      if (t1.type === "archer" && t2.type === "cannon" && areAdjacent(t1, t2)) {
-        return [t1, t2];
+  for (const recipe of MERGE_RECIPES) {
+    for (const t1 of towers) {
+      if (t1.type !== recipe.a && t1.type !== recipe.b) continue;
+      for (const t2 of towers) {
+        if (t2.id === t1.id) continue;
+        if (!areAdjacent(t1, t2)) continue;
+        const match =
+          (t1.type === recipe.a && t2.type === recipe.b) ||
+          (t1.type === recipe.b && t2.type === recipe.a);
+        if (match) return [t1, t2, recipe.result];
       }
     }
   }
   return null;
 }
 
-// Merge an archer+cannon pair into a ballista at the cannon's position
-export function mergeTowers(archer, cannon) {
-  const base = TOWER_TYPES.ballista;
+// Merge two towers into the result type, placed at t2's position
+export function mergeTowers(t1, t2, resultType) {
+  const base = TOWER_TYPES[resultType];
   return {
     id: Math.random().toString(36).substr(2, 9),
-    type: "ballista",
-    gridX: cannon.gridX,
-    gridY: cannon.gridY,
-    x: cannon.x,
-    y: cannon.y,
+    type: resultType,
+    gridX: t2.gridX,
+    gridY: t2.gridY,
+    x: t2.x,
+    y: t2.y,
     damage: base.damage,
     range: base.range * CELL_SIZE,
     fireRate: base.fireRate,
