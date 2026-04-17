@@ -212,7 +212,7 @@ export default function Game() {
           if (target) {
             const dmg = Math.floor(proj.damage * (1 - (target.damageReduction ?? 0)));
             target.hp -= dmg;
-            if (proj.towerType === "frost") {
+            if (proj.towerType === "frost" || TOWER_TYPES[proj.towerType]?.appliesSlow) {
               target.slowTimer = 2000;
             }
             if (target.hp <= 0) {
