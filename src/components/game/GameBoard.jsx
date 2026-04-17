@@ -6,33 +6,178 @@ import {
 const BOARD_W = GRID_COLS * CELL_SIZE;
 const BOARD_H = GRID_ROWS * CELL_SIZE;
 
-function drawGrid(ctx, theme) {
-  // Background
-  ctx.fillStyle = theme.bg;
-  ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+// Seeded pseudo-random for stable decorations
+function seededRand(seed) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
+}
 
-  // Ground tiles
+// Pre-compute stable decoration positions once
+const DECO_SEED = 42;
+const _rng = seededRand(DECO_SEED);
+// For each non-path cell, decide decoration: null | 'tree' | 'pine' | 'bush' | 'rock' | 'flower'
+const CELL_DECO = {};
+for (let x = 0; x < GRID_COLS; x++) {
+  for (let y = 0; y < GRID_ROWS; y++) {
+    if (PATH_SET.has(`${x},${y}`)) { CELL_DECO[`${x},${y}`] = null; continue; }
+    const r = _rng();
+    if (r < 0.10) CELL_DECO[`${x},${y}`] = 'tree';
+    else if (r < 0.17) CELL_DECO[`${x},${y}`] = 'pine';
+    else if (r < 0.22) CELL_DECO[`${x},${y}`] = 'rock';
+    else if (r < 0.27) CELL_DECO[`${x},${y}`] = 'bush';
+    else if (r < 0.31) CELL_DECO[`${x},${y}`] = 'flower';
+    else CELL_DECO[`${x},${y}`] = null;
+  }
+}
+
+// Stable cloud positions
+const CLOUDS = Array.from({ length: 5 }, (_, i) => {
+  const r2 = seededRand(i * 999 + 7);
+  return { x: r2() * BOARD_W, y: r2() * (BOARD_H * 0.28), r: 18 + r2() * 22 };
+});
+
+// Stable mountain silhouette peaks (background only)
+const MOUNTAIN_PEAKS = Array.from({ length: 6 }, (_, i) => {
+  const r3 = seededRand(i * 333 + 55);
+  return { x: r3() * BOARD_W, h: 55 + r3() * 55 };
+});
+
+function drawMeadowSky(ctx) {
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, BOARD_H * 0.45);
+  sky.addColorStop(0, "#3a7bd5");
+  sky.addColorStop(0.5, "#a8c8f0");
+  sky.addColorStop(1, "#d4e9c7");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, BOARD_W, BOARD_H * 0.45);
+
+  // Sun
+  ctx.save();
+  ctx.shadowColor = "rgba(255,230,100,0.6)";
+  ctx.shadowBlur = 28;
+  ctx.fillStyle = "#ffe066";
+  ctx.beginPath();
+  ctx.arc(BOARD_W * 0.82, BOARD_H * 0.1, 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Clouds
+  CLOUDS.forEach(c => {
+    ctx.save();
+    ctx.globalAlpha = 0.82;
+    ctx.fillStyle = "#ffffff";
+    [0, -c.r * 0.5, c.r * 0.5, -c.r * 0.8, c.r * 0.8].forEach((ox, i) => {
+      const oy = i === 0 ? -c.r * 0.25 : 0;
+      ctx.beginPath();
+      ctx.arc(c.x + ox, c.y + oy, c.r * (i === 0 ? 0.7 : 0.5), 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
+  });
+
+  // Distant mountains (silhouette)
+  ctx.save();
+  ctx.globalAlpha = 0.45;
+  MOUNTAIN_PEAKS.forEach(m => {
+    const grad = ctx.createLinearGradient(m.x, BOARD_H * 0.42 - m.h, m.x, BOARD_H * 0.42);
+    grad.addColorStop(0, "#7aa0c0");
+    grad.addColorStop(1, "#5a8060");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(m.x - m.h * 0.7, BOARD_H * 0.42);
+    ctx.lineTo(m.x, BOARD_H * 0.42 - m.h);
+    ctx.lineTo(m.x + m.h * 0.7, BOARD_H * 0.42);
+    ctx.closePath();
+    ctx.fill();
+    // Snow cap
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.beginPath();
+    ctx.moveTo(m.x - m.h * 0.12, BOARD_H * 0.42 - m.h * 0.75);
+    ctx.lineTo(m.x, BOARD_H * 0.42 - m.h);
+    ctx.lineTo(m.x + m.h * 0.12, BOARD_H * 0.42 - m.h * 0.75);
+    ctx.closePath();
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawMeadowGround(ctx, theme) {
+  // Rich rolling ground gradient over the bottom portion
+  const ground = ctx.createLinearGradient(0, BOARD_H * 0.35, 0, BOARD_H);
+  ground.addColorStop(0, "#3d7a3d");
+  ground.addColorStop(0.4, "#2e5e2e");
+  ground.addColorStop(1, "#1e3e1e");
+  ctx.fillStyle = ground;
+  ctx.fillRect(0, BOARD_H * 0.35, BOARD_W, BOARD_H * 0.65);
+}
+
+function drawCellDeco(ctx, x, y, deco) {
+  const cx = x * CELL_SIZE + CELL_SIZE / 2;
+  const cy = y * CELL_SIZE + CELL_SIZE / 2;
+  ctx.font = `${CELL_SIZE * 0.52}px serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const emojis = { tree: "🌳", pine: "🌲", rock: "🪨", bush: "🌿", flower: "🌸" };
+  if (emojis[deco]) ctx.fillText(emojis[deco], cx, cy + 2);
+}
+
+function drawGrid(ctx, theme, wave) {
+  const isMeadow = wave >= 1 && wave <= 5;
+
+  if (isMeadow) {
+    // Sky layer
+    drawMeadowSky(ctx);
+    // Ground layer
+    drawMeadowGround(ctx, theme);
+  } else {
+    // Non-meadow flat background
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+  }
+
+  // Ground tiles (checkerboard tint over the base)
   for (let x = 0; x < GRID_COLS; x++) {
     for (let y = 0; y < GRID_ROWS; y++) {
       const isPath = PATH_SET.has(`${x},${y}`);
       if (!isPath) {
-        ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
-        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        if (isMeadow) {
+          // Subtle checker overlay on top of meadow ground
+          ctx.globalAlpha = (x + y) % 2 === 0 ? 0.10 : 0.04;
+          ctx.fillStyle = "#a8d878";
+          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          ctx.globalAlpha = 1;
+        } else {
+          ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
+          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
       }
     }
   }
 
   // Path
   PATH.forEach(([x, y], i) => {
-    ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
-    ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    ctx.strokeStyle = theme.pathBorder;
+    if (isMeadow) {
+      // Earthy dirt path with texture
+      ctx.fillStyle = i % 2 === 0 ? "#8b6340" : "#7a5530";
+      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+      // Subtle gravel dots
+      ctx.fillStyle = "rgba(60,35,10,0.25)";
+      ctx.fillRect(x * CELL_SIZE + 4, y * CELL_SIZE + 4, 3, 3);
+      ctx.fillRect(x * CELL_SIZE + CELL_SIZE - 8, y * CELL_SIZE + CELL_SIZE - 8, 3, 3);
+    } else {
+      ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
+      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    }
+    ctx.strokeStyle = isMeadow ? "rgba(60,35,10,0.35)" : theme.pathBorder;
     ctx.lineWidth = 1;
     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   });
 
   // Grid lines
-  ctx.strokeStyle = theme.gridLine;
+  ctx.strokeStyle = isMeadow ? "rgba(0,80,0,0.08)" : theme.gridLine;
   ctx.lineWidth = 0.5;
   for (let x = 0; x <= GRID_COLS; x++) {
     ctx.beginPath();
@@ -45,6 +190,17 @@ function drawGrid(ctx, theme) {
     ctx.moveTo(0, y * CELL_SIZE);
     ctx.lineTo(BOARD_W, y * CELL_SIZE);
     ctx.stroke();
+  }
+
+  // Meadow decorations (trees, rocks, bushes) on non-path, non-tower cells
+  if (isMeadow) {
+    for (let x = 0; x < GRID_COLS; x++) {
+      for (let y = 0; y < GRID_ROWS; y++) {
+        const key = `${x},${y}`;
+        const deco = CELL_DECO[key];
+        if (deco) drawCellDeco(ctx, x, y, deco);
+      }
+    }
   }
 
   // Castle at end
@@ -216,7 +372,7 @@ export default function GameBoard({
     ctx.clearRect(0, 0, BOARD_W, BOARD_H);
 
     const theme = getStageTheme(wave || 1);
-    drawGrid(ctx, theme);
+    drawGrid(ctx, theme, wave || 1);
     drawTowers(ctx, towers, selectedTowerId);
     drawEnemies(ctx, enemies);
     drawProjectiles(ctx, projectiles);
