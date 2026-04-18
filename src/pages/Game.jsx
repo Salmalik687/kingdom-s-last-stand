@@ -15,6 +15,7 @@ import ComboDisplay from "../components/game/ComboDisplay";
 import ComboSuggestions from "../components/game/ComboSuggestions";
 import BossArrivalModal from "../components/game/BossArrivalModal";
 import WaveSuccessBanner from "../components/game/WaveSuccessBanner";
+import RoyalRewardModal from "../components/game/RoyalRewardModal";
 import { playKillSound, playDamageSound, playWaveSuccessSound } from "../lib/sounds";
 import { Shield } from "lucide-react";
 
@@ -34,6 +35,7 @@ export default function Game() {
   const [bossArrival, setBossArrival] = useState(null);
   const [mergeFlash, setMergeFlash] = useState(false);
   const [waveSuccess, setWaveSuccess] = useState(false);
+  const [royalReward, setRoyalReward] = useState(false);
   const comboTimerRef = useRef(null);
   const COMBO_WINDOW = 3000; // ms between kills to maintain combo
 
@@ -249,7 +251,12 @@ export default function Game() {
       if (waveQueueRef.current.length === 0 && enemiesRef.current.length === 0) {
         setWaveActive(prev => {
           if (prev) {
-            setWave(w => w + 1);
+            setWave(w => {
+              const next = w + 1;
+              // After meadow stage (wave 5), show royal reward
+              if (w === 5) setTimeout(() => setRoyalReward(true), 800);
+              return next;
+            });
             setGold(g => g + 25); // Wave completion bonus
             playWaveSuccessSound();
             setWaveSuccess(s => !s); // toggle to always re-trigger
@@ -381,6 +388,14 @@ export default function Game() {
 
       <BossArrivalModal boss={bossArrival} onDismiss={() => setBossArrival(null)} />
       <WaveSuccessBanner wave={wave} show={waveSuccess} />
+      <RoyalRewardModal
+        show={royalReward}
+        wave={wave}
+        onContinue={() => {
+          setRoyalReward(false);
+          setGold(g => g + 200); // Royal reward bonus gold
+        }}
+      />
 
       {gameOver && (
         <GameOverModal score={score} wave={wave} onRestart={handleRestart} />
