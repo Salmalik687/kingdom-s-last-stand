@@ -46,72 +46,140 @@ const MOUNTAIN_PEAKS = Array.from({ length: 6 }, (_, i) => {
 });
 
 function drawMeadowSky(ctx) {
-  // Sky gradient
-  const sky = ctx.createLinearGradient(0, 0, 0, BOARD_H * 0.45);
-  sky.addColorStop(0, "#3a7bd5");
-  sky.addColorStop(0.5, "#a8c8f0");
-  sky.addColorStop(1, "#d4e9c7");
+  // Deep sky gradient - top blue to horizon haze
+  const sky = ctx.createLinearGradient(0, 0, 0, BOARD_H);
+  sky.addColorStop(0,    "#1a6fb5");
+  sky.addColorStop(0.22, "#3a9ad9");
+  sky.addColorStop(0.5,  "#7ec8f0");
+  sky.addColorStop(0.72, "#b8dfa8");
+  sky.addColorStop(1,    "#4a8a3a");
   ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, BOARD_W, BOARD_H * 0.45);
+  ctx.fillRect(0, 0, BOARD_W, BOARD_H);
 
-  // Sun
+  // Sun glow halo
   ctx.save();
-  ctx.shadowColor = "rgba(255,230,100,0.6)";
-  ctx.shadowBlur = 28;
-  ctx.fillStyle = "#ffe066";
+  const sunX = BOARD_W * 0.80, sunY = BOARD_H * 0.09;
+  const halo = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 55);
+  halo.addColorStop(0, "rgba(255,240,120,0.55)");
+  halo.addColorStop(1, "rgba(255,240,120,0)");
+  ctx.fillStyle = halo;
   ctx.beginPath();
-  ctx.arc(BOARD_W * 0.82, BOARD_H * 0.1, 18, 0, Math.PI * 2);
+  ctx.arc(sunX, sunY, 55, 0, Math.PI * 2);
+  ctx.fill();
+  // Sun disc
+  ctx.shadowColor = "rgba(255,220,80,0.9)";
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = "#ffe855";
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, 16, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 
-  // Clouds
+  // Clouds - fluffy multi-circle style
   CLOUDS.forEach(c => {
     ctx.save();
-    ctx.globalAlpha = 0.82;
-    ctx.fillStyle = "#ffffff";
-    [0, -c.r * 0.5, c.r * 0.5, -c.r * 0.8, c.r * 0.8].forEach((ox, i) => {
-      const oy = i === 0 ? -c.r * 0.25 : 0;
+    ctx.shadowColor = "rgba(180,210,255,0.3)";
+    ctx.shadowBlur = 10;
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    const puffs = [
+      { ox: 0,           oy: -c.r * 0.18, r: c.r * 0.65 },
+      { ox: -c.r * 0.55, oy: 0,           r: c.r * 0.48 },
+      { ox:  c.r * 0.55, oy: 0,           r: c.r * 0.48 },
+      { ox: -c.r * 0.28, oy: c.r * 0.08,  r: c.r * 0.55 },
+      { ox:  c.r * 0.28, oy: c.r * 0.08,  r: c.r * 0.55 },
+    ];
+    puffs.forEach(p => {
       ctx.beginPath();
-      ctx.arc(c.x + ox, c.y + oy, c.r * (i === 0 ? 0.7 : 0.5), 0, Math.PI * 2);
+      ctx.arc(c.x + p.ox, c.y + p.oy, p.r, 0, Math.PI * 2);
       ctx.fill();
     });
+    // Bottom flat base
+    ctx.fillStyle = "rgba(210,235,255,0.6)";
+    ctx.fillRect(c.x - c.r * 0.9, c.y + c.r * 0.05, c.r * 1.8, c.r * 0.28);
     ctx.restore();
   });
 
-  // Distant mountains (silhouette)
+  // Distant layered mountains
   ctx.save();
-  ctx.globalAlpha = 0.45;
-  MOUNTAIN_PEAKS.forEach(m => {
-    const grad = ctx.createLinearGradient(m.x, BOARD_H * 0.42 - m.h, m.x, BOARD_H * 0.42);
-    grad.addColorStop(0, "#7aa0c0");
-    grad.addColorStop(1, "#5a8060");
+  // Far layer - cool blue-grey
+  ctx.globalAlpha = 0.38;
+  MOUNTAIN_PEAKS.forEach((m, i) => {
+    const grad = ctx.createLinearGradient(m.x, BOARD_H * 0.48 - m.h * 1.1, m.x, BOARD_H * 0.48);
+    grad.addColorStop(0, "#8ab0cc");
+    grad.addColorStop(1, "#6a9070");
     ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.moveTo(m.x - m.h * 0.7, BOARD_H * 0.42);
-    ctx.lineTo(m.x, BOARD_H * 0.42 - m.h);
-    ctx.lineTo(m.x + m.h * 0.7, BOARD_H * 0.42);
+    ctx.moveTo(m.x - m.h * 0.85, BOARD_H * 0.48);
+    ctx.lineTo(m.x - m.h * 0.08, BOARD_H * 0.48 - m.h * 1.1);
+    ctx.lineTo(m.x + m.h * 0.85, BOARD_H * 0.48);
     ctx.closePath();
     ctx.fill();
     // Snow cap
-    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = "#e8f4ff";
     ctx.beginPath();
-    ctx.moveTo(m.x - m.h * 0.12, BOARD_H * 0.42 - m.h * 0.75);
-    ctx.lineTo(m.x, BOARD_H * 0.42 - m.h);
-    ctx.lineTo(m.x + m.h * 0.12, BOARD_H * 0.42 - m.h * 0.75);
+    ctx.moveTo(m.x - m.h * 0.14, BOARD_H * 0.48 - m.h * 0.82);
+    ctx.lineTo(m.x - m.h * 0.08, BOARD_H * 0.48 - m.h * 1.1);
+    ctx.lineTo(m.x + m.h * 0.14, BOARD_H * 0.48 - m.h * 0.82);
     ctx.closePath();
     ctx.fill();
+    ctx.globalAlpha = 0.38;
   });
+  ctx.restore();
+
+  // Near rolling hills (horizon line - smooth bezier bumps)
+  ctx.save();
+  const hillY = BOARD_H * 0.52;
+  const hillGrad = ctx.createLinearGradient(0, hillY - 40, 0, hillY + 30);
+  hillGrad.addColorStop(0, "#5aaa48");
+  hillGrad.addColorStop(1, "#3d7a30");
+  ctx.fillStyle = hillGrad;
+  ctx.beginPath();
+  ctx.moveTo(0, BOARD_H);
+  ctx.lineTo(0, hillY + 15);
+  // Smooth hill bumps across the width
+  const hillBumps = [
+    [0, hillY + 15], [BOARD_W * 0.1, hillY - 18], [BOARD_W * 0.2, hillY + 8],
+    [BOARD_W * 0.33, hillY - 28], [BOARD_W * 0.46, hillY + 5],
+    [BOARD_W * 0.58, hillY - 22], [BOARD_W * 0.7, hillY + 10],
+    [BOARD_W * 0.82, hillY - 20], [BOARD_W * 0.92, hillY + 6], [BOARD_W, hillY + 12],
+  ];
+  ctx.moveTo(0, hillY + 15);
+  for (let i = 0; i < hillBumps.length - 1; i++) {
+    const [x0, y0] = hillBumps[i];
+    const [x1, y1] = hillBumps[i + 1];
+    const mx = (x0 + x1) / 2;
+    ctx.quadraticCurveTo(x0, y0, mx, (y0 + y1) / 2);
+  }
+  ctx.lineTo(BOARD_W, BOARD_H);
+  ctx.closePath();
+  ctx.fill();
+
+  // Grass highlight strip along horizon
+  ctx.fillStyle = "rgba(120,200,80,0.22)";
+  ctx.beginPath();
+  ctx.moveTo(0, hillY + 15);
+  for (let i = 0; i < hillBumps.length - 1; i++) {
+    const [x0, y0] = hillBumps[i];
+    const [x1, y1] = hillBumps[i + 1];
+    const mx = (x0 + x1) / 2;
+    ctx.quadraticCurveTo(x0, y0, mx, (y0 + y1) / 2);
+  }
+  ctx.lineTo(BOARD_W, hillY + 20);
+  ctx.lineTo(0, hillY + 20);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
 
-function drawMeadowGround(ctx, theme) {
-  // Rich rolling ground gradient over the bottom portion
-  const ground = ctx.createLinearGradient(0, BOARD_H * 0.35, 0, BOARD_H);
-  ground.addColorStop(0, "#3d7a3d");
-  ground.addColorStop(0.4, "#2e5e2e");
-  ground.addColorStop(1, "#1e3e1e");
+function drawMeadowGround(ctx) {
+  // Rich grass ground fill below the hill line
+  const ground = ctx.createLinearGradient(0, BOARD_H * 0.5, 0, BOARD_H);
+  ground.addColorStop(0,   "#4a9438");
+  ground.addColorStop(0.3, "#3a7a2a");
+  ground.addColorStop(1,   "#254d1a");
   ctx.fillStyle = ground;
-  ctx.fillRect(0, BOARD_H * 0.35, BOARD_W, BOARD_H * 0.65);
+  ctx.fillRect(0, BOARD_H * 0.5, BOARD_W, BOARD_H * 0.5);
 }
 
 function drawCellDeco(ctx, x, y, deco) {
@@ -128,10 +196,8 @@ function drawGrid(ctx, theme, wave) {
   const isMeadow = wave >= 1 && wave <= 5;
 
   if (isMeadow) {
-    // Sky layer
     drawMeadowSky(ctx);
-    // Ground layer
-    drawMeadowGround(ctx, theme);
+    drawMeadowGround(ctx);
   } else {
     // Non-meadow flat background
     ctx.fillStyle = theme.bg;
@@ -144,11 +210,7 @@ function drawGrid(ctx, theme, wave) {
       const isPath = PATH_SET.has(`${x},${y}`);
       if (!isPath) {
         if (isMeadow) {
-          // Subtle checker overlay on top of meadow ground
-          ctx.globalAlpha = (x + y) % 2 === 0 ? 0.10 : 0.04;
-          ctx.fillStyle = "#a8d878";
-          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-          ctx.globalAlpha = 1;
+          // no fill — background gradient shows through cleanly
         } else {
           ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
           ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
