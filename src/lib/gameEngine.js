@@ -619,6 +619,7 @@ export function createEnemy(type, hpMultiplier = 1, modifier = null) {
     x: PATH[0][0] * CELL_SIZE + CELL_SIZE / 2,
     y: PATH[0][1] * CELL_SIZE + CELL_SIZE / 2,
     slowTimer: 0,
+    spawnTime: performance.now(),
   };
 }
 

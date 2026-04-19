@@ -386,50 +386,117 @@ function drawTowers(ctx, towers, selectedTowerId) {
 }
 
 function drawEnemies(ctx, enemies) {
+  const now = performance.now();
+
   enemies.forEach(enemy => {
-    const { x, y, hp, maxHp, emoji, modEmoji, modColor } = enemy;
+    const { x, y, hp, maxHp, emoji, modEmoji, modColor, speed } = enemy;
+
+    // --- Animation calculations ---
+    // Unique per-enemy phase offset using their id hash
+    const idHash = enemy.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+    const phase = idHash * 0.731;
+
+    // Bob: vertical bounce based on speed
+    const bobFreq = 8 + speed * 3;
+    const bobAmp = 2.5 + speed * 1.2;
+    const bob = Math.sin(now * 0.001 * bobFreq + phase) * bobAmp;
+
+    // Charge lean: tilt forward (lean right = positive rotation)
+    const leanAngle = Math.min(0.35, speed * 0.13);
+
+    // Speed lines for fast enemies
+    const isFast = speed > 1.4;
+
+    // Spawn flash: bright ring in first ~600ms of life
+    const spawnAge = now - (enemy.spawnTime ?? now);
+    const isSpawning = spawnAge < 600;
+    const spawnAlpha = isSpawning ? Math.max(0, 1 - spawnAge / 600) : 0;
+
+    ctx.save();
+    ctx.translate(x, y + bob);
+
+    // Spawn entry flash ring
+    if (spawnAlpha > 0) {
+      ctx.save();
+      ctx.globalAlpha = spawnAlpha * 0.8;
+      ctx.strokeStyle = modColor || "#ffffff";
+      ctx.lineWidth = 3;
+      const ringR = CELL_SIZE * 0.5 * (1 + (1 - spawnAlpha) * 0.8);
+      ctx.beginPath();
+      ctx.arc(0, 0, ringR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // Speed lines behind fast/berserker enemies
+    if (isFast) {
+      const lineCount = 3;
+      const lineAlpha = 0.35 + Math.sin(now * 0.008 + phase) * 0.15;
+      ctx.save();
+      ctx.globalAlpha = lineAlpha;
+      ctx.strokeStyle = modColor || "#facc15";
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < lineCount; i++) {
+        const offset = (i - 1) * 5;
+        const len = 10 + speed * 4;
+        ctx.beginPath();
+        ctx.moveTo(-CELL_SIZE * 0.22, offset);
+        ctx.lineTo(-CELL_SIZE * 0.22 - len, offset);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Apply charge lean rotation
+    ctx.rotate(leanAngle);
 
     // Modifier glow ring
     if (modColor) {
       ctx.save();
       ctx.strokeStyle = modColor;
       ctx.lineWidth = 2;
-      ctx.globalAlpha = 0.7;
+      ctx.globalAlpha = 0.55 + Math.sin(now * 0.006 + phase) * 0.2;
       ctx.beginPath();
-      ctx.arc(x, y, CELL_SIZE * 0.34, 0, Math.PI * 2);
+      ctx.arc(0, 0, CELL_SIZE * 0.34, 0, Math.PI * 2);
       ctx.stroke();
       ctx.globalAlpha = 1;
       ctx.restore();
     }
 
-    // Shadow
+    // Shadow (squash/stretch with bob)
+    const shadowScale = 1 - bob * 0.04;
     ctx.fillStyle = "rgba(0,0,0,0.3)";
     ctx.beginPath();
-    ctx.ellipse(x, y + CELL_SIZE * 0.3, 8, 4, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, CELL_SIZE * 0.3 - bob, 8 * shadowScale, 4 * shadowScale, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Enemy emoji
-    ctx.font = `${CELL_SIZE * 0.45}px serif`;
+    // Enemy emoji — scale pulse on boss
+    const isBoss = enemy.type?.startsWith("boss_");
+    const scale = isBoss ? 1 + Math.sin(now * 0.004 + phase) * 0.07 : 1;
+    const fontSize = CELL_SIZE * 0.45 * scale;
+    ctx.font = `${fontSize}px serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(emoji, x, y);
+    ctx.fillText(emoji, 0, 0);
 
-    // Modifier badge (top-right corner)
+    // Modifier badge
     if (modEmoji) {
       ctx.font = `${CELL_SIZE * 0.28}px serif`;
-      ctx.fillText(modEmoji, x + CELL_SIZE * 0.22, y - CELL_SIZE * 0.22);
+      ctx.fillText(modEmoji, CELL_SIZE * 0.22, -CELL_SIZE * 0.22);
     }
 
-    // HP bar
+    ctx.restore();
+
+    // HP bar (drawn in world space, not rotated)
     const barW = CELL_SIZE * 0.7;
     const barH = 3;
     const barX = x - barW / 2;
-    const barY = y - CELL_SIZE * 0.4;
+    const barY = y + bob - CELL_SIZE * 0.42;
     const hpPercent = hp / maxHp;
 
     ctx.fillStyle = "rgba(0,0,0,0.6)";
     ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-    // Modifier affects HP bar colour
     ctx.fillStyle = modColor && hpPercent > 0.25
       ? modColor
       : hpPercent > 0.5 ? "#22c55e" : hpPercent > 0.25 ? "#eab308" : "#ef4444";
