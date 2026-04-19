@@ -45,141 +45,216 @@ const MOUNTAIN_PEAKS = Array.from({ length: 6 }, (_, i) => {
   return { x: r3() * BOARD_W, h: 55 + r3() * 55 };
 });
 
-function drawMeadowSky(ctx) {
-  // Deep sky gradient - top blue to horizon haze
-  const sky = ctx.createLinearGradient(0, 0, 0, BOARD_H);
-  sky.addColorStop(0,    "#1a6fb5");
-  sky.addColorStop(0.22, "#3a9ad9");
-  sky.addColorStop(0.5,  "#7ec8f0");
-  sky.addColorStop(0.72, "#b8dfa8");
-  sky.addColorStop(1,    "#4a8a3a");
-  ctx.fillStyle = sky;
+// 2D flat storybook-style meadow background
+function drawMeadow2D(ctx) {
+  // ── Sky: flat cornflower blue ──
+  ctx.fillStyle = "#87CEEB";
   ctx.fillRect(0, 0, BOARD_W, BOARD_H);
 
-  // Sun glow halo
-  ctx.save();
-  const sunX = BOARD_W * 0.80, sunY = BOARD_H * 0.09;
-  const halo = ctx.createRadialGradient(sunX, sunY, 10, sunX, sunY, 55);
-  halo.addColorStop(0, "rgba(255,240,120,0.55)");
-  halo.addColorStop(1, "rgba(255,240,120,0)");
-  ctx.fillStyle = halo;
+  // ── Sun: flat yellow circle + rays ──
+  const sunX = BOARD_W * 0.82, sunY = BOARD_H * 0.10;
+  // rays
+  ctx.strokeStyle = "#FFD600";
+  ctx.lineWidth = 2.5;
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(sunX + Math.cos(angle) * 20, sunY + Math.sin(angle) * 20);
+    ctx.lineTo(sunX + Math.cos(angle) * 32, sunY + Math.sin(angle) * 32);
+    ctx.stroke();
+  }
+  // disc fill
+  ctx.fillStyle = "#FFE033";
   ctx.beginPath();
-  ctx.arc(sunX, sunY, 55, 0, Math.PI * 2);
+  ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
   ctx.fill();
-  // Sun disc
-  ctx.shadowColor = "rgba(255,220,80,0.9)";
-  ctx.shadowBlur = 20;
-  ctx.fillStyle = "#ffe855";
+  // disc outline
+  ctx.strokeStyle = "#B8860B";
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(sunX, sunY, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+  ctx.stroke();
 
-  // Clouds - fluffy multi-circle style
-  CLOUDS.forEach(c => {
-    ctx.save();
-    ctx.shadowColor = "rgba(180,210,255,0.3)";
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = "rgba(255,255,255,0.92)";
-    const puffs = [
-      { ox: 0,           oy: -c.r * 0.18, r: c.r * 0.65 },
-      { ox: -c.r * 0.55, oy: 0,           r: c.r * 0.48 },
-      { ox:  c.r * 0.55, oy: 0,           r: c.r * 0.48 },
-      { ox: -c.r * 0.28, oy: c.r * 0.08,  r: c.r * 0.55 },
-      { ox:  c.r * 0.28, oy: c.r * 0.08,  r: c.r * 0.55 },
-    ];
-    puffs.forEach(p => {
+  // ── Flat 2D clouds (rounded rectangles with bumps) ──
+  function drawFlatCloud(cx, cy, w, h) {
+    ctx.fillStyle = "#FFFFFF";
+    // bumps on top
+    const bumps = 4;
+    for (let b = 0; b < bumps; b++) {
+      const bx = cx - w * 0.35 + (b / (bumps - 1)) * w * 0.7;
+      const by = cy - h * 0.3;
       ctx.beginPath();
-      ctx.arc(c.x + p.ox, c.y + p.oy, p.r, 0, Math.PI * 2);
+      ctx.arc(bx, by, h * 0.55, 0, Math.PI * 2);
       ctx.fill();
-    });
-    // Bottom flat base
-    ctx.fillStyle = "rgba(210,235,255,0.6)";
-    ctx.fillRect(c.x - c.r * 0.9, c.y + c.r * 0.05, c.r * 1.8, c.r * 0.28);
-    ctx.restore();
-  });
-
-  // Distant layered mountains
-  ctx.save();
-  // Far layer - cool blue-grey
-  ctx.globalAlpha = 0.38;
-  MOUNTAIN_PEAKS.forEach((m, i) => {
-    const grad = ctx.createLinearGradient(m.x, BOARD_H * 0.48 - m.h * 1.1, m.x, BOARD_H * 0.48);
-    grad.addColorStop(0, "#8ab0cc");
-    grad.addColorStop(1, "#6a9070");
-    ctx.fillStyle = grad;
+    }
+    // main body
     ctx.beginPath();
-    ctx.moveTo(m.x - m.h * 0.85, BOARD_H * 0.48);
-    ctx.lineTo(m.x - m.h * 0.08, BOARD_H * 0.48 - m.h * 1.1);
-    ctx.lineTo(m.x + m.h * 0.85, BOARD_H * 0.48);
-    ctx.closePath();
+    ctx.roundRect(cx - w / 2, cy - h * 0.1, w, h * 0.7, h * 0.35);
     ctx.fill();
-    // Snow cap
-    ctx.globalAlpha = 0.55;
-    ctx.fillStyle = "#e8f4ff";
+    // outline
+    ctx.strokeStyle = "#B0C8E0";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(m.x - m.h * 0.14, BOARD_H * 0.48 - m.h * 0.82);
-    ctx.lineTo(m.x - m.h * 0.08, BOARD_H * 0.48 - m.h * 1.1);
-    ctx.lineTo(m.x + m.h * 0.14, BOARD_H * 0.48 - m.h * 0.82);
-    ctx.closePath();
-    ctx.fill();
-    ctx.globalAlpha = 0.38;
-  });
-  ctx.restore();
+    for (let b = 0; b < bumps; b++) {
+      const bx = cx - w * 0.35 + (b / (bumps - 1)) * w * 0.7;
+      const by = cy - h * 0.3;
+      ctx.arc(bx, by, h * 0.55, Math.PI, 0);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.roundRect(cx - w / 2, cy - h * 0.1, w, h * 0.7, h * 0.35);
+    ctx.stroke();
+  }
+  drawFlatCloud(BOARD_W * 0.15, BOARD_H * 0.09, 80, 28);
+  drawFlatCloud(BOARD_W * 0.40, BOARD_H * 0.06, 60, 22);
+  drawFlatCloud(BOARD_W * 0.63, BOARD_H * 0.11, 70, 24);
 
-  // Near rolling hills (horizon line - smooth bezier bumps)
-  ctx.save();
-  const hillY = BOARD_H * 0.52;
-  const hillGrad = ctx.createLinearGradient(0, hillY - 40, 0, hillY + 30);
-  hillGrad.addColorStop(0, "#5aaa48");
-  hillGrad.addColorStop(1, "#3d7a30");
-  ctx.fillStyle = hillGrad;
-  ctx.beginPath();
-  ctx.moveTo(0, BOARD_H);
-  ctx.lineTo(0, hillY + 15);
-  // Smooth hill bumps across the width
-  const hillBumps = [
-    [0, hillY + 15], [BOARD_W * 0.1, hillY - 18], [BOARD_W * 0.2, hillY + 8],
-    [BOARD_W * 0.33, hillY - 28], [BOARD_W * 0.46, hillY + 5],
-    [BOARD_W * 0.58, hillY - 22], [BOARD_W * 0.7, hillY + 10],
-    [BOARD_W * 0.82, hillY - 20], [BOARD_W * 0.92, hillY + 6], [BOARD_W, hillY + 12],
+  // ── Distant mountains: flat triangles with outline ──
+  const mtns = [
+    { x: BOARD_W * 0.05, w: 100, h: 70, fill: "#A8C4D8", snow: "#EEF6FF" },
+    { x: BOARD_W * 0.22, w: 130, h: 90, fill: "#8BAEC8", snow: "#EEF6FF" },
+    { x: BOARD_W * 0.45, w: 110, h: 75, fill: "#9BB8CC", snow: "#EEF6FF" },
+    { x: BOARD_W * 0.65, w: 120, h: 82, fill: "#8BAEC8", snow: "#EEF6FF" },
+    { x: BOARD_W * 0.88, w: 95,  h: 65, fill: "#A8C4D8", snow: "#EEF6FF" },
   ];
-  ctx.moveTo(0, hillY + 15);
-  for (let i = 0; i < hillBumps.length - 1; i++) {
-    const [x0, y0] = hillBumps[i];
-    const [x1, y1] = hillBumps[i + 1];
-    const mx = (x0 + x1) / 2;
-    ctx.quadraticCurveTo(x0, y0, mx, (y0 + y1) / 2);
+  const horizonY = BOARD_H * 0.44;
+  mtns.forEach(m => {
+    // mountain body
+    ctx.fillStyle = m.fill;
+    ctx.beginPath();
+    ctx.moveTo(m.x - m.w / 2, horizonY);
+    ctx.lineTo(m.x, horizonY - m.h);
+    ctx.lineTo(m.x + m.w / 2, horizonY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#6A8FA8";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // snow cap
+    const snowH = m.h * 0.28;
+    ctx.fillStyle = m.snow;
+    ctx.beginPath();
+    ctx.moveTo(m.x - m.w * 0.18, horizonY - m.h + snowH);
+    ctx.lineTo(m.x, horizonY - m.h);
+    ctx.lineTo(m.x + m.w * 0.18, horizonY - m.h + snowH);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#B0CCE0";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  });
+
+  // ── Horizon hill strip: flat green band ──
+  ctx.fillStyle = "#6DBF5A";
+  ctx.beginPath();
+  ctx.moveTo(0, horizonY + 2);
+  // bumpy top edge
+  const hillPts = [
+    [0, horizonY + 2],
+    [BOARD_W * 0.12, horizonY - 14],
+    [BOARD_W * 0.25, horizonY + 4],
+    [BOARD_W * 0.38, horizonY - 18],
+    [BOARD_W * 0.52, horizonY + 2],
+    [BOARD_W * 0.65, horizonY - 12],
+    [BOARD_W * 0.78, horizonY + 6],
+    [BOARD_W * 0.90, horizonY - 10],
+    [BOARD_W, horizonY + 4],
+  ];
+  ctx.moveTo(hillPts[0][0], hillPts[0][1]);
+  for (let i = 0; i < hillPts.length - 1; i++) {
+    const mx = (hillPts[i][0] + hillPts[i + 1][0]) / 2;
+    const my = (hillPts[i][1] + hillPts[i + 1][1]) / 2;
+    ctx.quadraticCurveTo(hillPts[i][0], hillPts[i][1], mx, my);
   }
   ctx.lineTo(BOARD_W, BOARD_H);
+  ctx.lineTo(0, BOARD_H);
   ctx.closePath();
   ctx.fill();
-
-  // Grass highlight strip along horizon
-  ctx.fillStyle = "rgba(120,200,80,0.22)";
+  // dark outline on hill top
+  ctx.strokeStyle = "#3D8C2A";
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.moveTo(0, hillY + 15);
-  for (let i = 0; i < hillBumps.length - 1; i++) {
-    const [x0, y0] = hillBumps[i];
-    const [x1, y1] = hillBumps[i + 1];
-    const mx = (x0 + x1) / 2;
-    ctx.quadraticCurveTo(x0, y0, mx, (y0 + y1) / 2);
+  ctx.moveTo(hillPts[0][0], hillPts[0][1]);
+  for (let i = 0; i < hillPts.length - 1; i++) {
+    const mx = (hillPts[i][0] + hillPts[i + 1][0]) / 2;
+    const my = (hillPts[i][1] + hillPts[i + 1][1]) / 2;
+    ctx.quadraticCurveTo(hillPts[i][0], hillPts[i][1], mx, my);
   }
-  ctx.lineTo(BOARD_W, hillY + 20);
-  ctx.lineTo(0, hillY + 20);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
+  ctx.stroke();
 
-function drawMeadowGround(ctx) {
-  // Rich grass ground fill below the hill line
-  const ground = ctx.createLinearGradient(0, BOARD_H * 0.5, 0, BOARD_H);
-  ground.addColorStop(0,   "#4a9438");
-  ground.addColorStop(0.3, "#3a7a2a");
-  ground.addColorStop(1,   "#254d1a");
-  ctx.fillStyle = ground;
-  ctx.fillRect(0, BOARD_H * 0.5, BOARD_W, BOARD_H * 0.5);
+  // ── Ground: flat grass fill ──
+  ctx.fillStyle = "#5AB347";
+  ctx.fillRect(0, horizonY + 2, BOARD_W, BOARD_H);
+
+  // ── Flat hand-drawn cartoon trees in background (behind grid) ──
+  function drawFlatTree(tx, ty, trunk_h, canopy_r, fillC, outlineC) {
+    // trunk
+    ctx.fillStyle = "#7A4F2A";
+    ctx.fillRect(tx - 4, ty - trunk_h, 8, trunk_h);
+    ctx.strokeStyle = "#4A2E10";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(tx - 4, ty - trunk_h, 8, trunk_h);
+    // canopy
+    ctx.fillStyle = fillC;
+    ctx.beginPath();
+    ctx.arc(tx, ty - trunk_h, canopy_r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = outlineC;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // highlight dot
+    ctx.fillStyle = "rgba(255,255,255,0.25)";
+    ctx.beginPath();
+    ctx.arc(tx - canopy_r * 0.3, ty - trunk_h - canopy_r * 0.3, canopy_r * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  // scattered background trees along horizon
+  const bgTrees = [
+    { x: BOARD_W * 0.03, y: horizonY + 8 },
+    { x: BOARD_W * 0.09, y: horizonY + 4 },
+    { x: BOARD_W * 0.17, y: horizonY + 10 },
+    { x: BOARD_W * 0.30, y: horizonY + 6 },
+    { x: BOARD_W * 0.55, y: horizonY + 8 },
+    { x: BOARD_W * 0.72, y: horizonY + 5 },
+    { x: BOARD_W * 0.84, y: horizonY + 9 },
+    { x: BOARD_W * 0.95, y: horizonY + 7 },
+  ];
+  bgTrees.forEach((t, i) => {
+    const big = i % 3 === 0;
+    drawFlatTree(t.x, t.y, big ? 22 : 16, big ? 18 : 13, "#4CAF50", "#2E7D32");
+  });
+
+  // ── Flat flowers scattered on ground ──
+  const flowers = [
+    { x: BOARD_W * 0.07, y: horizonY + 22 }, { x: BOARD_W * 0.19, y: horizonY + 30 },
+    { x: BOARD_W * 0.34, y: horizonY + 18 }, { x: BOARD_W * 0.48, y: horizonY + 28 },
+    { x: BOARD_W * 0.61, y: horizonY + 20 }, { x: BOARD_W * 0.77, y: horizonY + 26 },
+    { x: BOARD_W * 0.91, y: horizonY + 22 },
+  ];
+  const flowerColors = ["#FF6B9D", "#FFD700", "#FF8C42", "#C084FC", "#FF6B6B"];
+  flowers.forEach((f, i) => {
+    const fc = flowerColors[i % flowerColors.length];
+    // stem
+    ctx.strokeStyle = "#3D8C2A";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(f.x, f.y);
+    ctx.lineTo(f.x, f.y - 10);
+    ctx.stroke();
+    // petals
+    ctx.fillStyle = fc;
+    for (let p = 0; p < 5; p++) {
+      const pa = (p / 5) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(f.x + Math.cos(pa) * 4, f.y - 10 + Math.sin(pa) * 4, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // center
+    ctx.fillStyle = "#FFD700";
+    ctx.beginPath();
+    ctx.arc(f.x, f.y - 10, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  });
 }
 
 function drawCellDeco(ctx, x, y, deco) {
@@ -196,8 +271,7 @@ function drawGrid(ctx, theme, wave) {
   const isMeadow = wave >= 1 && wave <= 5;
 
   if (isMeadow) {
-    drawMeadowSky(ctx);
-    drawMeadowGround(ctx);
+    drawMeadow2D(ctx);
   } else {
     // Non-meadow flat background
     ctx.fillStyle = theme.bg;
@@ -222,24 +296,20 @@ function drawGrid(ctx, theme, wave) {
   // Path
   PATH.forEach(([x, y], i) => {
     if (isMeadow) {
-      // Earthy dirt path with texture
-      ctx.fillStyle = i % 2 === 0 ? "#8b6340" : "#7a5530";
+      // Flat 2D dirt path
+      ctx.fillStyle = "#C8964A";
       ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-      // Subtle gravel dots
-      ctx.fillStyle = "rgba(60,35,10,0.25)";
-      ctx.fillRect(x * CELL_SIZE + 4, y * CELL_SIZE + 4, 3, 3);
-      ctx.fillRect(x * CELL_SIZE + CELL_SIZE - 8, y * CELL_SIZE + CELL_SIZE - 8, 3, 3);
     } else {
       ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
       ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     }
-    ctx.strokeStyle = isMeadow ? "rgba(60,35,10,0.35)" : theme.pathBorder;
+    ctx.strokeStyle = isMeadow ? "#7A4F2A" : theme.pathBorder;
     ctx.lineWidth = 1;
     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   });
 
   // Grid lines
-  ctx.strokeStyle = isMeadow ? "rgba(0,80,0,0.08)" : theme.gridLine;
+  ctx.strokeStyle = isMeadow ? "rgba(61,140,42,0.18)" : theme.gridLine;
   ctx.lineWidth = 0.5;
   for (let x = 0; x <= GRID_COLS; x++) {
     ctx.beginPath();
