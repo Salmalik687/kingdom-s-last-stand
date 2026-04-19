@@ -5,9 +5,9 @@ const TOWER_COLORS = {
   cannon:  { from: "#374151", to: "#1f2937", border: "#9ca3af", shadow: "#111827" },
   mage:    { from: "#6d28d9", to: "#4c1d95", border: "#a78bfa", shadow: "#2e1065" },
   frost:   { from: "#0ea5e9", to: "#0369a1", border: "#7dd3fc", shadow: "#082f49" },
-  mortar:  { from: "#92400e", to: "#78350f", border: "#fb923c", shadow: "#431407" },
-  railgun: { from: "#0369a1", to: "#075985", border: "#38bdf8", shadow: "#082f49" },
-  flak:    { from: "#475569", to: "#334155", border: "#cbd5e1", shadow: "#0f172a" },
+  trebuchet: { from: "#92400e", to: "#78350f", border: "#fb923c", shadow: "#431407" },
+  catapult:  { from: "#a16207", to: "#854d0e", border: "#fcd34d", shadow: "#3f2005" },
+  crossbow:  { from: "#78350f", to: "#57230a", border: "#d97706", shadow: "#2c1004" },
 };
 
 export default function TowerPanel({ selectedTower, onSelect, gold }) {
