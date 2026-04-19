@@ -17,6 +17,7 @@ import BossArrivalModal from "../components/game/BossArrivalModal";
 import WaveSuccessBanner from "../components/game/WaveSuccessBanner";
 import RoyalRewardModal from "../components/game/RoyalRewardModal";
 import DarkLordModal from "../components/game/DarkLordModal";
+import VictoryModal from "../components/game/VictoryModal";
 import { playKillSound, playDamageSound, playWaveSuccessSound } from "../lib/sounds";
 import { Shield } from "lucide-react";
 
@@ -54,6 +55,7 @@ export default function Game() {
   const [waveSuccess, setWaveSuccess] = useState(false);
   const [royalReward, setRoyalReward] = useState(false);
   const [darkLordDefeated, setDarkLordDefeated] = useState(false);
+  const [victory, setVictory] = useState(false);
   const comboTimerRef = useRef(null);
   const COMBO_WINDOW = 3000; // ms between kills to maintain combo
 
@@ -318,6 +320,7 @@ export default function Game() {
     setCombo(0);
     setRoyalReward(false);
     setDarkLordDefeated(false);
+    setVictory(false);
     if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
     lastTimeRef.current = 0;
   };
@@ -416,8 +419,15 @@ export default function Game() {
         show={darkLordDefeated}
         onContinue={() => {
           setDarkLordDefeated(false);
-          setGold(g => g + 500); // King's royal treasury reward
+          setGold(g => g + 500);
+          setTimeout(() => setVictory(true), 600);
         }}
+      />
+      <VictoryModal
+        show={victory}
+        score={score}
+        wave={wave}
+        onRestart={() => { setVictory(false); handleRestart(); }}
       />
       <RoyalRewardModal
         show={royalReward}
