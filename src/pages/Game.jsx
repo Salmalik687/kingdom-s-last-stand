@@ -15,9 +15,8 @@ import ComboDisplay from "../components/game/ComboDisplay";
 import ComboSuggestions from "../components/game/ComboSuggestions";
 import BossArrivalModal from "../components/game/BossArrivalModal";
 import WaveSuccessBanner from "../components/game/WaveSuccessBanner";
-import RoyalRewardModal from "../components/game/RoyalRewardModal";
-import DarkLordModal from "../components/game/DarkLordModal";
 import VictoryModal from "../components/game/VictoryModal";
+import LandCompleteModal from "../components/game/LandCompleteModal";
 import PerkShop from "../components/game/PerkShop";
 import IntroStoryModal from "../components/game/IntroStoryModal";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout } from "../lib/sounds";
@@ -55,8 +54,7 @@ export default function Game() {
   const [bossArrival, setBossArrival] = useState(null);
   const [mergeFlash, setMergeFlash] = useState(false);
   const [waveSuccess, setWaveSuccess] = useState(false);
-  const [royalReward, setRoyalReward] = useState(false);
-  const [darkLordDefeated, setDarkLordDefeated] = useState(false);
+  const [landComplete, setLandComplete] = useState(null); // 1-5 or null
   const [victory, setVictory] = useState(false);
   const [perkShop, setPerkShop] = useState(false);
   const [perksOwned, setPerksOwned] = useState({});
@@ -436,10 +434,9 @@ export default function Game() {
           if (prev) {
             setWave(w => {
               const next = w + 1;
-              // After meadow stage (wave 5), show royal reward
-              if (w === 5) setTimeout(() => setRoyalReward(true), 800);
-              // After dark fortress stage (wave 10), show Dark Lord defeated scene
-              if (w === 10) setTimeout(() => setDarkLordDefeated(true), 800);
+              // Show land complete scene after each land boss (waves 5,10,15,20,25)
+              const landBossWaves = { 5: 1, 10: 2, 15: 3, 20: 4, 25: 5 };
+              if (landBossWaves[w]) setTimeout(() => setLandComplete(landBossWaves[w]), 800);
               return next;
             });
             // Wave bonus scales with wave number
@@ -484,8 +481,7 @@ export default function Game() {
     setSelectedTowerType(null);
     setSelectedTowerId(null);
     setCombo(0);
-    setRoyalReward(false);
-    setDarkLordDefeated(false);
+    setLandComplete(null);
     setVictory(false);
       setPerkShop(false);
       setPerksOwned({});
@@ -610,12 +606,14 @@ export default function Game() {
 
       <BossArrivalModal boss={bossArrival} onDismiss={() => setBossArrival(null)} />
       <WaveSuccessBanner wave={wave} show={waveSuccess} />
-      <DarkLordModal
-        show={darkLordDefeated}
+      <LandCompleteModal
+        landNumber={landComplete}
+        show={!!landComplete}
         onContinue={() => {
-          setDarkLordDefeated(false);
-          setGold(g => g + 500);
-          setTimeout(() => setVictory(true), 600);
+          const LAND_REWARDS = { 1: 300, 2: 500, 3: 750, 4: 1000, 5: 2000 };
+          setGold(g => g + (LAND_REWARDS[landComplete] ?? 300));
+          setLandComplete(null);
+          if (landComplete === 5) setTimeout(() => setVictory(true), 600);
         }}
       />
       <VictoryModal
@@ -623,14 +621,6 @@ export default function Game() {
         score={score}
         wave={wave}
         onRestart={() => { setVictory(false); handleRestart(); }}
-      />
-      <RoyalRewardModal
-        show={royalReward}
-        wave={wave}
-        onContinue={() => {
-          setRoyalReward(false);
-          setGold(g => g + 200); // Royal reward bonus gold
-        }}
       />
 
       <PerkShop

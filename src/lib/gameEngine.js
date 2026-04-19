@@ -4,10 +4,11 @@ export const CELL_SIZE = 48;
 export const GRID_COLS = 16;
 export const GRID_ROWS = 10;
 
-// Stage themes — wave ranges map to a visual theme
+// 5 Lands — each has 5 waves (boss on final wave of each land)
+// Land 1: Waves 1–5   | Land 2: 6–10 | Land 3: 11–15 | Land 4: 16–20 | Land 5: 21–25
 export const STAGE_THEMES = {
   meadow: {
-    name: "The Meadow",
+    name: "The Verdant Meadow",
     waveRange: [1, 5],
     bg: "#071a07",
     grassA: "#0e2b0e",
@@ -17,12 +18,12 @@ export const STAGE_THEMES = {
     pathBorder: "rgba(60,40,10,0.45)",
     gridLine: "rgba(20,60,20,0.07)",
     borderColor: "#1a4a1a",
-    label: "Waves 1–5",
+    label: "Land 1 · Waves 1–5",
     emoji: "🌿",
   },
   dungeon: {
     name: "The Dark Dungeon",
-    waveRange: [6, 12],
+    waveRange: [6, 10],
     bg: "#080810",
     grassA: "#0d0d18",
     grassB: "#0a0a14",
@@ -31,12 +32,12 @@ export const STAGE_THEMES = {
     pathBorder: "rgba(60,60,20,0.4)",
     gridLine: "rgba(40,40,80,0.07)",
     borderColor: "#1a1a40",
-    label: "Waves 6–12",
+    label: "Land 2 · Waves 6–10",
     emoji: "🪨",
   },
   volcano: {
     name: "Volcanic Wastes",
-    waveRange: [13, 20],
+    waveRange: [11, 15],
     bg: "#100303",
     grassA: "#1a0505",
     grassB: "#160404",
@@ -45,21 +46,35 @@ export const STAGE_THEMES = {
     pathBorder: "rgba(150,40,0,0.45)",
     gridLine: "rgba(120,20,0,0.07)",
     borderColor: "#5a1a00",
-    label: "Waves 13–20",
+    label: "Land 3 · Waves 11–15",
     emoji: "🌋",
   },
   abyss: {
-    name: "The Abyss",
-    waveRange: [21, 999],
-    bg: "#020208",
-    grassA: "#05050f",
-    grassB: "#040410",
-    pathA: "#0e0e20",
-    pathB: "#0c0c1c",
-    pathBorder: "rgba(80,0,150,0.4)",
-    gridLine: "rgba(60,0,120,0.08)",
-    borderColor: "#1a0044",
-    label: "Wave 21+",
+    name: "The Frozen Abyss",
+    waveRange: [16, 20],
+    bg: "#020210",
+    grassA: "#03031a",
+    grassB: "#020215",
+    pathA: "#0a0a30",
+    pathB: "#080825",
+    pathBorder: "rgba(80,80,200,0.4)",
+    gridLine: "rgba(60,60,180,0.08)",
+    borderColor: "#0a0a60",
+    label: "Land 4 · Waves 16–20",
+    emoji: "❄️",
+  },
+  shadowRealm: {
+    name: "The Shadow Realm",
+    waveRange: [21, 25],
+    bg: "#08000f",
+    grassA: "#120020",
+    grassB: "#0e001a",
+    pathA: "#1e0030",
+    pathB: "#180025",
+    pathBorder: "rgba(150,0,200,0.5)",
+    gridLine: "rgba(120,0,180,0.10)",
+    borderColor: "#4a0080",
+    label: "Land 5 · Waves 21–25",
     emoji: "💀",
   },
 };
@@ -427,57 +442,73 @@ export const TOWER_TYPES = {
 };
 
 export const ENEMY_TYPES = {
-  peasant: { hp: 30, speed: 1.2, reward: 10, emoji: "🧑‍🌾", name: "Peasant" },
-  soldier: { hp: 60, speed: 1, reward: 15, emoji: "⚔️", name: "Soldier" },
-  knight: { hp: 120, speed: 0.8, reward: 25, emoji: "🛡️", name: "Knight" },
-  horseman: { hp: 80, speed: 1.8, reward: 20, emoji: "🐴", name: "Horseman" },
-  king: { hp: 300, speed: 0.6, reward: 100, emoji: "👑", name: "King" },
-  // Stage bosses
-  boss_meadow:  { hp: 600,  speed: 0.7, reward: 200, emoji: "🌲", name: "Forest Warden",   isBoss: true },
-  boss_dungeon: { hp: 1000, speed: 0.55, reward: 350, emoji: "🧟", name: "Dungeon Wraith",  isBoss: true },
-  boss_volcano: { hp: 1800, speed: 0.5, reward: 600, emoji: "🔥", name: "Flame Colossus",  isBoss: true },
-  boss_abyss:   { hp: 3000, speed: 0.45, reward: 1000, emoji: "💀", name: "Void Sovereign", isBoss: true },
+  peasant:  { hp: 30,  speed: 1.2,  reward: 10,   emoji: "🧑‍🌾", name: "Peasant"   },
+  soldier:  { hp: 60,  speed: 1,    reward: 15,   emoji: "⚔️",   name: "Soldier"   },
+  knight:   { hp: 120, speed: 0.8,  reward: 25,   emoji: "🛡️",   name: "Knight"    },
+  horseman: { hp: 80,  speed: 1.8,  reward: 20,   emoji: "🐴",   name: "Horseman"  },
+  king:     { hp: 300, speed: 0.6,  reward: 100,  emoji: "👑",   name: "King"      },
+  wraith:   { hp: 200, speed: 1.4,  reward: 40,   emoji: "👻",   name: "Wraith"    },
+  demon:    { hp: 350, speed: 1.0,  reward: 60,   emoji: "😈",   name: "Demon"     },
+  golem:    { hp: 500, speed: 0.5,  reward: 80,   emoji: "🪨",   name: "Golem"     },
+  specter:  { hp: 150, speed: 2.0,  reward: 45,   emoji: "🌫️",   name: "Specter"   },
+  shadow:   { hp: 400, speed: 1.3,  reward: 70,   emoji: "🌑",   name: "Shadow"    },
+  // Land bosses — one boss per land (on wave 5, 10, 15, 20, 25)
+  boss_meadow:  { hp: 800,   speed: 0.7,  reward: 250,  emoji: "🐉",   name: "Forest Drake",     isBoss: true },
+  boss_dungeon: { hp: 1500,  speed: 0.6,  reward: 450,  emoji: "🧟",   name: "Dungeon Overlord", isBoss: true },
+  boss_volcano: { hp: 2800,  speed: 0.5,  reward: 750,  emoji: "🔥",   name: "Flame Titan",      isBoss: true },
+  boss_abyss:   { hp: 4500,  speed: 0.45, reward: 1200, emoji: "❄️",   name: "Frost Colossus",   isBoss: true },
+  boss_shadow:  { hp: 7000,  speed: 0.4,  reward: 2000, emoji: "💀",   name: "Shadow Sovereign", isBoss: true },
 };
 
-// Stage boss waves: the final wave of each stage triggers a boss
-export const STAGE_BOSS_WAVES = { 5: "boss_meadow", 12: "boss_dungeon", 20: "boss_volcano", 30: "boss_abyss" };
+// Boss spawns on the final wave of each land
+export const STAGE_BOSS_WAVES = {
+  5:  "boss_meadow",
+  10: "boss_dungeon",
+  15: "boss_volcano",
+  20: "boss_abyss",
+  25: "boss_shadow",
+};
 
 const BOSS_NAME_PARTS = {
-  prefix: ["Lord", "Dread", "Dark", "Iron", "Blood", "Cursed", "Shadow", "Grim", "Wicked", "Fell"],
+  prefix:  ["Lord", "Dread", "Dark", "Iron", "Blood", "Cursed", "Shadow", "Grim", "Wicked", "Fell"],
   meadow:  ["Briar", "Thorn", "Grove", "Root", "Verdant", "Fen", "Wilder", "Bough"],
   dungeon: ["Crypt", "Bone", "Rotten", "Hollow", "Murk", "Bile", "Dusk", "Vile"],
   volcano: ["Ember", "Char", "Sear", "Cinder", "Scorch", "Forge", "Blaze", "Ash"],
-  abyss:   ["Void", "Null", "Abysm", "Ruin", "Doom", "Nether", "Oblivion", "Rift"],
+  abyss:   ["Frost", "Glacial", "Blizzard", "Frozen", "Arctic", "Rime", "Chill", "Permafrost"],
+  shadow:  ["Void", "Null", "Abysm", "Ruin", "Doom", "Nether", "Oblivion", "Rift"],
   suffix:  ["the Undying", "of Ruin", "the Betrayer", "the Eternal", "Bloodfang", "Deathbringer", "the Merciless", "Soulreaper"],
 };
 
 const BOSS_TAUNT = {
-  boss_meadow:  ["Your walls crumble like leaves in autumn.", "The forest reclaims what is mine.", "No arrow can pierce my bark."],
+  boss_meadow:  ["The forest answers my call!", "Your walls crumble like leaves!", "No arrow shall pierce my scales!"],
   boss_dungeon: ["The darkness obeys only me.", "Your torches will not save you.", "I have waited centuries for this."],
-  boss_volcano: ["I am born of the mountain's wrath.", "Your kingdom will burn like kindling.", "The earth itself is my weapon."],
-  boss_abyss:   ["Nothing escapes the void.", "Your very hope is fuel for me.", "I am inevitable."],
+  boss_volcano: ["I am born of the mountain's wrath!", "Your kingdom will burn like kindling!", "The earth itself is my weapon!"],
+  boss_abyss:   ["The cold shall claim your souls.", "No warmth survives my embrace.", "I am the eternal winter."],
+  boss_shadow:  ["Nothing escapes the void.", "Your very hope is fuel for me.", "I am inevitable. I am the end."],
 };
 
 const BOSS_GLOW = {
-  boss_meadow: "#22c55e",
+  boss_meadow:  "#22c55e",
   boss_dungeon: "#6366f1",
   boss_volcano: "#f97316",
-  boss_abyss: "#a855f7",
+  boss_abyss:   "#60a5fa",
+  boss_shadow:  "#a855f7",
 };
 
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 export function generateBossInfo(bossType) {
   const stageKey = bossType.replace("boss_", "");
-  const nameParts = BOSS_NAME_PARTS[stageKey] || BOSS_NAME_PARTS.abyss;
+  const nameParts = BOSS_NAME_PARTS[stageKey] || BOSS_NAME_PARTS.shadow;
   const name = `${pick(BOSS_NAME_PARTS.prefix)} ${pick(nameParts)} ${pick(BOSS_NAME_PARTS.suffix)}`;
-  const taunt = pick(BOSS_TAUNT[bossType]);
+  const taunt = pick(BOSS_TAUNT[bossType] || BOSS_TAUNT.boss_shadow);
   const glowColor = BOSS_GLOW[bossType] || "#ef4444";
   const stageLabel = {
-    boss_meadow: "🌿 The Meadow",
+    boss_meadow:  "🌿 The Verdant Meadow",
     boss_dungeon: "🪨 The Dark Dungeon",
     boss_volcano: "🌋 Volcanic Wastes",
-    boss_abyss: "💀 The Abyss",
+    boss_abyss:   "❄️ The Frozen Abyss",
+    boss_shadow:  "💀 The Shadow Realm",
   }[bossType] || "Stage Boss";
   const emoji = ENEMY_TYPES[bossType]?.emoji || "👹";
   return { name, taunt, glowColor, stageLabel, emoji, bossType };
@@ -487,56 +518,77 @@ export function generateWaves(waveNumber) {
   const enemies = [];
   const isBossWave = !!STAGE_BOSS_WAVES[waveNumber];
 
-  // Spawn interval shrinks aggressively — min 180ms at high waves
-  const spawnInterval = Math.max(180, 750 - waveNumber * 28);
-  // Enemy count grows faster — more enemies per wave
-  const count = Math.min(5 + Math.floor(waveNumber * 2.2), 55);
+  const spawnInterval = Math.max(160, 750 - waveNumber * 24);
+  const count = Math.min(6 + Math.floor(waveNumber * 2.4), 60);
 
+  // Land 1: Verdant Meadow (waves 1–5)
   if (waveNumber <= 2) {
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; i++)
       enemies.push({ type: "peasant", delay: i * spawnInterval });
-    }
   } else if (waveNumber <= 5) {
-    for (let i = 0; i < count; i++) {
-      enemies.push({ type: i % 3 === 0 ? "soldier" : "peasant", delay: i * spawnInterval });
-    }
-  } else if (waveNumber <= 9) {
-    const types = ["peasant", "soldier", "knight", "horseman"];
-    for (let i = 0; i < count; i++) {
+    const types = ["peasant", "soldier", "peasant", "horseman"];
+    for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-    }
+
+  // Land 2: Dark Dungeon (waves 6–10)
+  } else if (waveNumber <= 7) {
+    const types = ["soldier", "knight", "horseman", "wraith"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 10) {
+    const types = ["knight", "wraith", "horseman", "king", "wraith"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 3: Volcanic Wastes (waves 11–15)
+  } else if (waveNumber <= 12) {
+    const types = ["soldier", "knight", "demon", "horseman", "golem"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
   } else if (waveNumber <= 15) {
-    const types = ["soldier", "knight", "horseman", "king"];
-    for (let i = 0; i < count; i++) {
+    const types = ["demon", "golem", "king", "knight", "demon", "golem"];
+    for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-    }
-    if (waveNumber % 4 === 0 && !isBossWave) {
-      enemies.push({ type: "king", delay: count * spawnInterval + 800 });
-    }
+    if (!isBossWave && waveNumber % 2 === 0)
+      enemies.push({ type: "golem", delay: count * spawnInterval + 800 });
+
+  // Land 4: Frozen Abyss (waves 16–20)
+  } else if (waveNumber <= 17) {
+    const types = ["wraith", "specter", "knight", "demon", "specter", "golem"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 20) {
+    const types = ["specter", "shadow", "demon", "golem", "king", "specter"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+    if (!isBossWave)
+      for (let k = 0; k < 2; k++)
+        enemies.push({ type: "shadow", delay: count * spawnInterval + 800 + k * 600 });
+
+  // Land 5: Shadow Realm (waves 21–25)
+  } else if (waveNumber <= 22) {
+    const types = ["shadow", "demon", "specter", "golem", "shadow", "king"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
   } else {
-    // Late game: dense waves of heavy enemies + kings
-    const types = ["knight", "horseman", "king", "soldier", "king"];
-    for (let i = 0; i < count; i++) {
+    const types = ["shadow", "demon", "golem", "specter", "king", "shadow", "demon"];
+    for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-    }
-    // Extra king squad every 3 waves
-    if (waveNumber % 3 === 0 && !isBossWave) {
-      for (let k = 0; k < 3; k++) {
-        enemies.push({ type: "king", delay: count * spawnInterval + 800 + k * 600 });
-      }
-    }
+    if (!isBossWave)
+      for (let k = 0; k < 3; k++)
+        enemies.push({ type: "shadow", delay: count * spawnInterval + 800 + k * 500 });
   }
 
-  // Spawn stage boss at the end of the wave
+  // Boss at end of boss wave
   if (isBossWave) {
     const lastDelay = enemies.length > 0 ? enemies[enemies.length - 1].delay + 1500 : 1500;
     enemies.push({ type: STAGE_BOSS_WAVES[waveNumber], delay: lastDelay, isBoss: true });
   }
 
-  // HP scales much harder — exponential after wave 10
+  // HP scaling — steeper curve
   const hpMultiplier = waveNumber <= 10
-    ? 1 + (waveNumber - 1) * 0.22
-    : 1 + (waveNumber - 1) * 0.22 + Math.pow(waveNumber - 10, 1.4) * 0.12;
+    ? 1 + (waveNumber - 1) * 0.25
+    : 1 + (waveNumber - 1) * 0.25 + Math.pow(waveNumber - 10, 1.5) * 0.10;
 
   return enemies.map((e) => ({
     ...e,
