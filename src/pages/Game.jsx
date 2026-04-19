@@ -23,6 +23,22 @@ import { Shield } from "lucide-react";
 const INITIAL_GOLD = 150;
 const INITIAL_LIVES = 20;
 
+// Pre-placed cannon positions at game start
+const INITIAL_CANNON_POSITIONS = [[3, 6], [6, 3], [10, 5], [13, 6]];
+
+function makeInitialState() {
+  const towers = [];
+  const map = new Map();
+  INITIAL_CANNON_POSITIONS.forEach(([gx, gy]) => {
+    if (!PATH_SET.has(`${gx},${gy}`)) {
+      const t = createTower("cannon", gx, gy);
+      towers.push(t);
+      map.set(`${gx},${gy}`, t.id);
+    }
+  });
+  return { towers, map };
+}
+
 export default function Game() {
   const [gold, setGold] = useState(INITIAL_GOLD);
   const [lives, setLives] = useState(INITIAL_LIVES);
@@ -43,10 +59,11 @@ export default function Game() {
 
   const comboMultiplier = combo < 5 ? 1 : combo < 10 ? 2 : combo < 20 ? 3 : 5;
 
-  const towersRef = useRef([]);
+  const { towers: _initTowers, map: _initMap } = makeInitialState();
+  const towersRef = useRef(_initTowers);
   const enemiesRef = useRef([]);
   const projectilesRef = useRef([]);
-  const towerMapRef = useRef(new Map());
+  const towerMapRef = useRef(_initMap);
   const waveQueueRef = useRef([]);
   const waveTimerRef = useRef(0);
   const gameLoopRef = useRef(null);
@@ -284,10 +301,11 @@ export default function Game() {
   }, [gameOver]);
 
   const handleRestart = () => {
-    towersRef.current = [];
+    const { towers: rt, map: rm } = makeInitialState();
+    towersRef.current = rt;
     enemiesRef.current = [];
     projectilesRef.current = [];
-    towerMapRef.current = new Map();
+    towerMapRef.current = rm;
     waveQueueRef.current = [];
     setGold(INITIAL_GOLD);
     setLives(INITIAL_LIVES);
