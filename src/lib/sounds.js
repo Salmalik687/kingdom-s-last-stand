@@ -44,3 +44,36 @@ export function playWaveSuccessSound() {
     setTimeout(() => playTone({ frequency: freq, type: "sine", duration: 0.25, gain: 0.22 }), i * 110);
   });
 }
+
+const VICTORY_SHOUTS = [
+  "The round is won! Glory to Eldenmoor!",
+  "Hah! Yield, thou foul wretches! The kingdom stands!",
+  "Victory! By the crown of Aldric, we endure!",
+  "Begone, vile horde! This land shall never fall!",
+  "The enemy flees! Eldenmoor prevails this day!",
+];
+
+export function playVictoryShout() {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const text = VICTORY_SHOUTS[Math.floor(Math.random() * VICTORY_SHOUTS.length)];
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.78;
+  utt.pitch = 0.45;
+  utt.volume = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    v.lang === "en-GB" &&
+    (v.name.toLowerCase().includes("daniel") || v.name.toLowerCase().includes("george") ||
+     v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("oliver"))
+  ) || voices.find(v => v.lang === "en-GB") || voices.find(v => v.lang.startsWith("en"));
+  if (preferred) utt.voice = preferred;
+
+  const trySpeak = () => window.speechSynthesis.speak(utt);
+  if (voices.length === 0) {
+    window.speechSynthesis.onvoiceschanged = trySpeak;
+  } else {
+    trySpeak();
+  }
+}

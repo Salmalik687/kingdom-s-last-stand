@@ -20,7 +20,7 @@ import DarkLordModal from "../components/game/DarkLordModal";
 import VictoryModal from "../components/game/VictoryModal";
 import PerkShop from "../components/game/PerkShop";
 import IntroStoryModal from "../components/game/IntroStoryModal";
-import { playKillSound, playDamageSound, playWaveSuccessSound } from "../lib/sounds";
+import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout } from "../lib/sounds";
 
 
 const INITIAL_GOLD = 150;
@@ -445,6 +445,7 @@ export default function Game() {
             // Wave bonus scales with wave number
             setGold(g => g + 25 + wave * 5);
             playWaveSuccessSound();
+            playVictoryShout();
             setWaveSuccess(s => !s);
             // Show perk shop every 2 waves
             if (wave % 2 === 0) setTimeout(() => setPerkShop(true), 900);
