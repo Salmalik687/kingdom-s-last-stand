@@ -2,10 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CHARACTERS, getAllCharacters } from "../../lib/characters";
 import { LordAldric, QueenSeraphine, Morrigan, Kael, Aurora } from "./CharacterSprites";
+import CharacterStatsPanel from "./CharacterStatsPanel";
 
 export default function CharacterSelect({ onSelect }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const [selectedCharForStats, setSelectedCharForStats] = useState(null);
   const typeRef = useRef(null);
   const [typedText, setTypedText] = useState("");
   const [showDetails, setShowDetails] = useState(false);
@@ -117,13 +119,20 @@ export default function CharacterSelect({ onSelect }) {
             boxShadow: `0 0 60px ${current.color}40, inset 0 1px 0 rgba(138,85,200,0.1)`,
             backdropFilter: "blur(10px)",
           }}>
-            {/* Character sprite */}
-            <div style={{
-              marginBottom: 16,
-              filter: `drop-shadow(0 0 20px ${current.color})`,
-              display: "flex",
-              justifyContent: "center",
-            }}>
+            {/* Character sprite - clickable */}
+            <div
+              style={{
+                marginBottom: 16,
+                filter: `drop-shadow(0 0 20px ${current.color})`,
+                display: "flex",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "transform 0.2s",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              onClick={() => setSelectedCharForStats(current)}
+            >
               {current.id === "aldric" && <LordAldric size={100} />}
               {current.id === "seraphine" && <QueenSeraphine size={100} />}
               {current.id === "morrigan" && <Morrigan size={100} />}
@@ -289,6 +298,11 @@ export default function CharacterSelect({ onSelect }) {
           50% { box-shadow: 0 6px 0 ${current.color}44, 0 0 40px ${current.color}80; }
         }
       `}</style>
+
+      <CharacterStatsPanel
+        character={selectedCharForStats}
+        onClose={() => setSelectedCharForStats(null)}
+      />
     </div>
   );
 }
