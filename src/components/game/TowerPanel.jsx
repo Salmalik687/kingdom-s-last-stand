@@ -38,11 +38,12 @@ export default function TowerPanel({ selectedTower, onSelect, gold }) {
                 : "linear-gradient(160deg, #1e1b2e, #13101f)",
               border: `2px solid ${isSelected ? colors.border : "rgba(100,80,140,0.35)"}`,
               boxShadow: isSelected
-                ? `0 4px 0 ${colors.shadow}, 0 0 16px ${colors.border}55`
-                : "0 3px 0 #0a0814",
+                ? `0 4px 0 ${colors.shadow}, 0 0 20px ${colors.border}, 0 0 40px ${colors.border}66`
+                : "0 3px 0 #0a0814, 0 0 10px rgba(100,80,140,0.2)",
               opacity: canAfford ? 1 : 0.38,
               cursor: canAfford ? "pointer" : "not-allowed",
-              transform: isSelected ? "translateY(2px)" : "translateY(0)",
+              transform: isSelected ? "translateY(2px) scale(1.02)" : "translateY(0) scale(1)",
+              transition: "all 0.2s",
             }}
           >
             {/* Tower icon bubble */}

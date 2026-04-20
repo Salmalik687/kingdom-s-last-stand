@@ -15,13 +15,14 @@ export default function WaveButton({ waveActive, onStartWave, wave }) {
           ? "2px solid #94a3b8"
           : "2px solid #86efac",
         boxShadow: waveActive
-          ? "0 4px 0 #1e293b"
-          : "0 5px 0 #052e16, 0 0 20px rgba(34,197,94,0.35)",
+          ? "0 4px 0 #1e293b, 0 0 15px rgba(148,163,184,0.3)"
+          : "0 5px 0 #052e16, 0 0 30px rgba(34,197,94,0.6), 0 0 60px rgba(34,197,94,0.3)",
         color: "#fff",
-        textShadow: "0 1px 3px rgba(0,0,0,0.5)",
+        textShadow: "0 2px 4px rgba(0,0,0,0.6)",
         opacity: waveActive ? 0.7 : 1,
         cursor: waveActive ? "not-allowed" : "pointer",
-        transform: waveActive ? "translateY(2px)" : "translateY(0)",
+        transform: waveActive ? "translateY(2px) scale(0.98)" : "translateY(0) scale(1)",
+        animation: !waveActive ? "glowPulse 2s ease-in-out infinite" : "none",
       }}
     >
       {waveActive ? (
@@ -31,7 +32,7 @@ export default function WaveButton({ waveActive, onStartWave, wave }) {
         </>
       ) : (
         <>
-          <Play className="w-4 h-4" fill="white" />
+          <Play className="w-4 h-4 drop-shadow-lg" fill="white" />
           ⚔ Deploy Wave {wave}
         </>
       )}

@@ -496,12 +496,19 @@ function drawEnemies(ctx, enemies) {
     const barY = y + bob - CELL_SIZE * 0.42;
     const hpPercent = hp / maxHp;
 
-    ctx.fillStyle = "rgba(0,0,0,0.6)";
-    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-    ctx.fillStyle = modColor && hpPercent > 0.25
+    const hpColor = modColor && hpPercent > 0.25
       ? modColor
       : hpPercent > 0.5 ? "#22c55e" : hpPercent > 0.25 ? "#eab308" : "#ef4444";
+
+    ctx.fillStyle = "rgba(0,0,0,0.8)";
+    ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
+    
+    // HP bar with glow
+    ctx.shadowColor = hpColor;
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = hpColor;
     ctx.fillRect(barX, barY, barW * hpPercent, barH);
+    ctx.shadowBlur = 0;
   });
 }
 

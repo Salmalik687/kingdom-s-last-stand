@@ -350,10 +350,12 @@ export default function Game() {
       let killCount = 0;
       let newProjectiles = [];
       const projSpeedMult = perkMultRef.current.projSpeedBonus ?? 1;
+      let shouldShake = false;
       projectilesRef.current.forEach(proj => {
         proj.speed = 5 * projSpeedMult;
         const result = moveProjectile(proj, enemiesRef.current);
         if (result.hit) {
+          shouldShake = true;
           const target = enemiesRef.current.find(e => e.id === result.targetId);
           if (target) {
             // Armor break: reduce effective armor
@@ -471,6 +473,11 @@ export default function Game() {
       if (dotKilled.length > 0) enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
 
       if (goldEarned > 0) {
+        // Screen shake on big hits
+        if (killCount >= 3 && shouldShake) {
+          document.body.style.animation = "none";
+          setTimeout(() => { document.body.style.animation = "screenShake 0.15s ease-in-out 6 alternate"; }, 10);
+        }
         setCombo(prev => {
           const next = prev + killCount;
           if (comboTimerRef.current) clearTimeout(comboTimerRef.current);

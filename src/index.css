@@ -77,3 +77,30 @@
   pointer-events: none;
   z-index: 0;
 }
+
+/* Screen shake effect */
+@keyframes screenShake {
+  0%   { transform: translate(-3px, -2px) rotate(-0.3deg); }
+  25%  { transform: translate(3px, 2px) rotate(0.3deg); }
+  50%  { transform: translate(-2px, 3px) rotate(-0.2deg); }
+  75%  { transform: translate(2px, -3px) rotate(0.2deg); }
+  100% { transform: translate(0, 0) rotate(0); }
+}
+
+/* Glow pulse for high-value items */
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(255,214,10,0.3)); }
+  50% { filter: drop-shadow(0 0 25px rgba(255,214,10,0.7)); }
+}
+
+/* Gold particle float */
+@keyframes goldFloat {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-80px) scale(0); opacity: 0; }
+}
+
+/* Enemy explosion */
+@keyframes explode {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
