@@ -1,4 +1,4 @@
-// ─── LORD ALDRIC - Warrior Champion ────────────────────────────────────────────────────
+// ─── LORD ALDRIC - Kliff Graymanne (Crimson Desert Warrior) ────────────────────────────────
 export function LordAldric({ size = 100 }) {
   return (
     <svg width={size} height={size * 1.3} viewBox="0 0 80 100" style={{ overflow: "visible" }}>
@@ -8,47 +8,59 @@ export function LordAldric({ size = 100 }) {
       `}</style>
 
       <g className="al-body">
-        {/* Armor - metallic chest plate */}
-        <rect x="18" y="45" width="44" height="32" rx="6" fill="#4a4a4a" stroke="#6a6a6a" strokeWidth="1"/>
-        <path d="M30 48 L30 75 M50 48 L50 75" stroke="#6a6a6a" strokeWidth="0.5" opacity="0.5"/>
+        {/* Heavy armored chest plate - crimson warrior */}
+        <rect x="16" y="42" width="48" height="38" rx="8" fill="#3a3a3a" stroke="#8a5a3a" strokeWidth="2"/>
+        <path d="M24 45 L24 77 M40 44 L40 78 M56 45 L56 77" stroke="#8a5a3a" strokeWidth="1.5" opacity="0.6"/>
         
-        {/* Arms - armored */}
-        <rect x="10" y="50" width="10" height="28" rx="4" fill="#3a3a3a" stroke="#5a5a5a" strokeWidth="0.5"/>
-        <rect x="60" y="50" width="10" height="28" rx="4" fill="#3a3a3a" stroke="#5a5a5a" strokeWidth="0.5"/>
+        {/* Massive shoulders - imposing presence */}
+        <ellipse cx="14" cy="50" rx="8" ry="12" fill="#2a2a2a" stroke="#6a4a2a" strokeWidth="1.5"/>
+        <ellipse cx="66" cy="50" rx="8" ry="12" fill="#2a2a2a" stroke="#6a4a2a" strokeWidth="1.5"/>
         
-        {/* Gauntlets */}
-        <circle cx="12" cy="80" r="6" fill="#5a5a5a" stroke="#7a7a7a" strokeWidth="1"/>
-        <circle cx="68" cy="80" r="6" fill="#5a5a5a" stroke="#7a7a7a" strokeWidth="1"/>
+        {/* Thick armored arms - muscular */}
+        <rect x="6" y="48" width="12" height="32" rx="5" fill="#3a3a3a" stroke="#6a4a2a" strokeWidth="1"/>
+        <rect x="62" y="48" width="12" height="32" rx="5" fill="#3a3a3a" stroke="#6a4a2a" strokeWidth="1"/>
         
-        {/* Neck guard */}
-        <rect x="31" y="38" width="18" height="9" rx="2" fill="#4a4a4a" stroke="#6a6a6a" strokeWidth="0.5"/>
+        {/* Iron gauntlets */}
+        <circle cx="8" cy="82" r="7" fill="#4a4a4a" stroke="#8a7a6a" strokeWidth="1.5"/>
+        <circle cx="72" cy="82" r="7" fill="#4a4a4a" stroke="#8a7a6a" strokeWidth="1.5"/>
         
-        {/* Head - strong warrior face */}
-        <circle cx="40" cy="26" r="14" fill="#d4a574"/>
+        {/* Heavy neck guard */}
+        <rect x="30" y="36" width="20" height="12" rx="3" fill="#3a3a3a" stroke="#6a4a2a" strokeWidth="1"/>
         
-        {/* Dark brown hair - short, practical */}
-        <path d="M25 15 Q25 9 40 7 Q55 9 55 15" fill="#3a2a1a"/>
-        <path d="M26 20 Q24 24 24 30" stroke="#3a2a1a" strokeWidth="2.5" fill="none"/>
-        <path d="M54 20 Q56 24 56 30" stroke="#3a2a1a" strokeWidth="2.5" fill="none"/>
+        {/* Head - scarred, weathered warrior */}
+        <circle cx="40" cy="24" r="15" fill="#c8956f"/>
         
-        {/* Intense eyes */}
-        <circle cx="32" cy="25" r="2.5" fill="#1a0a0a"/>
-        <circle cx="48" cy="25" r="2.5" fill="#1a0a0a"/>
-        <circle cx="33.2" cy="23.5" r="0.9" fill="#fff" opacity="0.95"/>
-        <circle cx="49.2" cy="23.5" r="0.9" fill="#fff" opacity="0.95"/>
+        {/* Silver/white streaked hair - aged warrior */}
+        <path d="M23 12 Q23 5 40 3 Q57 5 57 12" fill="#4a4a4a"/>
+        <path d="M25 10 Q22 12 20 16" stroke="#5a5a5a" strokeWidth="1.5" fill="none" opacity="0.7"/>
+        <path d="M55 10 Q58 12 60 16" stroke="#5a5a5a" strokeWidth="1.5" fill="none" opacity="0.7"/>
         
-        {/* Stern eyebrows - battle-hardened */}
-        <path d="M30 19 Q32 17 35 19.5" stroke="#1a0a0a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-        <path d="M45 19.5 Q48 17 50 19" stroke="#1a0a0a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        {/* Silver streaks in hair */}
+        <path d="M32 8 Q30 12 29 20" stroke="#c0c0c0" strokeWidth="1" fill="none" opacity="0.7"/>
+        <path d="M48 8 Q50 12 51 20" stroke="#c0c0c0" strokeWidth="1" fill="none" opacity="0.7"/>
         
-        {/* Scar on cheek */}
-        <path d="M45 27 Q47 30 46 33" stroke="#8a5030" strokeWidth="0.8" fill="none" opacity="0.6"/>
+        {/* Intense, piercing eyes - bloodshot */}
+        <circle cx="31" cy="23" r="2.8" fill="#a01010"/>
+        <circle cx="49" cy="23" r="2.8" fill="#a01010"/>
+        <circle cx="32.5" cy="21" r="1.1" fill="#fff" opacity="0.9"/>
+        <circle cx="50.5" cy="21" r="1.1" fill="#fff" opacity="0.9"/>
         
-        {/* Strong nose */}
-        <line x1="40" y1="25" x2="40" y2="31" stroke="#b88860" strokeWidth="1.2"/>
+        {/* Heavy battle scars - multiple deep scars */}
+        <path d="M45 22 Q47 26 46 32" stroke="#6a3030" strokeWidth="1.2" fill="none" opacity="0.7"/>
+        <path d="M48 24 Q50 28 49 33" stroke="#6a3030" strokeWidth="1.2" fill="none" opacity="0.7"/>
+        <path d="M44 18 Q46 20 45 24" stroke="#6a3030" strokeWidth="0.9" fill="none" opacity="0.6"/>
         
-        {/* Determined mouth */}
-        <path d="M35 34 Q40 35 45 34" stroke="#6a4030" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+        {/* Thick, harsh eyebrows - aggressive */}
+        <path d="M28 16 Q31 13 35 16" stroke="#2a1a0a" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <path d="M45 16 Q49 13 52 16" stroke="#2a1a0a" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        
+        {/* Prominent nose - broken fighter's nose */}
+        <path d="M40 22 Q39 25 40 32" stroke="#9a7050" strokeWidth="1.5"/>
+        <path d="M37 24 L43 24" stroke="#9a7050" strokeWidth="0.9"/>
+        
+        {/* Grim determined mouth - clenched jaw */}
+        <path d="M34 34 L46 34" stroke="#5a3020" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+        <line x1="35" y1="35" x2="45" y2="35" stroke="#3a2010" strokeWidth="0.7" opacity="0.6"/>
       </g>
     </svg>
   );
