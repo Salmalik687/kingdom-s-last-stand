@@ -25,6 +25,7 @@ import ArmorUpgradeScreen from "../components/game/ArmorUpgradeScreen";
 import BossKillReward from "../components/game/BossKillReward";
 import AbilityTree from "../components/game/AbilityTree";
 import ActiveAbilityBar from "../components/game/ActiveAbilityBar";
+import CodexModal from "../components/game/CodexModal";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 
@@ -70,6 +71,8 @@ export default function Game() {
   const [armorUpgrade, setArmorUpgrade] = useState(null); // chapter number 2-5
   const [bossKillReward, setBossKillReward] = useState(null); // bossType string
   const [showAbilityTree, setShowAbilityTree] = useState(false);
+  const [showCodex, setShowCodex] = useState(false);
+  const [seenEnemies, setSeenEnemies] = useState(new Set());
   const [gloryPoints, setGloryPoints] = useState(0);
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
@@ -273,6 +276,8 @@ export default function Game() {
         if (waveTimerRef.current >= nextEnemy.delay) {
           const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier, nextEnemy.modifier);
           enemiesRef.current = [...enemiesRef.current, enemy];
+          // Track for Codex
+          setSeenEnemies(prev => prev.has(nextEnemy.type) ? prev : new Set([...prev, nextEnemy.type]));
           if (nextEnemy.isBoss) {
             setBossArrival(generateBossInfo(nextEnemy.type));
           }
@@ -754,6 +759,8 @@ export default function Game() {
     setDivineShieldActive(false);
     setVoidWrathActive(false);
     setShowAbilityTree(false);
+    setShowCodex(false);
+    setSeenEnemies(new Set());
     setUnlockedAchievements([]);
     setNewlyUnlocked([]);
     achStatsRef.current = {
@@ -816,6 +823,23 @@ export default function Game() {
                 <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black"
                   style={{ background: "#ffd60a", color: "#3a2000" }}>
                   {gloryPoints}✨
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setShowCodex(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
+              style={{
+                background: "linear-gradient(180deg, #0e7490, #155e75)",
+                border: "2px solid #22d3ee",
+                boxShadow: "0 2px 0 #042f2e, 0 0 10px rgba(34,211,238,0.3)",
+                color: "#cffafe",
+              }}>
+              📖 <span className="hidden sm:inline">Codex</span>
+              {seenEnemies.size > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black"
+                  style={{ background: "#22d3ee", color: "#042f2e" }}>
+                  {seenEnemies.size}
                 </span>
               )}
             </button>
@@ -979,6 +1003,7 @@ export default function Game() {
         <GameOverModal score={score} wave={wave} onRestart={handleRestart} />
       )}
 
+      <CodexModal show={showCodex} onClose={() => setShowCodex(false)} seenEnemies={seenEnemies} />
       <IntroStoryModal show={showIntro} onBegin={(armorId) => setShowIntro(false)} />
 
       <AbilityTree
