@@ -218,9 +218,11 @@ export function playVictoryShout() {
   window.speechSynthesis.cancel();
   const text = VICTORY_SHOUTS[Math.floor(Math.random() * VICTORY_SHOUTS.length)];
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.78;
-  utt.pitch = 0.2;
-  utt.volume = 1;
+  
+  // Drunk British accent: slower rate, slurred pitch variations, volume wobbles
+  utt.rate = 0.65 + Math.random() * 0.15; // Slurred, stumbling pace
+  utt.pitch = 0.3 + Math.random() * 0.4; // Pitch wavers unpredictably
+  utt.volume = 0.8 + Math.random() * 0.2; // Volume fluctuates
 
   const voices = window.speechSynthesis.getVoices();
   const preferred = voices.find(v =>
