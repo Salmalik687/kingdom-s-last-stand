@@ -3,227 +3,304 @@
 // ─── LORD ALDRIC ────────────────────────────────────────────────────────────
 export function LordAldric({ size = 120, bobOffset = 0 }) {
   return (
-    <svg width={size} height={size * 1.55} viewBox="0 0 90 140" style={{ overflow: "visible", filter: "drop-shadow(0 4px 22px rgba(200,160,60,0.5)) drop-shadow(0 0 40px rgba(180,120,40,0.2))" }}>
+    <svg width={size} height={size * 1.7} viewBox="0 0 120 200" style={{ overflow: "visible", filter: "drop-shadow(0 4px 22px rgba(200,160,60,0.5)) drop-shadow(0 0 40px rgba(180,120,40,0.2))" }}>
       <defs>
-        <radialGradient id="aldricSkin" cx="45%" cy="35%" r="60%">
-          <stop offset="0%" stopColor="#e8b888" />
-          <stop offset="60%" stopColor="#c89060" />
-          <stop offset="100%" stopColor="#a06840" />
+        <radialGradient id="aldricSkin" cx="42%" cy="32%" r="58%">
+          <stop offset="0%" stopColor="#f0c8a0" />
+          <stop offset="55%" stopColor="#d4a070" />
+          <stop offset="100%" stopColor="#a87048" />
         </radialGradient>
-        <linearGradient id="aldricArmor" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7a8090" />
-          <stop offset="50%" stopColor="#4a5060" />
-          <stop offset="100%" stopColor="#2a3040" />
+        <radialGradient id="aldricSkinDark" cx="42%" cy="32%" r="58%">
+          <stop offset="0%" stopColor="#c8987a" />
+          <stop offset="100%" stopColor="#8a5830" />
+        </radialGradient>
+        <linearGradient id="aldricArmor" x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%" stopColor="#8a95a8" />
+          <stop offset="40%" stopColor="#5a6575" />
+          <stop offset="100%" stopColor="#2e3848" />
         </linearGradient>
-        <linearGradient id="aldricSword" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#e8e8f8" />
-          <stop offset="40%" stopColor="#b0b8d0" />
-          <stop offset="100%" stopColor="#6070a0" />
+        <linearGradient id="aldricArmorDark" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#4a5565" />
+          <stop offset="100%" stopColor="#1e2838" />
         </linearGradient>
-        <radialGradient id="aldricShield" cx="50%" cy="30%" r="70%">
-          <stop offset="0%" stopColor="#a02828" />
+        <linearGradient id="aldricSword" x1="0%" y1="0%" x2="20%" y2="100%">
+          <stop offset="0%" stopColor="#f0f4ff" />
+          <stop offset="35%" stopColor="#c0c8e0" />
+          <stop offset="100%" stopColor="#5868a0" />
+        </linearGradient>
+        <radialGradient id="aldricShield" cx="40%" cy="28%" r="65%">
+          <stop offset="0%" stopColor="#c03030" />
+          <stop offset="100%" stopColor="#3a0808" />
+        </radialGradient>
+        <linearGradient id="aldricCape" x1="10%" y1="0%" x2="90%" y2="100%">
+          <stop offset="0%" stopColor="#9a1818" />
           <stop offset="100%" stopColor="#4a0808" />
+        </linearGradient>
+        <radialGradient id="aldricEye" cx="35%" cy="28%" r="60%">
+          <stop offset="0%" stopColor="#5a80d0" />
+          <stop offset="60%" stopColor="#2a4a90" />
+          <stop offset="100%" stopColor="#0d1f50" />
         </radialGradient>
       </defs>
       <style>{`
-        @keyframes aBob     { 0%,100%{transform:translateY(0)}     50%{transform:translateY(-4px)} }
-        @keyframes aCloak   { 0%,100%{transform:skewX(0deg)}       50%{transform:skewX(1.5deg)} }
-        @keyframes aGleam   { 0%,100%{opacity:0;transform:translateY(0)}   40%{opacity:0.9;transform:translateY(-4px)}  80%{opacity:0} }
-        @keyframes aEye     { 0%,100%{opacity:0.7} 50%{opacity:1} }
-        @keyframes aCape    { 0%,100%{transform:skewX(0) scaleX(1)} 50%{transform:skewX(2deg) scaleX(1.02)} }
-        @keyframes aBreath  { 0%,100%{transform:scaleY(1)}          50%{transform:scaleY(1.02)} }
-        .a-body   { animation: aBob     2.4s ease-in-out ${bobOffset}s infinite; transform-origin: 45px 128px; }
-        .a-cloak  { animation: aCape    3.2s ease-in-out ${bobOffset}s infinite; transform-origin: 45px 85px; }
-        .a-torso  { animation: aBreath  3s   ease-in-out ${bobOffset}s infinite; transform-origin: 45px 75px; }
+        @keyframes aBob    { 0%,100%{transform:translateY(0)}   50%{transform:translateY(-5px)} }
+        @keyframes aCape   { 0%,100%{transform:skewX(0)}        50%{transform:skewX(1.8deg)} }
+        @keyframes aGleam  { 0%,80%,100%{opacity:0} 40%{opacity:0.85} }
+        @keyframes aEye    { 0%,100%{opacity:0.6} 50%{opacity:1} }
+        @keyframes aBreath { 0%,100%{transform:scaleY(1) scaleX(1)} 50%{transform:scaleY(1.018) scaleX(1.008)} }
+        .a-body   { animation: aBob    2.6s ease-in-out ${bobOffset}s infinite; transform-origin: 60px 185px; }
+        .a-cape   { animation: aCape   3.4s ease-in-out ${bobOffset}s infinite; transform-origin: 60px 120px; }
+        .a-torso  { animation: aBreath 3.2s ease-in-out ${bobOffset}s infinite; transform-origin: 60px 105px; }
       `}</style>
 
       <g className="a-body">
 
-        {/* ══ BOOTS ══ — armoured sabatons */}
-        <path d="M28 120 Q26 128 24 134 Q32 136 38 134 Q38 128 36 120 Z" fill="#1e1410" />
-        <path d="M22 130 Q30 136 38 134" stroke="#3a2818" strokeWidth="1.5" fill="none" />
-        <path d="M52 120 Q50 128 48 134 Q56 136 62 134 Q64 128 62 120 Z" fill="#1e1410" />
-        <path d="M48 130 Q56 136 64 134" stroke="#3a2818" strokeWidth="1.5" fill="none" />
-        {/* Sabaton plate lines */}
-        <path d="M24 132 L38 134" stroke="#4a3820" strokeWidth="0.8" opacity="0.7" />
-        <path d="M48 132 L64 134" stroke="#4a3820" strokeWidth="0.8" opacity="0.7" />
+        {/* ══ FEET / SABATONS ══ */}
+        <path d="M38 172 Q34 178 30 182 Q36 186 48 184 Q50 178 46 172 Z" fill="#1a1810" />
+        <path d="M30 180 Q40 186 50 183" stroke="#3a3020" strokeWidth="1.2" fill="none" />
+        <path d="M40 172 Q36 178 34 182 Q38 186 46 184 Q50 180 50 174 Z" fill="#2a2818" />
+        <path d="M72 172 Q68 178 64 182 Q70 186 82 184 Q84 178 80 172 Z" fill="#1a1810" />
+        <path d="M64 180 Q74 186 84 183" stroke="#3a3020" strokeWidth="1.2" fill="none" />
+        <path d="M74 172 Q70 178 68 182 Q72 186 80 184 Q84 180 84 174 Z" fill="#2a2818" />
 
-        {/* ══ GREAVES / LEGS ══ */}
-        <path d="M28 96 Q26 112 28 120 L38 120 Q40 112 38 96 Z" fill="url(#aldricArmor)" />
-        <path d="M52 96 Q50 112 52 120 L62 120 Q64 112 62 96 Z" fill="url(#aldricArmor)" />
-        {/* Greave highlight */}
-        <path d="M30 98 Q29 112 30 118" stroke="#8090a8" strokeWidth="1" fill="none" opacity="0.5" />
-        <path d="M54 98 Q53 112 54 118" stroke="#8090a8" strokeWidth="1" fill="none" opacity="0.5" />
-        {/* Knee cap */}
-        <ellipse cx="33" cy="96" rx="6" ry="4" fill="#5a6070" />
-        <ellipse cx="57" cy="96" rx="6" ry="4" fill="#5a6070" />
-        <ellipse cx="33" cy="95" rx="4" ry="2.5" fill="#6a7080" />
-        <ellipse cx="57" cy="95" rx="4" ry="2.5" fill="#6a7080" />
+        {/* ══ LOWER LEGS / GREAVES ══ */}
+        {/* Left leg */}
+        <path d="M38 140 Q34 155 35 165 Q38 172 46 172 Q52 168 52 160 Q52 148 48 140 Z" fill="url(#aldricArmor)" />
+        <path d="M40 142 Q37 156 38 166" stroke="#9aa5b8" strokeWidth="1.2" fill="none" opacity="0.5" />
+        {/* Right leg */}
+        <path d="M72 140 Q68 155 69 165 Q72 172 80 172 Q86 168 86 160 Q86 148 82 140 Z" fill="url(#aldricArmor)" />
+        <path d="M74 142 Q71 156 72 166" stroke="#9aa5b8" strokeWidth="1.2" fill="none" opacity="0.5" />
 
-        {/* ══ CAPE / TABARD ══ */}
-        <g className="a-cloak">
-          <path d="M20 65 Q15 95 16 118 Q22 122 32 120 Q36 114 36 96 L36 65 Z" fill="#7a1010" opacity="0.9" />
-          <path d="M70 65 Q75 95 74 118 Q68 122 58 120 Q54 114 54 96 L54 65 Z" fill="#7a1010" opacity="0.9" />
+        {/* ══ KNEES ══ */}
+        <ellipse cx="44" cy="140" rx="9" ry="6" fill="#6a7888" />
+        <ellipse cx="44" cy="139" rx="6" ry="4" fill="#8a9aaa" />
+        <ellipse cx="78" cy="140" rx="9" ry="6" fill="#6a7888" />
+        <ellipse cx="78" cy="139" rx="6" ry="4" fill="#8a9aaa" />
+
+        {/* ══ UPPER LEGS / CUISSES ══ */}
+        {/* Left thigh */}
+        <path d="M36 108 Q30 124 32 138 Q38 144 48 142 Q56 138 56 124 Q56 110 50 106 Z" fill="url(#aldricArmor)" />
+        <path d="M38 110 Q34 124 36 136" stroke="#9aa5b8" strokeWidth="1" fill="none" opacity="0.4" />
+        {/* Right thigh */}
+        <path d="M70 108 Q64 124 66 138 Q72 144 82 142 Q90 138 90 124 Q90 110 84 106 Z" fill="url(#aldricArmor)" />
+        <path d="M72 110 Q68 124 70 136" stroke="#9aa5b8" strokeWidth="1" fill="none" opacity="0.4" />
+
+        {/* ══ CAPE / SURCOAT ══ */}
+        <g className="a-cape">
+          {/* Main flowing cape — red */}
+          <path d="M28 90 Q18 118 16 148 Q18 162 30 164 Q40 166 48 158 Q50 140 48 108 L48 90 Z" fill="url(#aldricCape)" />
+          <path d="M92 90 Q102 118 104 148 Q102 162 90 164 Q80 166 72 158 Q70 140 72 108 L72 90 Z" fill="url(#aldricCape)" />
+          {/* Cape inner shadow */}
+          <path d="M30 90 Q22 118 20 148 Q22 160 32 162" stroke="#2a0808" strokeWidth="2.5" fill="none" opacity="0.5" />
+          <path d="M90 90 Q98 118 100 148 Q98 160 88 162" stroke="#2a0808" strokeWidth="2.5" fill="none" opacity="0.5" />
           {/* Gold trim */}
-          <path d="M20 65 Q15 95 16 118" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.85" />
-          <path d="M70 65 Q75 95 74 118" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.85" />
-          <path d="M16 118 Q22 122 32 120" stroke="#d4af37" strokeWidth="1.2" fill="none" opacity="0.7" />
-          <path d="M74 118 Q68 122 58 120" stroke="#d4af37" strokeWidth="1.2" fill="none" opacity="0.7" />
-          {/* Crest / sigil */}
-          <path d="M41 78 L45 70 L49 78 L45 85 Z" fill="#d4af37" opacity="0.9" />
-          <circle cx="45" cy="77" r="2" fill="#c8000a" opacity="0.8" />
+          <path d="M28 90 Q18 118 16 148" stroke="#d4af37" strokeWidth="1.8" fill="none" opacity="0.9" />
+          <path d="M92 90 Q102 118 104 148" stroke="#d4af37" strokeWidth="1.8" fill="none" opacity="0.9" />
+          <path d="M16 148 Q18 162 30 164 Q40 166 48 158" stroke="#d4af37" strokeWidth="1.4" fill="none" opacity="0.7" />
+          <path d="M104 148 Q102 162 90 164 Q80 166 72 158" stroke="#d4af37" strokeWidth="1.4" fill="none" opacity="0.7" />
+          {/* Tabard sigil — Eldenmoor crest */}
+          <path d="M54 110 L60 100 L66 110 L60 120 Z" fill="#d4af37" opacity="0.95" />
+          <circle cx="60" cy="110" r="3.5" fill="#8b0000" />
+          <path d="M56 110 L64 110 M60 104 L60 116" stroke="#d4af37" strokeWidth="0.8" fill="none" opacity="0.6" />
         </g>
 
-        {/* ══ TORSO / PLATE ARMOUR ══ */}
+        {/* ══ TORSO ══ */}
         <g className="a-torso">
-          {/* Breastplate */}
-          <path d="M24 62 Q22 78 24 90 Q36 96 45 95 Q54 96 66 90 Q68 78 66 62 Q56 56 45 55 Q34 56 24 62 Z" fill="url(#aldricArmor)" />
-          {/* Breastplate highlight */}
-          <path d="M30 64 Q28 78 30 88" stroke="#8090a8" strokeWidth="1.5" fill="none" opacity="0.5" />
-          <path d="M38 58 Q36 78 38 90" stroke="#9098b0" strokeWidth="0.8" fill="none" opacity="0.3" />
-          {/* Center line */}
-          <path d="M45 58 L45 92" stroke="#6070a0" strokeWidth="0.8" fill="none" opacity="0.5" />
-          {/* Plate detailing */}
-          <path d="M30 72 Q45 76 60 72" stroke="#5a6070" strokeWidth="1" fill="none" opacity="0.6" />
-          <path d="M28 80 Q45 84 62 80" stroke="#5a6070" strokeWidth="1" fill="none" opacity="0.5" />
-          {/* Battle-worn scrapes */}
-          <path d="M35 66 Q37 68 36 71" stroke="#3a4050" strokeWidth="0.8" fill="none" opacity="0.6" />
-          <path d="M50 60 Q52 63 51 67" stroke="#3a4050" strokeWidth="0.8" fill="none" opacity="0.5" />
+          {/* Breastplate main body */}
+          <path d="M30 82 Q26 96 28 112 Q38 120 60 120 Q82 120 92 112 Q94 96 90 82 Q78 72 60 70 Q42 72 30 82 Z" fill="url(#aldricArmor)" />
+          {/* Breastplate center ridge */}
+          <path d="M60 74 Q58 96 60 118" stroke="#9aa5b8" strokeWidth="1.5" fill="none" opacity="0.6" />
+          {/* Pectoral plates */}
+          <path d="M32 86 Q42 80 58 82 Q58 96 46 98 Q34 96 32 86 Z" fill="#5a6878" opacity="0.7" />
+          <path d="M88 86 Q78 80 62 82 Q62 96 74 98 Q86 96 88 86 Z" fill="#5a6878" opacity="0.7" />
+          {/* Highlight on pectorals */}
+          <path d="M36 87 Q44 82 56 84" stroke="#9aaab8" strokeWidth="1" fill="none" opacity="0.5" />
+          <path d="M84 87 Q76 82 64 84" stroke="#9aaab8" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Abs / lower plate */}
+          <path d="M36 100 Q40 108 60 110 Q80 108 84 100 Q84 96 60 96 Q36 96 36 100 Z" fill="#4a5868" />
+          {/* Waist faulds */}
+          <path d="M32 110 Q36 116 60 118 Q84 116 88 110" stroke="#6a7888" strokeWidth="1.5" fill="none" opacity="0.7" />
+          {/* Battle scrapes on armor */}
+          <path d="M44 86 L46 90 L45 94" stroke="#2a3848" strokeWidth="1.2" fill="none" opacity="0.5" strokeLinecap="round" />
 
-          {/* Pauldrons — heavy plate shoulders */}
-          {/* Left pauldron */}
-          <path d="M14 58 Q10 62 10 70 Q14 76 22 74 Q26 68 24 60 Z" fill="#4a5060" />
-          <path d="M14 58 Q10 64 10 70" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.7" />
-          <path d="M10 70 Q14 76 22 74" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* ══ PAULDRONS (shoulders) ══ */}
+          {/* Left pauldron — layered plates */}
+          <path d="M16 76 Q10 82 10 94 Q14 102 26 100 Q34 96 34 84 Q34 74 26 72 Z" fill="#4a5868" />
+          <path d="M18 76 Q12 84 14 94" stroke="#8a9aaa" strokeWidth="1.2" fill="none" opacity="0.6" />
+          <path d="M14 94 Q18 102 26 100" stroke="#7a8a9a" strokeWidth="1" fill="none" opacity="0.5" />
+          <path d="M16 80 Q12 86 14 92" fill="none" stroke="#9aaab8" strokeWidth="0.8" opacity="0.4" />
           {/* Right pauldron */}
-          <path d="M76 58 Q80 62 80 70 Q76 76 68 74 Q64 68 66 60 Z" fill="#4a5060" />
-          <path d="M76 58 Q80 64 80 70" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.7" />
-          <path d="M80 70 Q76 76 68 74" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.5" />
-          {/* Shoulder spikes — subtle */}
-          <path d="M12 58 L9 50 L15 56 Z" fill="#3a4050" stroke="#6a7080" strokeWidth="0.5" />
-          <path d="M78 58 L81 50 L75 56 Z" fill="#3a4050" stroke="#6a7080" strokeWidth="0.5" />
+          <path d="M104 76 Q110 82 110 94 Q106 102 94 100 Q86 96 86 84 Q86 74 94 72 Z" fill="#4a5868" />
+          <path d="M102 76 Q108 84 106 94" stroke="#8a9aaa" strokeWidth="1.2" fill="none" opacity="0.6" />
+          <path d="M106 94 Q102 102 94 100" stroke="#7a8a9a" strokeWidth="1" fill="none" opacity="0.5" />
 
-          {/* ══ SWORD ARM (LEFT) ══ */}
-          <path d="M10 70 Q6 76 6 88 Q8 96 14 94 Q20 90 20 80 Q18 72 14 68 Z" fill="#4a5060" />
-          <path d="M8 76 Q6 84 8 92" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.5" />
-          {/* Gauntlet left */}
-          <path d="M7 92 Q5 98 7 104 Q12 106 16 104 Q18 98 16 92 Z" fill="#3a4050" />
-          {/* Fingers */}
-          <path d="M7 104 Q9 108 10 104" stroke="#5a6070" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-          <path d="M10 105 Q12 110 13 105" stroke="#5a6070" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          {/* ══ UPPER ARMS ══ */}
+          {/* Left upper arm */}
+          <path d="M10 94 Q4 102 4 116 Q6 126 14 124 Q22 120 24 108 Q24 96 18 92 Z" fill="url(#aldricArmor)" />
+          <path d="M8 98 Q4 110 6 120" stroke="#8a9aaa" strokeWidth="1" fill="none" opacity="0.4" />
+          {/* Right upper arm */}
+          <path d="M110 94 Q116 102 116 116 Q114 126 106 124 Q98 120 96 108 Q96 96 102 92 Z" fill="url(#aldricArmor)" />
+          <path d="M112 98 Q116 110 114 120" stroke="#8a9aaa" strokeWidth="1" fill="none" opacity="0.4" />
 
-          {/* ══ SHIELD ARM (RIGHT) ══ */}
-          <path d="M80 70 Q84 76 84 88 Q82 96 76 94 Q70 90 70 80 Q72 72 76 68 Z" fill="#4a5060" />
-          <path d="M82 76 Q84 84 82 92" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.5" />
-          {/* Shield */}
-          <path d="M82 64 Q92 66 94 76 Q94 90 82 98 Q70 90 70 76 Q70 66 82 64 Z" fill="url(#aldricShield)" />
-          <path d="M82 64 Q92 66 94 76 Q94 90 82 98 Q70 90 70 76 Q70 66 82 64" stroke="#d4af37" strokeWidth="1.5" fill="none" />
-          {/* Shield cross */}
-          <path d="M82 66 L82 96" stroke="#d4af37" strokeWidth="1.2" opacity="0.8" />
-          <path d="M72 81 L92 81" stroke="#d4af37" strokeWidth="1.2" opacity="0.8" />
-          {/* Shield boss */}
-          <circle cx="82" cy="81" r="4" fill="#d4af37" opacity="0.9" />
-          <circle cx="82" cy="81" r="2" fill="#c8000a" opacity="0.8" />
+          {/* ══ VAMBRACES / LOWER ARMS ══ */}
+          {/* Left vambrace (sword hand) */}
+          <path d="M6 122 Q2 130 2 142 Q4 150 12 148 Q20 144 22 134 Q22 122 14 120 Z" fill="url(#aldricArmorDark)" />
+          <path d="M4 126 Q2 136 4 144" stroke="#7a8898" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Left gauntlet */}
+          <path d="M4 146 Q2 154 4 160 Q8 164 14 162 Q18 158 18 150 Q16 144 10 144 Z" fill="#2e3848" />
+          <path d="M4 152 Q6 158 10 160 Q14 158 17 154" stroke="#5a6878" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Fingers left */}
+          <path d="M5 160 Q6 165 7 161" stroke="#4a5868" strokeWidth="2" strokeLinecap="round" fill="none" />
+          <path d="M8 162 Q9 167 10 162" stroke="#4a5868" strokeWidth="2" strokeLinecap="round" fill="none" />
+          <path d="M11 162 Q12 167 13 162" stroke="#4a5868" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+          {/* Right vambrace (shield hand) */}
+          <path d="M114 122 Q118 130 118 142 Q116 150 108 148 Q100 144 98 134 Q98 122 106 120 Z" fill="url(#aldricArmorDark)" />
+          <path d="M116 126 Q118 136 116 144" stroke="#7a8898" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Right gauntlet */}
+          <path d="M116 146 Q118 154 116 160 Q112 164 106 162 Q102 158 102 150 Q104 144 110 144 Z" fill="#2e3848" />
+
+          {/* ══ SHIELD ══ */}
+          <path d="M110 118 Q124 122 128 136 Q128 154 110 164 Q92 154 92 136 Q92 122 110 118 Z" fill="url(#aldricShield)" />
+          <path d="M110 118 Q124 122 128 136 Q128 154 110 164 Q92 154 92 136 Q92 122 110 118" stroke="#d4af37" strokeWidth="2" fill="none" />
+          <path d="M110 120 L110 162" stroke="#d4af37" strokeWidth="1.5" opacity="0.8" />
+          <path d="M94 141 L126 141" stroke="#d4af37" strokeWidth="1.5" opacity="0.8" />
+          <circle cx="110" cy="141" r="7" fill="#d4af37" opacity="0.95" />
+          <circle cx="110" cy="141" r="4.5" fill="#c8000a" />
+          <circle cx="110" cy="141" r="2" fill="#ff3030" opacity="0.6" />
+          {/* Shield battle notches */}
+          <path d="M95 128 L97 132" stroke="#5a1010" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M124 148 L122 152" stroke="#5a1010" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
         </g>
 
-        {/* ══ SWORD ══ — great Elden Ring longsword */}
-        {/* Blade */}
-        <path d="M6 18 L3 22 L6 108 L8 108 L11 22 Z" fill="url(#aldricSword)" />
-        <path d="M6 18 L6 108" stroke="#d0d8e8" strokeWidth="0.5" fill="none" opacity="0.6" />
+        {/* ══ SWORD ══ */}
+        {/* Blade — tapered */}
+        <path d="M8 12 L5 18 L7 148 L9 148 L12 18 Z" fill="url(#aldricSword)" />
+        <path d="M9 12 L9 148" stroke="#e0e8f8" strokeWidth="0.6" fill="none" opacity="0.5" />
+        <path d="M9 14 L6 22 L8 22 Z" fill="white" opacity="0.6" />
         {/* Crossguard */}
-        <path d="M0 54 Q9 52 18 54" fill="#d4af37" />
-        <path d="M0 54 Q9 52 18 54" stroke="#b8860b" strokeWidth="0.8" fill="none" />
+        <path d="M1 78 Q10 75 19 78 Q18 82 10 82 Q2 82 1 78 Z" fill="#d4af37" />
+        <path d="M1 78 Q10 75 19 78" stroke="#ffe566" strokeWidth="0.8" fill="none" opacity="0.7" />
         {/* Grip */}
-        <rect x="5.5" y="54" width="3" height="18" rx="1" fill="#5a3010" />
-        {[0,1,2,3].map(i => <path key={i} d={`M5 ${57+i*4} Q7 ${58+i*4} 9 ${57+i*4}`} stroke="#d4af37" strokeWidth="0.6" fill="none" opacity="0.6" />)}
+        <path d="M7 82 Q6 90 7 102 L11 102 Q12 90 11 82 Z" fill="#5a3010" />
+        {[0,1,2,3,4].map(i => <path key={i} d={`M6.5 ${84+i*4} Q9 ${85.5+i*4} 11.5 ${84+i*4}`} stroke="#b8860b" strokeWidth="0.7" fill="none" opacity="0.6" />)}
         {/* Pommel */}
-        <ellipse cx="7" cy="74" rx="4" ry="3" fill="#d4af37" />
-        <circle cx="7" cy="73" r="1.5" fill="#ffe566" opacity="0.7" />
-        {/* Blade gleam animation */}
-        <path d="M7 22 L7 52" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0" style={{ animation: "aGleam 4s ease-in-out 1.5s infinite" }} />
-        {/* Blade rune glow */}
-        <path d="M7 32 Q6 40 7 48" stroke="#4a7aff" strokeWidth="0.8" fill="none" opacity="0.3" style={{ animation: "aEye 2s ease-in-out infinite" }} />
+        <ellipse cx="9" cy="104" rx="6" ry="4" fill="#d4af37" />
+        <ellipse cx="9" cy="103" rx="3.5" ry="2" fill="#ffe566" opacity="0.7" />
+        {/* Gleam animation */}
+        <path d="M9 16 L9 60" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0" style={{ animation: "aGleam 4.5s ease-in-out 2s infinite" }} />
+        {/* Rune on blade */}
+        <path d="M9 30 Q8 40 9 50" stroke="#6080ff" strokeWidth="1" fill="none" opacity="0.25" style={{ animation: "aEye 2.5s ease-in-out infinite" }} />
 
         {/* ══ NECK ══ */}
-        <path d="M38 44 Q36 52 36 58 L54 58 Q54 52 52 44 Q48 40 45 40 Q42 40 38 44 Z" fill="url(#aldricSkin)" />
-        {/* Gorget (neck armor) */}
-        <path d="M33 56 Q36 60 45 62 Q54 60 57 56 Q54 54 45 54 Q36 54 33 56 Z" fill="#4a5060" />
-        <path d="M33 56 Q45 62 57 56" stroke="#6a7080" strokeWidth="0.8" fill="none" opacity="0.6" />
+        <path d="M50 60 Q46 68 46 76 L74 76 Q74 68 70 60 Q66 54 60 54 Q54 54 50 60 Z" fill="url(#aldricSkin)" />
+        {/* Adam's apple */}
+        <ellipse cx="60" cy="72" rx="3" ry="2" fill="#c09870" opacity="0.35" />
+        {/* Gorget */}
+        <path d="M42 74 Q48 80 60 82 Q72 80 78 74 Q72 70 60 70 Q48 70 42 74 Z" fill="#4a5868" />
+        <path d="M42 74 Q60 82 78 74" stroke="#7a8898" strokeWidth="0.8" fill="none" opacity="0.5" />
 
-        {/* ══ HEAD / FACE ══ */}
-        <ellipse cx="45" cy="32" rx="16" ry="18" fill="url(#aldricSkin)" />
-        {/* Jaw definition */}
-        <path d="M31 38 Q32 46 45 50 Q58 46 59 38" stroke="#a07050" strokeWidth="0.8" fill="none" opacity="0.4" />
+        {/* ══ HEAD ══ — realistic proportions */}
+        {/* Head shape */}
+        <ellipse cx="60" cy="38" rx="22" ry="26" fill="url(#aldricSkin)" />
+        {/* Cheekbones */}
+        <path d="M38 40 Q42 46 50 48" stroke="#b08060" strokeWidth="0.8" fill="none" opacity="0.4" />
+        <path d="M82 40 Q78 46 70 48" stroke="#b08060" strokeWidth="0.8" fill="none" opacity="0.4" />
+        {/* Jaw line */}
+        <path d="M40 50 Q46 62 60 64 Q74 62 80 50" stroke="#a07850" strokeWidth="1" fill="none" opacity="0.3" />
         {/* Jaw shadow */}
-        <ellipse cx="45" cy="46" rx="11" ry="5" fill="#a06840" opacity="0.25" />
-        {/* Battle scar — across cheek */}
-        <path d="M34 30 L38 35" stroke="#804828" strokeWidth="1.2" strokeLinecap="round" opacity="0.65" />
-        <path d="M35 30 L39 35" stroke="#c07858" strokeWidth="0.5" strokeLinecap="round" opacity="0.3" />
+        <ellipse cx="60" cy="60" rx="14" ry="6" fill="#9a7050" opacity="0.2" />
+        {/* Temple shadows */}
+        <ellipse cx="40" cy="36" rx="5" ry="8" fill="#a07850" opacity="0.12" />
+        <ellipse cx="80" cy="36" rx="5" ry="8" fill="#a07850" opacity="0.12" />
+        {/* Battle scar */}
+        <path d="M46 32 L50 38" stroke="#8a5030" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+        <path d="M47 32 L51 38" stroke="#c08060" strokeWidth="0.6" strokeLinecap="round" opacity="0.3" />
 
-        {/* ══ EYES ══ — intense, determined */}
-        <ellipse cx="38" cy="29" rx="5" ry="3.8" fill="white" />
-        <ellipse cx="52" cy="29" rx="5" ry="3.8" fill="white" />
+        {/* ══ EYES ══ */}
+        {/* Eye sockets shadow */}
+        <ellipse cx="52" cy="34" rx="7" ry="5.5" fill="#9a7050" opacity="0.15" />
+        <ellipse cx="68" cy="34" rx="7" ry="5.5" fill="#9a7050" opacity="0.15" />
+        {/* Eye whites */}
+        <ellipse cx="52" cy="34" rx="6" ry="4.5" fill="#f8f4f0" />
+        <ellipse cx="68" cy="34" rx="6" ry="4.5" fill="#f8f4f0" />
         {/* Iris */}
-        <circle cx="38" cy="30" r="3.2" fill="#2a4a90" />
-        <circle cx="52" cy="30" r="3.2" fill="#2a4a90" />
-        <circle cx="38" cy="30" r="2" fill="#0d1f50" />
-        <circle cx="52" cy="30" r="2" fill="#0d1f50" />
-        {/* Shine */}
-        <circle cx="39.5" cy="28.5" r="1" fill="white" opacity="0.9" />
-        <circle cx="53.5" cy="28.5" r="1" fill="white" opacity="0.9" />
-        <circle cx="37" cy="31" r="0.5" fill="white" opacity="0.4" />
-        <circle cx="51" cy="31" r="0.5" fill="white" opacity="0.4" />
-        {/* Eye glow — heroic blue */}
-        <circle cx="38" cy="30" r="3.5" fill="#4a7aff" opacity="0.18" style={{ animation: "aEye 2.5s ease-in-out infinite" }} />
-        <circle cx="52" cy="30" r="3.5" fill="#4a7aff" opacity="0.18" style={{ animation: "aEye 2.5s ease-in-out 0.5s infinite" }} />
-        {/* Heavy brow — furrowed, battle-set */}
-        <path d="M33 24 Q38 21.5 43 23.5" stroke="#3a2010" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-        <path d="M47 23.5 Q52 21.5 57 24" stroke="#3a2010" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-        {/* Brow furrow */}
-        <path d="M42 23 Q43 22 44 23" stroke="#5a3020" strokeWidth="1" fill="none" opacity="0.6" />
-        {/* Eyelid line */}
-        <path d="M33 26 Q38 24.5 43 26" stroke="#2a1810" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <path d="M47 26 Q52 24.5 57 26" stroke="#2a1810" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <circle cx="52" cy="35" r="3.8" fill="url(#aldricEye)" />
+        <circle cx="68" cy="35" r="3.8" fill="url(#aldricEye)" />
+        {/* Pupil */}
+        <circle cx="52" cy="35" r="2.2" fill="#080e28" />
+        <circle cx="68" cy="35" r="2.2" fill="#080e28" />
+        {/* Highlight — multi-point */}
+        <circle cx="53.8" cy="33.2" r="1.4" fill="white" opacity="0.92" />
+        <circle cx="69.8" cy="33.2" r="1.4" fill="white" opacity="0.92" />
+        <circle cx="50.8" cy="36.4" r="0.6" fill="white" opacity="0.45" />
+        <circle cx="66.8" cy="36.4" r="0.6" fill="white" opacity="0.45" />
+        {/* Eye glow */}
+        <circle cx="52" cy="35" r="4.2" fill="#4060e0" opacity="0.15" style={{ animation: "aEye 3s ease-in-out infinite" }} />
+        <circle cx="68" cy="35" r="4.2" fill="#4060e0" opacity="0.15" style={{ animation: "aEye 3s ease-in-out 0.6s infinite" }} />
+        {/* Upper eyelid crease */}
+        <path d="M46 30 Q52 28 58 30" stroke="#1e1008" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        <path d="M62 30 Q68 28 74 30" stroke="#1e1008" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        {/* Lower lid */}
+        <path d="M46 38 Q52 39.5 58 38" stroke="#4a2c18" strokeWidth="0.7" fill="none" strokeLinecap="round" opacity="0.5" />
+        <path d="M62 38 Q68 39.5 74 38" stroke="#4a2c18" strokeWidth="0.7" fill="none" strokeLinecap="round" opacity="0.5" />
+        {/* Brows — heavy, furrowed */}
+        <path d="M45 26 Q51 22.5 57 25" stroke="#2c1808" strokeWidth="2.8" fill="none" strokeLinecap="round" />
+        <path d="M63 25 Q69 22.5 75 26" stroke="#2c1808" strokeWidth="2.8" fill="none" strokeLinecap="round" />
+        {/* Brow inner wrinkle */}
+        <path d="M56 24 Q57 23 58 24" stroke="#4a2808" strokeWidth="1.2" fill="none" opacity="0.55" />
+        <path d="M62 24 Q63 23 64 24" stroke="#4a2808" strokeWidth="1.2" fill="none" opacity="0.55" />
 
-        {/* ══ NOSE ══ — strong, masculine */}
-        <path d="M44 33 Q43 38 44 41 Q45 42.5 46 41 Q47 38 46 33" stroke="#a07050" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.7" />
-        <ellipse cx="43.5" cy="41" rx="2" ry="1.2" fill="#906040" opacity="0.35" />
-        <ellipse cx="46.5" cy="41" rx="2" ry="1.2" fill="#906040" opacity="0.35" />
+        {/* ══ NOSE ══ */}
+        <path d="M59 38 Q56 44 57 48 Q60 50 63 48 Q64 44 61 38" stroke="#a07858" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity="0.7" />
+        <ellipse cx="57.5" cy="48" rx="2.5" ry="1.5" fill="#9a6848" opacity="0.3" />
+        <ellipse cx="62.5" cy="48" rx="2.5" ry="1.5" fill="#9a6848" opacity="0.3" />
+        {/* Nose bridge shadow */}
+        <path d="M60 28 Q59 34 59 40" stroke="#b08060" strokeWidth="0.8" fill="none" opacity="0.2" />
 
-        {/* ══ MOUTH ══ — determined set jaw */}
-        <path d="M37 46 Q42 44 45 45 Q48 44 53 46" stroke="#7a4030" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <path d="M39 47 Q45 49 51 47" stroke="#6a3825" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.5" />
-        {/* Stubble shadow */}
-        <ellipse cx="45" cy="46" rx="10" ry="4" fill="#7a4030" opacity="0.08" />
-        {[36,38,40,42,44,46,48,50,52,54].map((x,i) => (
-          <line key={i} x1={x} y1="44" x2={x + (i%2?0.5:-0.5)} y2="47" stroke="#5a3020" strokeWidth="0.7" opacity="0.35" />
+        {/* ══ MOUTH ══ */}
+        {/* Upper lip */}
+        <path d="M50 54 Q55 51.5 58 52.5 Q60 51 62 52.5 Q65 51.5 70 54" fill="#9a5040" stroke="none" />
+        {/* Lower lip */}
+        <path d="M50 54 Q55 58 60 59 Q65 58 70 54" fill="#b05850" />
+        <path d="M52 56 Q60 60 68 56" fill="#c06860" opacity="0.5" />
+        {/* Lip highlight */}
+        <path d="M54 57 Q60 59 66 57" stroke="rgba(220,160,140,0.5)" strokeWidth="0.9" fill="none" />
+        {/* Mouth line / grimace */}
+        <path d="M50 54 Q55 55.5 60 55 Q65 55.5 70 54" stroke="#7a3828" strokeWidth="0.8" fill="none" />
+        {/* Stubble dots */}
+        {[48,51,54,57,60,63,66,69,72].map((x,i) => (
+          <circle key={i} cx={x} cy={56 + (i%3)*1.5} r="0.6" fill="#6a3820" opacity="0.3" />
         ))}
 
-        {/* ══ HELMET ══ — great helm with visor */}
-        {/* Main helm body */}
-        <path d="M29 28 Q29 10 45 8 Q61 10 61 28 Z" fill="#4a5060" />
-        <path d="M29 28 Q29 10 45 8 Q61 10 61 28" stroke="#7a8090" strokeWidth="1.5" fill="none" />
-        {/* Helm detail — banded plates */}
-        <path d="M30 24 Q45 22 60 24" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.7" />
-        <path d="M30 18 Q45 16 60 18" stroke="#5a6070" strokeWidth="0.8" fill="none" opacity="0.5" />
-        {/* Nose/face guard */}
-        <rect x="43" y="16" width="4" height="18" rx="1.5" fill="#3a4050" />
-        <rect x="43.5" y="17" width="1.5" height="16" rx="0.8" fill="#5a6070" opacity="0.5" />
-        {/* Visor slot */}
-        <path d="M32 26 Q38 24 43 25" stroke="#1a2030" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
-        <path d="M47 25 Q52 24 58 26" stroke="#1a2030" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
-        {/* Crown on helmet */}
-        <path d="M31 20 L34 14 L37 18 L40 11 L43 16 L47 16 L50 11 L53 18 L56 14 L59 20"
-          stroke="#d4af37" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {/* ══ HELMET ══ */}
+        {/* Main helm */}
+        <path d="M38 34 Q38 10 60 8 Q82 10 82 34 Z" fill="#4a5868" />
+        <path d="M38 34 Q38 10 60 8 Q82 10 82 34" stroke="#8a9aaa" strokeWidth="1.8" fill="none" />
+        {/* Helm bands */}
+        <path d="M39 28 Q60 26 81 28" stroke="#6a7888" strokeWidth="1.2" fill="none" opacity="0.7" />
+        <path d="M40 20 Q60 18 80 20" stroke="#5a6878" strokeWidth="1" fill="none" opacity="0.5" />
+        {/* Cheek guards */}
+        <path d="M38 28 Q34 34 36 42 Q40 46 44 44 Q42 36 42 28 Z" fill="#3e4e5e" />
+        <path d="M82 28 Q86 34 84 42 Q80 46 76 44 Q78 36 78 28 Z" fill="#3e4e5e" />
+        {/* Nose guard */}
+        <path d="M57 18 Q55 24 55 36 L65 36 Q65 24 63 18 Q61 14 59 14 Q57.5 14 57 18 Z" fill="#2e3e4e" />
+        <path d="M58 19 Q57 25 57 34" stroke="#6a7a8a" strokeWidth="0.8" fill="none" opacity="0.5" />
+        {/* Visor slit */}
+        <path d="M40 30 Q50 27.5 55 29" stroke="#0a1220" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.85" />
+        <path d="M65 29 Q70 27.5 80 30" stroke="#0a1220" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.85" />
+        {/* Crown */}
+        <path d="M40 20 L43 13 L47 18 L51 8 L55 14 L60 10 L65 14 L69 8 L73 18 L77 13 L80 20"
+          stroke="#d4af37" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
         {/* Crown gems */}
-        <circle cx="45" cy="12" r="2" fill="#ef4444" opacity="0.9" />
-        <circle cx="36" cy="15" r="1.5" fill="#d4af37" opacity="0.8" />
-        <circle cx="54" cy="15" r="1.5" fill="#d4af37" opacity="0.8" />
-        {/* Helm plume */}
-        <path d="M45 8 Q42 0 38 -4 Q42 -5 46 -5 Q48 -1 45 8" fill="#8b1a1a" opacity="0.9" />
-        <path d="M45 8 Q48 2 50 -2" stroke="#a02020" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.7" />
-        {/* Plume shimmer */}
-        <path d="M44 2 Q43 0 42 -2" stroke="#c03030" strokeWidth="1" fill="none" opacity="0.5" />
+        <circle cx="60" cy="11" r="3" fill="#ef4444" />
+        <circle cx="60" cy="11" r="1.5" fill="#ff8080" opacity="0.7" />
+        <circle cx="50" cy="10" r="2" fill="#d4af37" />
+        <circle cx="70" cy="10" r="2" fill="#d4af37" />
+        {/* Plume */}
+        <path d="M60 8 Q56 0 52 -6 Q56 -7 60 -7 Q64 -7 68 -6 Q64 0 60 8" fill="#8b1010" opacity="0.95" />
+        <path d="M59 1 Q57 -2 55 -5" stroke="#c02020" strokeWidth="1.5" fill="none" opacity="0.6" strokeLinecap="round" />
+        <path d="M61 1 Q63 -2 65 -5" stroke="#c02020" strokeWidth="1.5" fill="none" opacity="0.5" strokeLinecap="round" />
       </g>
     </svg>
   );
