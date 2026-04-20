@@ -213,14 +213,21 @@ export function LordAldric({ size = 120, bobOffset = 0 }) {
         {/* Temple shadows */}
         <ellipse cx="40" cy="36" rx="5" ry="8" fill="#a07850" opacity="0.12" />
         <ellipse cx="80" cy="36" rx="5" ry="8" fill="#a07850" opacity="0.12" />
-        {/* Battle scar */}
-        <path d="M46 32 L50 38" stroke="#8a5030" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-        <path d="M47 32 L51 38" stroke="#c08060" strokeWidth="0.6" strokeLinecap="round" opacity="0.3" />
+        {/* Battle scars — multiple */}
+        <path d="M46 32 L50 38" stroke="#6a3020" strokeWidth="1.8" strokeLinecap="round" opacity="0.7" />
+        <path d="M47 32 L51 38" stroke="#a05040" strokeWidth="0.7" strokeLinecap="round" opacity="0.4" />
+        <path d="M52 25 L54 31" stroke="#6a3020" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+        <path d="M48 40 L46 45" stroke="#6a3020" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+
+        {/* War Paint — Blue forehead marks */}
+        <path d="M46 26 L50 22 L54 26" fill="#2a5a9a" opacity="0.8" />
+        <path d="M47 28 L50 24 L53 28" fill="#3a6aaa" opacity="0.6" />
+        <line x1="45" y1="30" x2="55" y2="30" stroke="#2a5a9a" strokeWidth="0.8" opacity="0.7" />
 
         {/* ══ EYES ══ */}
         {/* Eye sockets shadow */}
-        <ellipse cx="52" cy="34" rx="7" ry="5.5" fill="#9a7050" opacity="0.15" />
-        <ellipse cx="68" cy="34" rx="7" ry="5.5" fill="#9a7050" opacity="0.15" />
+        <ellipse cx="52" cy="34" rx="7" ry="5.5" fill="#5a4030" opacity="0.4" />
+        <ellipse cx="68" cy="34" rx="7" ry="5.5" fill="#5a4030" opacity="0.4" />
         {/* Eye whites */}
         <ellipse cx="52" cy="34" rx="6" ry="4.5" fill="#f8f4f0" />
         <ellipse cx="68" cy="34" rx="6" ry="4.5" fill="#f8f4f0" />
@@ -244,9 +251,9 @@ export function LordAldric({ size = 120, bobOffset = 0 }) {
         {/* Lower lid */}
         <path d="M46 38 Q52 39.5 58 38" stroke="#4a2c18" strokeWidth="0.7" fill="none" strokeLinecap="round" opacity="0.5" />
         <path d="M62 38 Q68 39.5 74 38" stroke="#4a2c18" strokeWidth="0.7" fill="none" strokeLinecap="round" opacity="0.5" />
-        {/* Brows — heavy, furrowed */}
-        <path d="M45 26 Q51 22.5 57 25" stroke="#2c1808" strokeWidth="2.8" fill="none" strokeLinecap="round" />
-        <path d="M63 25 Q69 22.5 75 26" stroke="#2c1808" strokeWidth="2.8" fill="none" strokeLinecap="round" />
+        {/* Brows — heavy, angry, furrowed */}
+        <path d="M44 23 Q51 20 57 23" stroke="#0a0a0a" strokeWidth="3" fill="none" strokeLinecap="round" />
+        <path d="M64 23 Q69 20 76 23" stroke="#0a0a0a" strokeWidth="3" fill="none" strokeLinecap="round" />
         {/* Brow inner wrinkle */}
         <path d="M56 24 Q57 23 58 24" stroke="#4a2808" strokeWidth="1.2" fill="none" opacity="0.55" />
         <path d="M62 24 Q63 23 64 24" stroke="#4a2808" strokeWidth="1.2" fill="none" opacity="0.55" />
@@ -435,8 +442,8 @@ export function QueenSeraphine({ size = 120, glowColor = "#e879f9", glowRgb = "2
         ))}
 
         {/* ══ HEAD / FACE ══ */}
-        {/* Head shape — elegant oval */}
-        <ellipse cx="50" cy="38" rx="17" ry="19" fill="url(#skinGrad)" />
+        {/* Head shape — battle-hardened */}
+        <ellipse cx="50" cy="38" rx="17" ry="19" fill="url(#aldricSkinDark)" />
         {/* Facial structure shadow */}
         <ellipse cx="50" cy="50" rx="11" ry="5" fill="#c09070" opacity="0.25" />
         <ellipse cx="44" cy="36" rx="4" ry="6" fill="#c09070" opacity="0.08" />
