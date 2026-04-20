@@ -8,7 +8,7 @@ const COMBOS = [
   { towers: ["🔴","🎯"],   name: "💥 Doomsday Cannon",      desc: "War Cannon + Ballista",        color: "text-rose-300",   border: "border-rose-600/60",   bg: "bg-rose-950/30",   tier: "MEGA"  },
   // Archer tree
   { towers: ["🧝","🧝"],   name: "⚡ Storm Archer",         desc: "Archer + Archer",              color: "text-yellow-300", border: "border-yellow-600/60", bg: "bg-yellow-950/30", tier: "MERGE" },
-  { towers: ["🧝","🧝"],   name: "🏹⚡ Arrow Storm",        desc: "Crossbow + Archer",            color: "text-yellow-300", border: "border-yellow-600/60", bg: "bg-yellow-950/30", tier: "MERGE" },
+  { towers: ["🏹","🧝"],   name: "🏹⚡ Arrow Storm",        desc: "Crossbow + Archer",            color: "text-yellow-300", border: "border-yellow-600/60", bg: "bg-yellow-950/30", tier: "MERGE" },
   // Mage tree
   { towers: ["🔮","🔮"],   name: "🌀 Spellcaster",          desc: "Mage + Mage",                  color: "text-violet-300", border: "border-violet-600/60", bg: "bg-violet-950/30", tier: "MERGE" },
   { towers: ["🔮","❄️"],   name: "🧊 Frozen Mage",          desc: "Mage + Frost",                 color: "text-cyan-300",   border: "border-cyan-600/60",   bg: "bg-cyan-950/30",   tier: "MERGE" },
@@ -16,7 +16,7 @@ const COMBOS = [
   { towers: ["🔮","🧝"],   name: "🌑🔮 Shadow Mage",        desc: "Mage + Archer",                color: "text-indigo-300", border: "border-indigo-600/60", bg: "bg-indigo-950/30", tier: "NEW"   },
   { towers: ["🔮","🔴"],   name: "🌀💣 Void Cannon",        desc: "Mage + War Cannon",            color: "text-purple-400", border: "border-purple-700/60", bg: "bg-purple-950/30", tier: "NEW"   },
   { towers: ["⚡","🔮"],   name: "⚡🧝 Thunder Archer",      desc: "Storm Archer + Mage",          color: "text-yellow-400", border: "border-yellow-700/60", bg: "bg-yellow-950/30", tier: "NEW"   },
-  { towers: ["🔮","🧝"],   name: "☠️🧝 Venom Crossbow",     desc: "Crossbow + Mage",              color: "text-green-300",  border: "border-green-600/60",  bg: "bg-green-950/30",  tier: "NEW"   },
+  { towers: ["🔮","🏹"],   name: "☠️🏹 Venom Crossbow",     desc: "Crossbow + Mage",              color: "text-green-300",  border: "border-green-600/60",  bg: "bg-green-950/30",  tier: "NEW"   },
   { towers: ["🌀","⚙️"],   name: "🔯⚙️ Arcane Siege",       desc: "Spellcaster + Trebuchet",      color: "text-fuchsia-300",border: "border-fuchsia-600/60",bg: "bg-fuchsia-950/30",tier: "NEW"   },
   // Siege tree
   { towers: ["💣","⚙️"],   name: "⚙️🪨 Siege Engine",       desc: "Cannon + Trebuchet",           color: "text-orange-300", border: "border-orange-600/60", bg: "bg-orange-950/30", tier: "MERGE" },

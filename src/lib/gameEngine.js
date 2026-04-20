@@ -302,7 +302,7 @@ export const TOWER_TYPES = {
     range: 3.5,
     fireRate: 600,
     color: "#78350f",
-    emoji: "🧝",
+    emoji: "🏹",
     description: "Fast bolts, medium damage",
     upgradeCost: 60,
     comboType: "speed",
