@@ -13,6 +13,18 @@ const WAVE_DIALOGUES = {
   25: { speaker: "Queen Seraphine", text: "The Shadow Sovereign falls! Malgrath's grip loosens. One final battle stands between us and true peace..." },
   26: { speaker: "Queen Seraphine", text: "The Demon Lord himself descends! This is our final stand, hero. Save Eldenmoor. SAVE US ALL!" },
   30: { speaker: "Queen Seraphine", text: "VICTORY! The Demon Lord Malgrath is NO MORE! Eldenmoor is FOREVER FREE! Thou art our eternal savior, Lord Aldric!" },
+  31: { speaker: "Queen Seraphine", text: "Even with Malgrath fallen, greater evils stir. Ancient gates that sealed primordial evil have cracked open, Aldric." },
+  35: { speaker: "Queen Seraphine", text: "The guardian of the gates falls... but the true darkness cannot be sealed. Not again. Not without sacrifice." },
+  36: { speaker: "Queen Seraphine", text: "Nature itself has been poisoned, Aldric. The Corrupted Grove spreads like a sickness. This evil is... different." },
+  40: { speaker: "Queen Seraphine", text: "The corruption is purged, but... at what cost? Nature will not heal for generations. Are we truly saving anything?" },
+  41: { speaker: "Queen Seraphine", text: "Ancient plagues return! Diseases that killed thousands in ages past. Aldric... I've never seen you look so uncertain." },
+  45: { speaker: "Queen Seraphine", text: "The plagues are contained. But I see it—you're changing. Let me share this burden with you, my champion." },
+  50: { speaker: "Queen Seraphine", text: "That entity... it was only one of many. We're not fighting a war, Aldric. We're witnessing an awakening." },
+  55: { speaker: "Queen Seraphine", text: "The storms calm. But you... you've become something beyond mortal. Are we saving Eldenmoor, or creating a new god?" },
+  60: { speaker: "Queen Seraphine", text: "The infernal lords vanquish...but I scarcely recognize you anymore. Are you still the hero I once knew, Aldric?" },
+  65: { speaker: "Queen Seraphine", text: "The Void retreats for now... but let's face whatever comes together. Not as ruler and champion—as two souls against the dark." },
+  70: { speaker: "Queen Seraphine", text: "You stand atop the spire. The answer is revealed... oh Aldric, do you see? Do you understand now what we must do?" },
+  75: { speaker: "Queen Seraphine", text: "THE CYCLE BREAKS! Aldric, you have not just saved Eldenmoor—you have healed the universe itself. We are eternal now." },
 };
 
 export default function WaveDialogue({ wave, show }) {

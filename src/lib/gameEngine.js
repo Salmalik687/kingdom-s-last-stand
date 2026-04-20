@@ -4,23 +4,9 @@ export const CELL_SIZE = 48;
 export const GRID_COLS = 16;
 export const GRID_ROWS = 10;
 
-// 5 Lands — each has 5 waves (boss on final wave of each land)
-// Land 1: Waves 1–5   | Land 2: 6–10 | Land 3: 11–15 | Land 4: 16–20 | Land 5: 21–25
+// 15 Lands — each has 5 waves (boss on final wave of each land)
+// Waves 1–5 to 71–75
 export const STAGE_THEMES = {
-  demonRealm: {
-    name: "The Demon's Throne",
-    waveRange: [26, 30],
-    bg: "#0a0005",
-    grassA: "#15000f",
-    grassB: "#0f000a",
-    pathA: "#2a0010",
-    pathB: "#240008",
-    pathBorder: "rgba(180,0,80,0.5)",
-    gridLine: "rgba(100,0,50,0.08)",
-    borderColor: "#6a001a",
-    label: "Land 6 · Waves 26–30",
-    emoji: "👑",
-  },
   meadow: {
     name: "The Verdant Meadow",
     waveRange: [1, 5],
@@ -89,6 +75,147 @@ export const STAGE_THEMES = {
     gridLine: "rgba(120,0,180,0.10)",
     borderColor: "#4a0080",
     label: "Land 5 · Waves 21–25",
+    emoji: "💀",
+  },
+  demonRealm: {
+    name: "The Demon's Throne",
+    waveRange: [26, 30],
+    bg: "#0a0005",
+    grassA: "#15000f",
+    grassB: "#0f000a",
+    pathA: "#2a0010",
+    pathB: "#240008",
+    pathBorder: "rgba(180,0,80,0.5)",
+    gridLine: "rgba(100,0,50,0.08)",
+    borderColor: "#6a001a",
+    label: "Land 6 · Waves 26–30",
+    emoji: "👑",
+  },
+  // New lands 7-15
+  shatteredGates: {
+    name: "The Shattered Gates",
+    waveRange: [31, 35],
+    bg: "#0f0810",
+    grassA: "#1a1620",
+    grassB: "#141018",
+    pathA: "#2a2535",
+    pathB: "#242038",
+    pathBorder: "rgba(120,80,160,0.45)",
+    gridLine: "rgba(100,80,140,0.08)",
+    borderColor: "#3a2a5a",
+    label: "Land 7 · Waves 31–35",
+    emoji: "⚔️",
+  },
+  corruptedGrove: {
+    name: "The Corrupted Grove",
+    waveRange: [36, 40],
+    bg: "#0a150a",
+    grassA: "#0f2a0f",
+    grassB: "#0c200c",
+    pathA: "#4a3a1a",
+    pathB: "#403510",
+    pathBorder: "rgba(100,120,40,0.5)",
+    gridLine: "rgba(80,100,30,0.08)",
+    borderColor: "#2a4a1a",
+    label: "Land 8 · Waves 36–40",
+    emoji: "🍂",
+  },
+  plaguelands: {
+    name: "The Plaguelands",
+    waveRange: [41, 45],
+    bg: "#0a0a05",
+    grassA: "#1a1a0f",
+    grassB: "#0f0f08",
+    pathA: "#3a3a20",
+    pathB: "#303018",
+    pathBorder: "rgba(100,100,40,0.4)",
+    gridLine: "rgba(80,80,20,0.08)",
+    borderColor: "#4a4a1a",
+    label: "Land 9 · Waves 41–45",
+    emoji: "☠️",
+  },
+  crystallicScar: {
+    name: "The Crystallic Scar",
+    waveRange: [46, 50],
+    bg: "#080a0f",
+    grassA: "#0f1420",
+    grassB: "#0a0f18",
+    pathA: "#2a3a5a",
+    pathB: "#202a45",
+    pathBorder: "rgba(100,140,220,0.4)",
+    gridLine: "rgba(80,120,200,0.08)",
+    borderColor: "#1a3a7a",
+    label: "Land 10 · Waves 46–50",
+    emoji: "💎",
+  },
+  stormpeakPass: {
+    name: "Stormbreak Pass",
+    waveRange: [51, 55],
+    bg: "#0a0a10",
+    grassA: "#15151f",
+    grassB: "#0f0f18",
+    pathA: "#3a3a4a",
+    pathB: "#303038",
+    pathBorder: "rgba(200,200,100,0.4)",
+    gridLine: "rgba(150,150,80,0.08)",
+    borderColor: "#5a5a2a",
+    label: "Land 11 · Waves 51–55",
+    emoji: "⚡",
+  },
+  infernalChasms: {
+    name: "The Infernal Chasms",
+    waveRange: [56, 60],
+    bg: "#1a0a05",
+    grassA: "#2a1a0f",
+    grassB: "#1f0f08",
+    pathA: "#4a2a10",
+    pathB: "#3a2008",
+    pathBorder: "rgba(200,80,20,0.5)",
+    gridLine: "rgba(150,60,10,0.08)",
+    borderColor: "#6a2a00",
+    label: "Land 12 · Waves 56–60",
+    emoji: "🔥",
+  },
+  voidEdges: {
+    name: "The Void's Edges",
+    waveRange: [61, 65],
+    bg: "#05000a",
+    grassA: "#0a0010",
+    grassB: "#08000c",
+    pathA: "#200040",
+    pathB: "#180035",
+    pathBorder: "rgba(180,80,255,0.5)",
+    gridLine: "rgba(150,60,200,0.08)",
+    borderColor: "#5a1a8a",
+    label: "Land 13 · Waves 61–65",
+    emoji: "🌀",
+  },
+  celestialSpire: {
+    name: "The Celestial Spire",
+    waveRange: [66, 70],
+    bg: "#0f080a",
+    grassA: "#2a1a30",
+    grassB: "#1f0f25",
+    pathA: "#4a3a6a",
+    pathB: "#3a2a55",
+    pathBorder: "rgba(200,150,255,0.45)",
+    gridLine: "rgba(180,130,220,0.08)",
+    borderColor: "#5a3a8a",
+    label: "Land 14 · Waves 66–70",
+    emoji: "✨",
+  },
+  malgrath_Throne: {
+    name: "Malgrath's Throne",
+    waveRange: [71, 75],
+    bg: "#0a0005",
+    grassA: "#15000f",
+    grassB: "#0f000a",
+    pathA: "#3a0015",
+    pathB: "#2e000f",
+    pathBorder: "rgba(255,0,100,0.6)",
+    gridLine: "rgba(200,0,80,0.10)",
+    borderColor: "#8a001a",
+    label: "Land 15 · Waves 71–75",
     emoji: "💀",
   },
 };
@@ -693,9 +820,64 @@ export const ENEMY_TYPES = {
     phaseShifts: [0.8, 0.6, 0.4, 0.2],
     rageMultiplier: 3.0,
   },
+  // Extended lands 7-15
+  boss_gates: { hp: 8000, speed: 0.6, reward: 2000, emoji: "⚔️", name: "Guardian of the Gates", isBoss: true,
+    cinematicTitle: "THE GATES SHATTER",
+    cinematicDesc: "An ancient construct that has sealed away primordial evil for eons. Its fall reveals that the true darkness has yet to be awakened.",
+    phaseShifts: [0.7, 0.4],
+    rageMultiplier: 2.0,
+  },
+  boss_corruption: { hp: 6500, speed: 0.5, reward: 1800, emoji: "🍂", name: "The Corrupted Bloom", isBoss: true,
+    cinematicTitle: "NATURE CLEANSED",
+    cinematicDesc: "A living forest warped by ancient malice. To save nature, you must destroy nature itself.",
+    phaseShifts: [0.6, 0.3],
+    rageMultiplier: 1.8,
+  },
+  boss_plague: { hp: 5500, speed: 0.7, reward: 1600, emoji: "☠️", name: "The Plague Mother", isBoss: true,
+    cinematicTitle: "THE SICKNESS ENDS",
+    cinematicDesc: "A sentient pestilence that has ravaged kingdoms for millennia. Her hunger is endless.",
+    phaseShifts: [0.65, 0.35],
+    rageMultiplier: 1.9,
+  },
+  boss_crystal: { hp: 7200, speed: 0.4, reward: 2100, emoji: "💎", name: "The Crystalline Titan", isBoss: true,
+    cinematicTitle: "THE SCAR SEALED",
+    cinematicDesc: "A being of living crystal that grows from the wound in reality itself. Its very existence defies the laws of nature.",
+    phaseShifts: [0.7, 0.45, 0.2],
+    rageMultiplier: 2.1,
+  },
+  boss_storm: { hp: 8500, speed: 0.5, reward: 2300, emoji: "⚡", name: "The Storm Sovereign", isBoss: true,
+    cinematicTitle: "THE HEAVENS CALM",
+    cinematicDesc: "An entity born from the fury of nature itself. Command of sky, wind, and lightning.",
+    phaseShifts: [0.75, 0.5, 0.25],
+    rageMultiplier: 2.2,
+  },
+  boss_inferno: { hp: 10000, speed: 0.45, reward: 2700, emoji: "🔥", name: "The Infernal Patriarch", isBoss: true,
+    cinematicTitle: "THE DEPTHS SEALED",
+    cinematicDesc: "An ancient lord of the underworld. Its mere presence warps reality with heat and pain.",
+    phaseShifts: [0.8, 0.6, 0.4, 0.2],
+    rageMultiplier: 2.5,
+  },
+  boss_void: { hp: 12000, speed: 0.35, reward: 3500, emoji: "🌀", name: "The Void Warden", isBoss: true,
+    cinematicTitle: "THE VOID RECEDES",
+    cinematicDesc: "A being that exists between dimensions. It speaks in the language of nothing and entropy.",
+    phaseShifts: [0.85, 0.65, 0.45, 0.25],
+    rageMultiplier: 2.8,
+  },
+  boss_spire: { hp: 9500, speed: 0.5, reward: 2600, emoji: "✨", name: "The Celestial Sentinel", isBoss: true,
+    cinematicTitle: "THE SPIRE CROWNED",
+    cinematicDesc: "A guardian of the highest realms. It alone knows the truth of creation and destruction.",
+    phaseShifts: [0.7, 0.45, 0.2],
+    rageMultiplier: 2.3,
+  },
+  boss_origin: { hp: 20000, speed: 0.3, reward: 10000, emoji: "💀", name: "The Origin of All Darkness", isBoss: true,
+    cinematicTitle: "THE CYCLE BREAKS",
+    cinematicDesc: "The first darkness. The primordial evil. The reason all darkness returns. To defeat it is to heal the universe itself.",
+    phaseShifts: [0.9, 0.75, 0.6, 0.45, 0.3, 0.15],
+    rageMultiplier: 3.5,
+  },
 };
 
-// Boss spawns on the final wave of each land
+// Boss spawns on the final wave of each land (all 15 lands)
 export const STAGE_BOSS_WAVES = {
   5:  "boss_meadow",
   10: "boss_dungeon",
@@ -703,6 +885,15 @@ export const STAGE_BOSS_WAVES = {
   20: "boss_abyss",
   25: "boss_shadow",
   30: "boss_demon",
+  35: "boss_gates",
+  40: "boss_corruption",
+  45: "boss_plague",
+  50: "boss_crystal",
+  55: "boss_storm",
+  60: "boss_inferno",
+  65: "boss_void",
+  70: "boss_spire",
+  75: "boss_origin",
 };
 
 const BOSS_NAME_PARTS = {
@@ -821,13 +1012,106 @@ export function generateWaves(waveNumber) {
     const types = ["doomKnight", "abyssLord", "soulReaper", "voidling"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-  } else {
+  } else if (waveNumber <= 30) {
     const types = ["abyssLord", "soulReaper", "doomKnight", "voidling", "abyssLord", "soulReaper"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
     if (!isBossWave)
       for (let k = 0; k < 5; k++)
         enemies.push({ type: k % 2 === 0 ? "abyssLord" : "soulReaper", delay: count * spawnInterval + 800 + k * 400 });
+
+  // Land 7: Shattered Gates (waves 31-35)
+  } else if (waveNumber <= 32) {
+    const types = ["voidling", "doomKnight", "abyssLord", "soulReaper"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 35) {
+    const types = ["abyssLord", "soulReaper", "doomKnight", "voidling", "abyssLord"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 8: Corrupted Grove (waves 36-40)
+  } else if (waveNumber <= 37) {
+    const types = ["peasant", "soldier", "horseman", "knight", "firedrake"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 40) {
+    const types = ["firedrake", "demon", "lavaSpawn", "golem", "firedrake"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 9: Plaguelands (waves 41-45)
+  } else if (waveNumber <= 42) {
+    const types = ["skeleton", "wraith", "necromancer", "king"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 45) {
+    const types = ["wraith", "necromancer", "king", "skeleton", "wraith"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 10: Crystallic Scar (waves 46-50)
+  } else if (waveNumber <= 47) {
+    const types = ["specter", "shadow", "frostGiant", "iceWalker"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 50) {
+    const types = ["shadow", "frostGiant", "specter", "iceWalker", "shadow"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 11: Stormbreak Pass (waves 51-55)
+  } else if (waveNumber <= 52) {
+    const types = ["voidling", "soulReaper", "doomKnight"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 55) {
+    const types = ["doomKnight", "soulReaper", "voidling", "abyssLord"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 12: Infernal Chasms (waves 56-60)
+  } else if (waveNumber <= 57) {
+    const types = ["lavaSpawn", "demon", "firedrake", "golem"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 60) {
+    const types = ["demon", "golem", "firedrake", "lavaSpawn", "demon"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 13: Void's Edges (waves 61-65)
+  } else if (waveNumber <= 62) {
+    const types = ["voidling", "soulReaper", "shadow", "doomKnight"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 65) {
+    const types = ["abyssLord", "doomKnight", "voidling", "soulReaper", "shadow"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 14: Celestial Spire (waves 66-70)
+  } else if (waveNumber <= 67) {
+    const types = ["specter", "shadow", "frostGiant", "iceWalker", "voidling"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else if (waveNumber <= 70) {
+    const types = ["doomKnight", "abyssLord", "soulReaper", "voidling", "shadow"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+
+  // Land 15: Malgrath's Throne (waves 71-75)
+  } else if (waveNumber <= 72) {
+    const types = ["abyssLord", "soulReaper", "doomKnight", "voidling"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else {
+    const types = ["abyssLord", "soulReaper", "doomKnight", "voidling", "shadow"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+    if (!isBossWave)
+      for (let k = 0; k < 6; k++)
+        enemies.push({ type: k % 2 === 0 ? "abyssLord" : "soulReaper", delay: count * spawnInterval + 800 + k * 300 });
   }
 
   // Boss at end of boss wave
