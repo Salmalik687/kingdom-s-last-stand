@@ -219,7 +219,7 @@ export function playVictoryShout() {
   const text = VICTORY_SHOUTS[Math.floor(Math.random() * VICTORY_SHOUTS.length)];
   const utt = new SpeechSynthesisUtterance(text);
   utt.rate = 0.78;
-  utt.pitch = 0.45;
+  utt.pitch = 0.2;
   utt.volume = 1;
 
   const voices = window.speechSynthesis.getVoices();
