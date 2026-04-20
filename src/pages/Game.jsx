@@ -35,6 +35,7 @@ import CharacterSelect from "../components/game/CharacterSelect";
 import DifficultySelect from "../components/game/DifficultySelect";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
+import DamagePopup from "../components/game/DamagePopup";
 
 
 const INITIAL_GOLD = 150;
@@ -100,6 +101,7 @@ export default function Game() {
   const tempBuffsRef = useRef({}); // { damageBonus, fireRateBonus, rangeBonus, wavesLeft }
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
+  const [damagePopups, setDamagePopups] = useState([]);
 
   // Achievement stats ref — updated continuously
   const achStatsRef = useRef({
@@ -410,6 +412,16 @@ export default function Game() {
             const voidMult = voidWrathActive ? 3 : 1;
             const dmg = Math.floor(proj.damage * (1 - effectiveDR) * voidMult);
             target.hp -= dmg;
+
+            // Add damage popup
+            const isCritical = Math.random() < 0.15;
+            setDamagePopups(prev => [...prev, {
+              id: Math.random(),
+              damage: isCritical ? Math.floor(dmg * 1.5) : dmg,
+              x: target.x,
+              y: target.y - 30,
+              critical: isCritical,
+            }]);
 
             // Slow / freeze effects
             if (proj.towerType === "frost" || TOWER_TYPES[proj.towerType]?.appliesSlow || proj.appliesSlow) {
@@ -1053,17 +1065,29 @@ export default function Game() {
       </div>
 
       {mergeFlash && (
-        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl font-black tracking-widest uppercase text-sm animate-bounce"
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-6 py-3 rounded-2xl font-black tracking-widest uppercase text-sm"
           style={{
             background: 'linear-gradient(160deg, #7c3aed, #4c1d95)',
             border: '2px solid #a78bfa',
             boxShadow: '0 5px 0 #1e0a4a, 0 0 30px rgba(139,92,246,0.5)',
             color: '#e9d5ff',
             textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+            animation: 'mergeFlash 1.8s cubic-bezier(0.34,1.56,0.64,1) forwards',
           }}>
           ✨ {mergeFlash.emoji} {mergeFlash.name} Forged!
         </div>
       )}
+
+      {/* Damage popups */}
+      {damagePopups.map(popup => (
+        <DamagePopup
+          key={popup.id}
+          damage={popup.damage}
+          x={popup.x}
+          y={popup.y}
+          critical={popup.critical}
+        />
+      ))}
       <BossHealthBar enemies={enemiesRef.current} />
       <ComboDisplay combo={combo} multiplier={comboMultiplier} />
 

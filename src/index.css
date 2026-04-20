@@ -104,3 +104,124 @@
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(2.5); opacity: 0; }
 }
+
+/* Damage popup float animation */
+@keyframes damageFloat {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -80px) scale(0.7);
+  }
+}
+
+/* Critical hit pulse */
+@keyframes criticalPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(239,68,68,0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(239,68,68,1));
+  }
+}
+
+/* Tower attack animation */
+@keyframes towerAttack {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* Enemy hit knockback */
+@keyframes enemyHitKnockback {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+/* Projectile impact flash */
+@keyframes projectileImpact {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Heal glow */
+@keyframes healGlow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(16,185,129,0.4)); }
+  50% { filter: drop-shadow(0 0 16px rgba(16,185,129,0.8)); }
+}
+
+/* Enemy death fade */
+@keyframes enemyDeathFade {
+  0% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+}
+
+/* Enemy spawn entrance */
+@keyframes enemySpawn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Tower level up flash */
+@keyframes towerLevelUp {
+  0%, 100% { filter: drop-shadow(0 0 0px #fbbf24); }
+  50% { filter: drop-shadow(0 0 12px #fbbf24); }
+}
+
+/* Merge flash effect */
+@keyframes mergeFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Health bar damage drain */
+@keyframes healthDrain {
+  0% { width: var(--from-width); }
+  100% { width: var(--to-width); }
+}
+
+/* Boss rage phase pulse */
+@keyframes bossRagePulse {
+  0%, 100% { filter: drop-shadow(0 0 0px currentColor); }
+  50% { filter: drop-shadow(0 0 20px currentColor); }
+}
+
+/* Ability activation glow */
+@keyframes abilityGlow {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
