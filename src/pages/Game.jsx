@@ -35,7 +35,7 @@ const INITIAL_GOLD = 150;
 const INITIAL_LIVES = 20;
 
 // Pre-placed cannon positions at game start
-const INITIAL_CANNON_POSITIONS = [[3, 6], [6, 3], [10, 5], [13, 6]];
+const INITIAL_CANNON_POSITIONS = [];
 
 function makeInitialState() {
   const towers = [];
