@@ -26,6 +26,7 @@ import BossKillReward from "../components/game/BossKillReward";
 import AbilityTree from "../components/game/AbilityTree";
 import ActiveAbilityBar from "../components/game/ActiveAbilityBar";
 import CodexModal from "../components/game/CodexModal";
+import BossHealthBar from "../components/game/BossHealthBar";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 
@@ -957,6 +958,7 @@ export default function Game() {
           ✨ {mergeFlash.emoji} {mergeFlash.name} Forged!
         </div>
       )}
+      <BossHealthBar enemies={enemiesRef.current} />
       <ComboDisplay combo={combo} multiplier={comboMultiplier} />
 
       <BossArrivalModal boss={bossArrival} onDismiss={() => setBossArrival(null)} />
