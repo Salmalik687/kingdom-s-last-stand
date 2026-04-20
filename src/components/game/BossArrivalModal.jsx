@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { DemonLord } from "./CharacterSprites";
 
 // Cinematic data per boss
 const BOSS_CINEMATIC = {
@@ -327,18 +326,14 @@ export default function BossArrivalModal({ boss, onDismiss }) {
               borderRadius: "50%", border: `3px solid ${cinematic.glow}`,
               opacity: 0.4, animation: "pulseGlow 2s ease-in-out infinite",
             }} />
-            {isShadowBoss ? (
-              <DemonLord size={160} />
-            ) : (
-              <div style={{
-                fontSize: "clamp(80px,18vw,160px)",
-                filter: `drop-shadow(0 0 40px ${cinematic.glow}) drop-shadow(0 0 80px rgba(${cinematic.rgb},0.4))`,
-                animation: "bossFloat 2.8s ease-in-out infinite",
-                display: "block", textAlign: "center",
-              }}>
-                {cinematic.emoji}
-              </div>
-            )}
+            <div style={{
+            fontSize: "clamp(80px,18vw,160px)",
+            filter: `drop-shadow(0 0 40px ${cinematic.glow}) drop-shadow(0 0 80px rgba(${cinematic.rgb},0.4))`,
+            animation: "bossFloat 2.8s ease-in-out infinite",
+            display: "block", textAlign: "center",
+          }}>
+            {cinematic.emoji}
+          </div>
           </div>
 
           {/* Boss name */}
