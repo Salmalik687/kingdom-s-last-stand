@@ -252,7 +252,7 @@ export default function Game() {
 
   const handleSell = useCallback((tower) => {
     const base = TOWER_TYPES[tower.type];
-    const value = Math.floor(base.cost * 0.6 * tower.level);
+    const value = Math.floor(base.cost * 0.5 * tower.level);
     towersRef.current = towersRef.current.filter(t => t.id !== tower.id);
     towerMapRef.current.delete(`${tower.gridX},${tower.gridY}`);
     setGold(prev => prev + value);
