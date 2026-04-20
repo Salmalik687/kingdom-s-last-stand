@@ -37,6 +37,166 @@ export function playDamageSound() {
   setTimeout(() => playTone({ frequency: 60, type: "sine", duration: 0.2, gain: 0.25 }), 20);
 }
 
+// Unique merge sounds — one per result tower type
+export function playMergeSound(resultType) {
+  const ac = getCtx();
+
+  function tone(freq, type, duration, gain, startOffset = 0, detune = 0) {
+    const osc = ac.createOscillator();
+    const g = ac.createGain();
+    osc.connect(g);
+    g.connect(ac.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, ac.currentTime + startOffset);
+    if (detune) osc.detune.setValueAtTime(detune, ac.currentTime + startOffset);
+    g.gain.setValueAtTime(gain, ac.currentTime + startOffset);
+    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + startOffset + duration);
+    osc.start(ac.currentTime + startOffset);
+    osc.stop(ac.currentTime + startOffset + duration);
+  }
+
+  switch (resultType) {
+    case "ballista":
+      // Twang + metallic ping
+      tone(180, "sawtooth", 0.12, 0.3);
+      tone(440, "sine", 0.18, 0.25, 0.05);
+      tone(880, "sine", 0.10, 0.15, 0.15);
+      break;
+    case "warcannon":
+      // Deep boom
+      tone(80, "sawtooth", 0.3, 0.5);
+      tone(120, "square", 0.2, 0.35, 0.05);
+      tone(220, "sine", 0.15, 0.2, 0.1);
+      break;
+    case "doomcannon":
+      // Massive explosion crescendo
+      tone(55, "sawtooth", 0.4, 0.6);
+      tone(110, "square", 0.35, 0.45, 0.04);
+      tone(220, "sine", 0.25, 0.3, 0.1);
+      tone(440, "sine", 0.2, 0.2, 0.2);
+      tone(880, "sine", 0.15, 0.15, 0.3);
+      break;
+    case "stormArcher":
+      // Fast ascending whistle
+      tone(600, "sine", 0.08, 0.2);
+      tone(800, "sine", 0.08, 0.2, 0.07);
+      tone(1000, "sine", 0.1, 0.22, 0.14);
+      break;
+    case "arrowStorm":
+      // Rapid flurry of pings
+      [400, 500, 650, 800, 1000].forEach((f, i) =>
+        tone(f, "sine", 0.07, 0.2, i * 0.05)
+      );
+      break;
+    case "spellcaster":
+      // Mystical ascending shimmer
+      [330, 440, 554, 660, 880].forEach((f, i) =>
+        tone(f, "sine", 0.18, 0.22, i * 0.06)
+      );
+      break;
+    case "frozenMage":
+      // Icy crystalline shimmer
+      tone(880, "sine", 0.2, 0.2);
+      tone(1100, "sine", 0.15, 0.18, 0.08);
+      tone(660, "triangle", 0.25, 0.15, 0.04, -20);
+      break;
+    case "arcaneCannoneer":
+      // Magic boom
+      tone(200, "sawtooth", 0.25, 0.4);
+      tone(440, "sine", 0.2, 0.3, 0.05);
+      tone(880, "sine", 0.15, 0.2, 0.15);
+      break;
+    case "siegeEngine":
+      // Heavy grinding crash
+      tone(60, "sawtooth", 0.4, 0.55);
+      tone(90, "square", 0.3, 0.35, 0.06);
+      tone(180, "sine", 0.2, 0.25, 0.15);
+      break;
+    case "warMachine":
+      // Clanging metal
+      tone(150, "square", 0.25, 0.4);
+      tone(300, "sawtooth", 0.2, 0.3, 0.08);
+      tone(250, "sine", 0.18, 0.2, 0.16);
+      break;
+    case "blizzardTower":
+      // Cold windy whoosh
+      tone(220, "sine", 0.35, 0.15, 0, 30);
+      tone(330, "sine", 0.3, 0.12, 0.07, -20);
+      tone(440, "triangle", 0.25, 0.1, 0.14, 10);
+      break;
+    case "frostCannoneer":
+      // Ice cannon crack
+      tone(100, "sawtooth", 0.2, 0.45);
+      tone(660, "sine", 0.15, 0.2, 0.06);
+      tone(1100, "sine", 0.1, 0.15, 0.14);
+      break;
+    case "shadowMage":
+      // Dark descending dread
+      [880, 660, 440, 330].forEach((f, i) =>
+        tone(f, "sawtooth", 0.15, 0.2, i * 0.07)
+      );
+      break;
+    case "voidCannon":
+      // Eerie void pulse
+      tone(60, "sine", 0.5, 0.4);
+      tone(440, "sine", 0.2, 0.2, 0.1, -50);
+      tone(880, "sine", 0.12, 0.15, 0.25, 50);
+      break;
+    case "glacialBallista":
+      // Ice bolt thud
+      tone(500, "sine", 0.15, 0.25);
+      tone(750, "triangle", 0.12, 0.2, 0.08);
+      tone(1200, "sine", 0.08, 0.15, 0.18);
+      break;
+    case "thunderArcher":
+      // Electric crack + high whine
+      tone(100, "square", 0.1, 0.4);
+      tone(800, "sine", 0.12, 0.25, 0.04);
+      tone(1600, "sine", 0.08, 0.15, 0.12);
+      break;
+    case "infernoTrebuchet":
+      // Roaring fire launch
+      tone(70, "sawtooth", 0.45, 0.55);
+      tone(140, "sawtooth", 0.35, 0.4, 0.05);
+      tone(280, "sine", 0.25, 0.3, 0.15);
+      tone(560, "sine", 0.15, 0.2, 0.28);
+      break;
+    case "venomCrossbow":
+      // Hissing poison dart
+      tone(600, "sawtooth", 0.08, 0.3);
+      tone(300, "sine", 0.12, 0.2, 0.06, -30);
+      tone(450, "triangle", 0.1, 0.15, 0.13);
+      break;
+    case "doomSiege":
+      // Earth-shattering ULTRA boom
+      tone(40, "sawtooth", 0.6, 0.7);
+      tone(80, "square", 0.5, 0.55, 0.04);
+      tone(160, "sawtooth", 0.4, 0.4, 0.1);
+      tone(320, "sine", 0.3, 0.3, 0.2);
+      tone(640, "sine", 0.2, 0.2, 0.32);
+      tone(1280, "sine", 0.15, 0.15, 0.44);
+      break;
+    case "frostStorm":
+      // Icy rapid volley
+      [1000, 800, 600, 400, 600, 800].forEach((f, i) =>
+        tone(f, "sine", 0.08, 0.18, i * 0.05)
+      );
+      break;
+    case "arcaneSiege":
+      // Arcane heavy charge
+      tone(110, "sawtooth", 0.35, 0.45);
+      tone(440, "sine", 0.25, 0.3, 0.08);
+      tone(660, "sine", 0.18, 0.22, 0.18);
+      tone(880, "sine", 0.12, 0.15, 0.28);
+      break;
+    default:
+      // Generic merge chime
+      tone(440, "sine", 0.15, 0.3);
+      tone(660, "sine", 0.12, 0.25, 0.08);
+      tone(880, "sine", 0.1, 0.2, 0.16);
+  }
+}
+
 export function playWaveSuccessSound() {
   // Triumphant fanfare arpeggio
   const notes = [523, 659, 784, 1047];

@@ -23,7 +23,7 @@ import HallOfHeroesModal from "../components/game/HallOfHeroesModal";
 import AchievementToast from "../components/game/AchievementToast";
 import ArmorUpgradeScreen from "../components/game/ArmorUpgradeScreen";
 import { checkNewAchievements } from "../lib/achievements";
-import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout } from "../lib/sounds";
+import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 
 
 const INITIAL_GOLD = 150;
@@ -154,6 +154,7 @@ export default function Game() {
           achStatsRef.current.mergedTypes = [...achStatsRef.current.mergedTypes, resultType];
         }
         checkAchievements({ ...achStatsRef.current });
+        playMergeSound(resultType);
         setMergeFlash(TOWER_TYPES[resultType]);
         setTimeout(() => setMergeFlash(false), 1800);
       } else {
