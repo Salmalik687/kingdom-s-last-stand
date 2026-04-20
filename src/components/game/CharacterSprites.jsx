@@ -93,19 +93,19 @@ export function QueenSeraphine({ size = 120, glowColor = "#2d7a4a", glowRgb = "4
     <svg width={size} height={size * 1.8} viewBox="0 0 100 180" style={{ overflow: "visible", filter: `drop-shadow(0 6px 28px rgba(45,90,74,0.5)) drop-shadow(0 0 40px rgba(45,122,74,0.2))` }}>
       <defs>
         <radialGradient id="queenSkinGrad" cx="45%" cy="38%" r="55%">
-          <stop offset="0%" stopColor="#f5d9c8" />
-          <stop offset="60%" stopColor="#e8c4ac" />
-          <stop offset="100%" stopColor="#d4a884" />
+          <stop offset="0%" stopColor="#f9e4d0" />
+          <stop offset="50%" stopColor="#f0d4b8" />
+          <stop offset="100%" stopColor="#dcc0a0" />
         </radialGradient>
         <linearGradient id="queenHairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#6b4a3a" />
-          <stop offset="50%" stopColor="#4a3a2a" />
-          <stop offset="100%" stopColor="#2a1a10" />
+          <stop offset="0%" stopColor="#4a3a2a" />
+          <stop offset="50%" stopColor="#3a2a1a" />
+          <stop offset="100%" stopColor="#1a0a00" />
         </linearGradient>
         <radialGradient id="greenDressGrad" cx="50%" cy="20%" r="80%">
-          <stop offset="0%" stopColor="#5a9a7a" />
-          <stop offset="50%" stopColor="#3a7a5a" />
-          <stop offset="100%" stopColor="#2a5a4a" />
+          <stop offset="0%" stopColor="#6aaa8a" />
+          <stop offset="50%" stopColor="#4a8a6a" />
+          <stop offset="100%" stopColor="#2a6a4a" />
         </radialGradient>
       </defs>
 
@@ -191,25 +191,35 @@ export function QueenSeraphine({ size = 120, glowColor = "#2d7a4a", glowRgb = "4
         {/* ══ HEAD / FACE ══ */}
         {/* Head shape */}
         <ellipse cx="50" cy="38" rx="17" ry="19" fill="url(#queenSkinGrad)" />
-        {/* Facial structure shadow */}
-        <ellipse cx="50" cy="50" rx="11" ry="5" fill="#c09070" opacity="0.25" />
-        {/* Cheeks — soft rose */}
-        <ellipse cx="36" cy="42" rx="6" ry="4" fill="#d47a7a" opacity="0.18" />
-        <ellipse cx="64" cy="42" rx="6" ry="4" fill="#d47a7a" opacity="0.18" />
+        {/* Realistic face structure */}
+        <ellipse cx="50" cy="50" rx="11" ry="5" fill="#c8956f" opacity="0.35" />
+        {/* Cheeks — natural blush */}
+        <ellipse cx="36" cy="43" rx="5.5" ry="3.5" fill="#e89a8a" opacity="0.22" />
+        <ellipse cx="64" cy="43" rx="5.5" ry="3.5" fill="#e89a8a" opacity="0.22" />
+        {/* Subtle jawline definition */}
+        <path d="M34 48 Q50 55 66 48" stroke="#c8956f" strokeWidth="0.8" fill="none" opacity="0.3" />
 
-        {/* ══ EYES ══ — bright, kind */}
-        {/* Eye whites */}
-        <ellipse cx="39" cy="36" rx="6" ry="4.5" fill="white" />
-        <ellipse cx="61" cy="36" rx="6" ry="4.5" fill="white" />
-        {/* Iris — warm brown-green */}
-        <circle cx="39" cy="37" r="3.8" fill="#5a7a6a" />
-        <circle cx="61" cy="37" r="3.8" fill="#5a7a6a" />
+        {/* ══ EYES ══ — expressive and realistic */}
+        {/* Eye whites with subtle definition */}
+        <ellipse cx="39" cy="36" rx="6.2" ry="4.8" fill="#faf8f5" />
+        <ellipse cx="61" cy="36" rx="6.2" ry="4.8" fill="#faf8f5" />
+        {/* Upper eyelid shadow for depth */}
+        <ellipse cx="39" cy="33" rx="6.5" ry="2" fill="rgba(0,0,0,0.08)" />
+        <ellipse cx="61" cy="33" rx="6.5" ry="2" fill="rgba(0,0,0,0.08)" />
+        {/* Iris — rich emerald */}
+        <circle cx="39" cy="37" r="4" fill="#4a8a6a" />
+        <circle cx="61" cy="37" r="4" fill="#4a8a6a" />
+        {/* Iris detail ring */}
+        <circle cx="39" cy="37" r="3.8" fill="none" stroke="#2a6a4a" strokeWidth="0.5" opacity="0.6" />
+        <circle cx="61" cy="37" r="3.8" fill="none" stroke="#2a6a4a" strokeWidth="0.5" opacity="0.6" />
         {/* Inner pupil */}
-        <circle cx="39" cy="37" r="2.2" fill="#0a1a18" />
-        <circle cx="61" cy="37" r="2.2" fill="#0a1a18" />
-        {/* Pupil shine */}
-        <circle cx="40.5" cy="35.5" r="1.1" fill="white" opacity="0.95" />
-        <circle cx="62.5" cy="35.5" r="1.1" fill="white" opacity="0.95" />
+        <circle cx="39" cy="37" r="2" fill="#0a0a0a" />
+        <circle cx="61" cy="37" r="2" fill="#0a0a0a" />
+        {/* Realistic pupil shine — multiple light sources */}
+        <circle cx="40.5" cy="35" r="1.2" fill="white" opacity="0.95" />
+        <circle cx="39" cy="39" r="0.5" fill="white" opacity="0.4" />
+        <circle cx="62.5" cy="35" r="1.2" fill="white" opacity="0.95" />
+        <circle cx="61" cy="39" r="0.5" fill="white" opacity="0.4" />
         
         {/* Upper eyelid / lash line */}
         <path d="M33 33 Q39 31 45 33" stroke="#3a2a1a" strokeWidth="1.6" fill="none" strokeLinecap="round" />
@@ -223,45 +233,51 @@ export function QueenSeraphine({ size = 120, glowColor = "#2d7a4a", glowRgb = "4
         <path d="M31 28 Q36 24.5 42 27" stroke="#4a3a2a" strokeWidth="1.6" fill="none" strokeLinecap="round" />
         <path d="M58 27 Q64 24.5 69 28" stroke="#4a3a2a" strokeWidth="1.6" fill="none" strokeLinecap="round" />
 
-        {/* ══ NOSE ══ — delicate */}
-        <path d="M49 40 Q47 45 48 47 Q50 48.5 52 47 Q53 45 51 40" stroke="#c09070" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.7" />
-        <ellipse cx="48" cy="47" rx="1.5" ry="1" fill="#a87858" opacity="0.4" />
-        <ellipse cx="52" cy="47" rx="1.5" ry="1" fill="#a87858" opacity="0.4" />
+        {/* ══ NOSE ══ — refined */}
+        <path d="M49 40 Q48.5 44 48.5 46.5 Q49.5 47.8 50.5 47 Q51.5 46 51 40" stroke="#b88860" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.8" />
+        {/* Nostril shadows */}
+        <ellipse cx="48" cy="47" rx="1.2" ry="1.2" fill="rgba(120,80,60,0.3)" />
+        <ellipse cx="52" cy="47" rx="1.2" ry="1.2" fill="rgba(120,80,60,0.3)" />
 
-        {/* ══ LIPS ══ — full, elegant rose */}
-        {/* Upper lip */}
-        <path d="M40 51 Q43 49 46 50 Q48 48.5 50 49 Q52 48.5 54 50 Q57 49 60 51" fill="#b8506a" stroke="none" />
-        <path d="M40 51 Q45 49.5 50 50 Q55 49.5 60 51" fill="#c8607a" opacity="0.5" />
-        {/* Lower lip */}
-        <path d="M40 51 Q43 54 50 55 Q57 54 60 51" fill="#c8506a" />
-        <path d="M40 51 Q50 56 60 51" fill="#d8607a" opacity="0.25" />
-        {/* Lip highlight */}
-        <path d="M44 52.5 Q50 54.5 56 52.5" stroke="rgba(255,180,200,0.5)" strokeWidth="0.7" fill="none" strokeLinecap="round" />
+        {/* ══ LIPS ══ — soft, natural rose */}
+        {/* Upper lip with natural shape */}
+        <path d="M40 51.5 Q43 49.5 46 50.5 Q48 48.8 50 49.5 Q52 48.8 54 50.5 Q57 49.5 60 51.5" fill="#d4708a" stroke="none" />
+        {/* Upper lip texture */}
+        <path d="M40 51.5 Q50 49.5 60 51.5" fill="#e48098" opacity="0.35" />
+        {/* Lower lip fuller */}
+        <path d="M40 51.5 Q43 55 50 56.5 Q57 55 60 51.5" fill="#d4708a" />
+        {/* Lower lip shading */}
+        <path d="M40 51.5 Q50 57 60 51.5" fill="#e48098" opacity="0.25" />
+        {/* Realistic lip shine */}
+        <path d="M43 52 Q50 54.5 57 52" stroke="rgba(255,200,220,0.6)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
 
-        {/* ══ HAIR ══ — flowing brown/tan tresses ══ */}
+        {/* ══ HAIR ══ — voluminous, flowing locks ══ */}
         <g className="q-hair">
-          {/* Back hair mass */}
-          <path d="M33 22 Q26 18 24 10 Q36 4 50 3 Q64 4 76 10 Q74 18 67 22" fill="#6b4a3a" />
+          {/* Top crown volume */}
+          <path d="M30 18 Q26 12 24 6 Q36 2 50 1 Q64 2 76 6 Q74 12 70 18" fill="#3a2a1a" />
+          <path d="M32 16 Q28 14 26 10 Q38 6 50 5 Q62 6 74 10 Q72 14 68 16" fill="#4a3a2a" opacity="0.6" />
           
-          {/* Side volume — left */}
-          <path d="M33 22 Q22 28 18 42 Q15 56 17 72 Q14 80 16 92" stroke="url(#queenHairGrad)" strokeWidth="11" fill="none" strokeLinecap="round" />
+          {/* Left side volume — wavy, realistic */}
+          <path d="M32 20 Q18 26 14 40 Q10 56 12 70 Q9 80 12 92" stroke="url(#queenHairGrad)" strokeWidth="12" fill="none" strokeLinecap="round" />
+          <path d="M32 20 Q20 30 18 48 Q15 64 18 78" stroke="#2a1a0a" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.4" />
           
-          {/* Side volume — right */}
-          <path d="M67 22 Q78 28 82 42 Q85 56 83 72 Q86 80 84 92" stroke="url(#queenHairGrad)" strokeWidth="11" fill="none" strokeLinecap="round" />
+          {/* Right side volume — matching */}
+          <path d="M68 20 Q82 26 86 40 Q90 56 88 70 Q91 80 88 92" stroke="url(#queenHairGrad)" strokeWidth="12" fill="none" strokeLinecap="round" />
+          <path d="M68 20 Q80 30 82 48 Q85 64 82 78" stroke="#2a1a0a" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.4" />
           
-          {/* Inner hair flow left */}
-          <path d="M33 22 Q24 32 22 48 Q20 62 22 78" stroke="#4a3a2a" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.6" />
+          {/* Long flowing tresses back */}
+          <path d="M15 92 Q10 112 14 140 Q16 155 20 168" stroke="#3a2a1a" strokeWidth="8" fill="none" strokeLinecap="round" />
+          <path d="M85 92 Q90 112 86 140 Q84 155 80 168" stroke="#3a2a1a" strokeWidth="8" fill="none" strokeLinecap="round" />
           
-          {/* Inner hair flow right */}
-          <path d="M67 22 Q76 32 78 48 Q80 62 78 78" stroke="#4a3a2a" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.6" />
+          {/* Inner shadow definition */}
+          <path d="M32 22 Q25 35 23 50 Q21 65 24 80" stroke="#1a0a00" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.5" />
+          <path d="M68 22 Q75 35 77 50 Q79 65 76 80" stroke="#1a0a00" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.5" />
           
-          {/* Long trailing tresses */}
-          <path d="M17 90 Q13 110 16 130 Q18 140 20 150" stroke="#4a3a2a" strokeWidth="7" fill="none" strokeLinecap="round" />
-          <path d="M83 90 Q87 110 84 130 Q82 140 80 150" stroke="#4a3a2a" strokeWidth="7" fill="none" strokeLinecap="round" />
-          
-          {/* Small face-framing wisps */}
-          <path d="M34 32 Q30 36 31 42" stroke="#4a3a2a" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.8" />
-          <path d="M66 32 Q70 36 69 42" stroke="#4a3a2a" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.8" />
+          {/* Soft face-framing wisps */}
+          <path d="M34 30 Q28 34 30 42" stroke="#3a2a1a" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
+          <path d="M66 30 Q72 34 70 42" stroke="#3a2a1a" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
+          <path d="M32 25 Q28 28 30 35" stroke="#4a3a2a" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.6" />
+          <path d="M68 25 Q72 28 70 35" stroke="#4a3a2a" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.6" />
         </g>
 
         {/* ══ HEADPIECE — Ornate medieval circlet ══ */}
