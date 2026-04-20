@@ -48,13 +48,46 @@ const MOUNTAIN_PEAKS = Array.from({ length: 6 }, (_, i) => {
 // Biome-based terrain background with regions
 function drawBiomeMap(ctx, wave) {
   const theme = getStageTheme(wave || 1);
+  const isMeadow = wave >= 1 && wave <= 5;
   
   // Base background gradient
   ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, BOARD_W, BOARD_H);
 
+  // Meadow: Draw distant mountains
+  if (isMeadow) {
+    // Far mountains (darker, smaller)
+    ctx.fillStyle = "rgba(60,100,80,0.3)";
+    ctx.beginPath();
+    ctx.moveTo(-20, BOARD_H * 0.35);
+    ctx.lineTo(BOARD_W * 0.25, BOARD_H * 0.15);
+    ctx.lineTo(BOARD_W * 0.5, BOARD_H * 0.28);
+    ctx.lineTo(BOARD_W * 0.75, BOARD_H * 0.12);
+    ctx.lineTo(BOARD_W + 20, BOARD_H * 0.32);
+    ctx.lineTo(BOARD_W + 20, BOARD_H);
+    ctx.lineTo(-20, BOARD_H);
+    ctx.fill();
+    
+    // Snow caps on mountains
+    ctx.fillStyle = "rgba(240,245,255,0.4)";
+    ctx.beginPath();
+    ctx.moveTo(BOARD_W * 0.25, BOARD_H * 0.15);
+    ctx.lineTo(BOARD_W * 0.32, BOARD_H * 0.22);
+    ctx.lineTo(BOARD_W * 0.18, BOARD_H * 0.22);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(BOARD_W * 0.75, BOARD_H * 0.12);
+    ctx.lineTo(BOARD_W * 0.83, BOARD_H * 0.20);
+    ctx.lineTo(BOARD_W * 0.67, BOARD_H * 0.20);
+    ctx.fill();
+  }
+
   // Create biome regions with organic shapes
-  const biomes = [
+  const biomes = isMeadow ? [
+    { x: BOARD_W * 0.3, y: BOARD_H * 0.6, r: 95, color: "#7BC043", name: "grass" },
+    { x: BOARD_W * 0.7, y: BOARD_H * 0.65, r: 80, color: "#6BA340", name: "grass" },
+    { x: BOARD_W * 0.2, y: BOARD_H * 0.8, r: 70, color: "#5BA3D0", name: "water" },
+  ] : [
     { x: BOARD_W * 0.2, y: BOARD_H * 0.3, r: 90, color: "#D4A574", name: "desert" },
     { x: BOARD_W * 0.7, y: BOARD_H * 0.25, r: 85, color: "#7BC043", name: "forest" },
     { x: BOARD_W * 0.15, y: BOARD_H * 0.75, r: 80, color: "#5BA3D0", name: "water" },
@@ -81,35 +114,56 @@ function drawBiomeMap(ctx, wave) {
   ctx.quadraticCurveTo(BOARD_W * 0.7, BOARD_H * 0.5, BOARD_W, BOARD_H * 0.6);
   ctx.stroke();
 
-  // Scatter biome decorations (trees in forest, rocks in desert, etc.)
-  for (let i = 0; i < 15; i++) {
-    const angle = (i / 15) * Math.PI * 2;
-    const forestDist = BOARD_W * 0.25 + Math.random() * BOARD_W * 0.15;
-    const tx = BOARD_W * 0.7 + Math.cos(angle) * forestDist * (0.7 + Math.random() * 0.3);
-    const ty = BOARD_H * 0.25 + Math.sin(angle) * forestDist * (0.7 + Math.random() * 0.3);
-    
-    if (tx > 0 && tx < BOARD_W && ty > 0 && ty < BOARD_H) {
-      ctx.fillStyle = "#5BA347";
+  // Meadow: snow particles and wind lines
+  if (isMeadow) {
+    // Falling snow streaks (wind effect)
+    ctx.strokeStyle = "rgba(240,245,255,0.25)";
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 20; i++) {
+      const sx = (i * BOARD_W / 20 + (performance.now() * 0.05) % BOARD_W) % BOARD_W;
+      const sy = BOARD_H * 0.15 + (i % 4) * BOARD_H * 0.15;
       ctx.beginPath();
-      ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx - 8, sy + 3);
+      ctx.stroke();
+    }
+    
+    // Snow accumulation on ground
+    ctx.fillStyle = "rgba(240,245,255,0.15)";
+    ctx.fillRect(0, BOARD_H * 0.85, BOARD_W, BOARD_H * 0.15);
+  }
+
+  // Scatter biome decorations
+  if (!isMeadow) {
+    for (let i = 0; i < 15; i++) {
+      const angle = (i / 15) * Math.PI * 2;
+      const forestDist = BOARD_W * 0.25 + Math.random() * BOARD_W * 0.15;
+      const tx = BOARD_W * 0.7 + Math.cos(angle) * forestDist * (0.7 + Math.random() * 0.3);
+      const ty = BOARD_H * 0.25 + Math.sin(angle) * forestDist * (0.7 + Math.random() * 0.3);
+      
+      if (tx > 0 && tx < BOARD_W && ty > 0 && ty < BOARD_H) {
+        ctx.fillStyle = "#5BA347";
+        ctx.beginPath();
+        ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#2E7D32";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+    
+    // Desert rocks
+    for (let i = 0; i < 10; i++) {
+      const rx = BOARD_W * (0.1 + Math.random() * 0.3);
+      const ry = BOARD_H * (0.2 + Math.random() * 0.3);
+      ctx.fillStyle = "#A89060";
+      ctx.beginPath();
+      ctx.arc(rx, ry, 5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "#2E7D32";
+      ctx.strokeStyle = "#8B7355";
       ctx.lineWidth = 1;
       ctx.stroke();
     }
-  }
-  
-  // Desert rocks
-  for (let i = 0; i < 10; i++) {
-    const rx = BOARD_W * (0.1 + Math.random() * 0.3);
-    const ry = BOARD_H * (0.2 + Math.random() * 0.3);
-    ctx.fillStyle = "#A89060";
-    ctx.beginPath();
-    ctx.arc(rx, ry, 5, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#8B7355";
-    ctx.lineWidth = 1;
-    ctx.stroke();
   }
 }
 
