@@ -316,7 +316,7 @@ export default function Game() {
         waveTimerRef.current += dt * 1000;
         const nextEnemy = waveQueueRef.current[0];
         if (waveTimerRef.current >= nextEnemy.delay) {
-          const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier, nextEnemy.modifier);
+          const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier, nextEnemy.modifier, nextEnemy.speedMultiplier);
           enemiesRef.current = [...enemiesRef.current, enemy];
           // Track for Codex
           setSeenEnemies(prev => prev.has(nextEnemy.type) ? prev : new Set([...prev, nextEnemy.type]));

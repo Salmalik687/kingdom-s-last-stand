@@ -1120,14 +1120,21 @@ export function generateWaves(waveNumber) {
     enemies.push({ type: STAGE_BOSS_WAVES[waveNumber], delay: lastDelay, isBoss: true });
   }
 
-  // HP scaling — steeper curve
-  const hpMultiplier = waveNumber <= 10
+  // HP scaling — steeper curve with 5-wave land bonuses
+  const landNumber = Math.floor((waveNumber - 1) / 5) + 1;
+  const landScaling = 1 + (landNumber - 1) * 0.35; // +35% per land
+  
+  const hpMultiplier = landScaling * (waveNumber <= 10
     ? 1 + (waveNumber - 1) * 0.25
-    : 1 + (waveNumber - 1) * 0.25 + Math.pow(waveNumber - 10, 1.5) * 0.10;
+    : 1 + (waveNumber - 1) * 0.25 + Math.pow(waveNumber - 10, 1.5) * 0.10);
+
+  // Speed scaling — +8% per land (every 5 waves)
+  const speedMultiplier = 1 + (landNumber - 1) * 0.08;
 
   return enemies.map((e) => ({
     ...e,
     hpMultiplier,
+    speedMultiplier,
     modifier: e.isBoss ? null : rollModifier(waveNumber),
   }));
 }
@@ -1222,7 +1229,7 @@ function rollModifier(waveNumber) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-export function createEnemy(type, hpMultiplier = 1, modifier = null) {
+export function createEnemy(type, hpMultiplier = 1, modifier = null, speedMultiplier = 1) {
   const base = ENEMY_TYPES[type];
   const mod = modifier ? ENEMY_MODIFIERS[modifier] : null;
   const hp = Math.floor(base.hp * hpMultiplier * (mod?.hpMult ?? 1));
@@ -1232,7 +1239,7 @@ export function createEnemy(type, hpMultiplier = 1, modifier = null) {
     modifier,
     hp,
     maxHp: hp,
-    speed: base.speed * (mod?.speedMult ?? 1),
+    speed: base.speed * (mod?.speedMult ?? 1) * speedMultiplier,
     reward: Math.floor(base.reward * (mod?.rewardMult ?? 1)),
     damageReduction: mod?.damageReduction ?? 0,
     emoji: base.emoji,
