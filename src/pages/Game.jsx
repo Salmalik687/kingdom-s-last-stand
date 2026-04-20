@@ -323,7 +323,8 @@ export default function Game() {
         if (waveTimerRef.current >= nextEnemy.delay) {
           const diffMult = difficulty ? difficulty.hpMult : 1;
           const diffSpeed = difficulty ? difficulty.speedMult : 1;
-          const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier * diffMult, nextEnemy.modifier, nextEnemy.speedMultiplier * diffSpeed);
+          const waveScaling = 1 + (wave - 1) * 0.12; // 12% health increase per wave
+          const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier * diffMult * waveScaling, nextEnemy.modifier, nextEnemy.speedMultiplier * diffSpeed);
           enemiesRef.current = [...enemiesRef.current, enemy];
           // Track for Codex
           setSeenEnemies(prev => prev.has(nextEnemy.type) ? prev : new Set([...prev, nextEnemy.type]));
