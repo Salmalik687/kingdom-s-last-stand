@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CHARACTERS, getAllCharacters } from "../../lib/characters";
+import { LordAldric, QueenSeraphine, Morrigan, Kael, Aurora } from "./CharacterSprites";
 
 export default function CharacterSelect({ onSelect }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -116,13 +117,18 @@ export default function CharacterSelect({ onSelect }) {
             boxShadow: `0 0 60px ${current.color}40, inset 0 1px 0 rgba(138,85,200,0.1)`,
             backdropFilter: "blur(10px)",
           }}>
-            {/* Character emoji */}
+            {/* Character sprite */}
             <div style={{
-              fontSize: 80,
               marginBottom: 16,
               filter: `drop-shadow(0 0 20px ${current.color})`,
+              display: "flex",
+              justifyContent: "center",
             }}>
-              {current.emoji}
+              {current.id === "aldric" && <LordAldric size={100} />}
+              {current.id === "seraphine" && <QueenSeraphine size={100} />}
+              {current.id === "morrigan" && <Morrigan size={100} />}
+              {current.id === "kael" && <Kael size={100} />}
+              {current.id === "aurora" && <Aurora size={100} />}
             </div>
 
             {/* Character name and title */}
