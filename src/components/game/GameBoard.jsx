@@ -45,216 +45,72 @@ const MOUNTAIN_PEAKS = Array.from({ length: 6 }, (_, i) => {
   return { x: r3() * BOARD_W, h: 55 + r3() * 55 };
 });
 
-// 2D flat storybook-style meadow background
-function drawMeadow2D(ctx) {
-  // ── Sky: flat cornflower blue ──
-  ctx.fillStyle = "#87CEEB";
+// Biome-based terrain background with regions
+function drawBiomeMap(ctx, wave) {
+  const theme = getStageTheme(wave || 1);
+  
+  // Base background gradient
+  ctx.fillStyle = theme.bg;
   ctx.fillRect(0, 0, BOARD_W, BOARD_H);
 
-  // ── Sun: flat yellow circle + rays ──
-  const sunX = BOARD_W * 0.82, sunY = BOARD_H * 0.10;
-  // rays
-  ctx.strokeStyle = "#FFD600";
-  ctx.lineWidth = 2.5;
-  for (let i = 0; i < 8; i++) {
-    const angle = (i / 8) * Math.PI * 2;
+  // Create biome regions with organic shapes
+  const biomes = [
+    { x: BOARD_W * 0.2, y: BOARD_H * 0.3, r: 90, color: "#D4A574", name: "desert" },
+    { x: BOARD_W * 0.7, y: BOARD_H * 0.25, r: 85, color: "#7BC043", name: "forest" },
+    { x: BOARD_W * 0.15, y: BOARD_H * 0.75, r: 80, color: "#5BA3D0", name: "water" },
+    { x: BOARD_W * 0.85, y: BOARD_H * 0.65, r: 75, color: "#4A8FBF", name: "water" },
+  ];
+  
+  // Draw biome blobs
+  biomes.forEach(b => {
+    ctx.fillStyle = b.color;
     ctx.beginPath();
-    ctx.moveTo(sunX + Math.cos(angle) * 20, sunY + Math.sin(angle) * 20);
-    ctx.lineTo(sunX + Math.cos(angle) * 32, sunY + Math.sin(angle) * 32);
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = `${b.color}aa`;
+    ctx.lineWidth = 2;
     ctx.stroke();
-  }
-  // disc fill
-  ctx.fillStyle = "#FFE033";
+  });
+  
+  // Winding river/path blend zones
+  ctx.strokeStyle = "rgba(76,140,180,0.4)";
+  ctx.lineWidth = 4;
   ctx.beginPath();
-  ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
-  ctx.fill();
-  // disc outline
-  ctx.strokeStyle = "#B8860B";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
+  ctx.moveTo(0, BOARD_H * 0.5);
+  ctx.quadraticCurveTo(BOARD_W * 0.3, BOARD_H * 0.3, BOARD_W * 0.5, BOARD_H * 0.4);
+  ctx.quadraticCurveTo(BOARD_W * 0.7, BOARD_H * 0.5, BOARD_W, BOARD_H * 0.6);
   ctx.stroke();
 
-  // ── Flat 2D clouds (rounded rectangles with bumps) ──
-  function drawFlatCloud(cx, cy, w, h) {
-    ctx.fillStyle = "#FFFFFF";
-    // bumps on top
-    const bumps = 4;
-    for (let b = 0; b < bumps; b++) {
-      const bx = cx - w * 0.35 + (b / (bumps - 1)) * w * 0.7;
-      const by = cy - h * 0.3;
+  // Scatter biome decorations (trees in forest, rocks in desert, etc.)
+  for (let i = 0; i < 15; i++) {
+    const angle = (i / 15) * Math.PI * 2;
+    const forestDist = BOARD_W * 0.25 + Math.random() * BOARD_W * 0.15;
+    const tx = BOARD_W * 0.7 + Math.cos(angle) * forestDist * (0.7 + Math.random() * 0.3);
+    const ty = BOARD_H * 0.25 + Math.sin(angle) * forestDist * (0.7 + Math.random() * 0.3);
+    
+    if (tx > 0 && tx < BOARD_W && ty > 0 && ty < BOARD_H) {
+      ctx.fillStyle = "#5BA347";
       ctx.beginPath();
-      ctx.arc(bx, by, h * 0.55, 0, Math.PI * 2);
+      ctx.arc(tx, ty, 6, 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = "#2E7D32";
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
-    // main body
+  }
+  
+  // Desert rocks
+  for (let i = 0; i < 10; i++) {
+    const rx = BOARD_W * (0.1 + Math.random() * 0.3);
+    const ry = BOARD_H * (0.2 + Math.random() * 0.3);
+    ctx.fillStyle = "#A89060";
     ctx.beginPath();
-    ctx.roundRect(cx - w / 2, cy - h * 0.1, w, h * 0.7, h * 0.35);
+    ctx.arc(rx, ry, 5, 0, Math.PI * 2);
     ctx.fill();
-    // outline
-    ctx.strokeStyle = "#B0C8E0";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    for (let b = 0; b < bumps; b++) {
-      const bx = cx - w * 0.35 + (b / (bumps - 1)) * w * 0.7;
-      const by = cy - h * 0.3;
-      ctx.arc(bx, by, h * 0.55, Math.PI, 0);
-    }
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.roundRect(cx - w / 2, cy - h * 0.1, w, h * 0.7, h * 0.35);
+    ctx.strokeStyle = "#8B7355";
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
-  drawFlatCloud(BOARD_W * 0.15, BOARD_H * 0.09, 80, 28);
-  drawFlatCloud(BOARD_W * 0.40, BOARD_H * 0.06, 60, 22);
-  drawFlatCloud(BOARD_W * 0.63, BOARD_H * 0.11, 70, 24);
-
-  // ── Distant mountains: flat triangles with outline ──
-  const mtns = [
-    { x: BOARD_W * 0.05, w: 100, h: 70, fill: "#A8C4D8", snow: "#EEF6FF" },
-    { x: BOARD_W * 0.22, w: 130, h: 90, fill: "#8BAEC8", snow: "#EEF6FF" },
-    { x: BOARD_W * 0.45, w: 110, h: 75, fill: "#9BB8CC", snow: "#EEF6FF" },
-    { x: BOARD_W * 0.65, w: 120, h: 82, fill: "#8BAEC8", snow: "#EEF6FF" },
-    { x: BOARD_W * 0.88, w: 95,  h: 65, fill: "#A8C4D8", snow: "#EEF6FF" },
-  ];
-  const horizonY = BOARD_H * 0.44;
-  mtns.forEach(m => {
-    // mountain body
-    ctx.fillStyle = m.fill;
-    ctx.beginPath();
-    ctx.moveTo(m.x - m.w / 2, horizonY);
-    ctx.lineTo(m.x, horizonY - m.h);
-    ctx.lineTo(m.x + m.w / 2, horizonY);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#6A8FA8";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    // snow cap
-    const snowH = m.h * 0.28;
-    ctx.fillStyle = m.snow;
-    ctx.beginPath();
-    ctx.moveTo(m.x - m.w * 0.18, horizonY - m.h + snowH);
-    ctx.lineTo(m.x, horizonY - m.h);
-    ctx.lineTo(m.x + m.w * 0.18, horizonY - m.h + snowH);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = "#B0CCE0";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  });
-
-  // ── Horizon hill strip: flat green band ──
-  ctx.fillStyle = "#6DBF5A";
-  ctx.beginPath();
-  ctx.moveTo(0, horizonY + 2);
-  // bumpy top edge
-  const hillPts = [
-    [0, horizonY + 2],
-    [BOARD_W * 0.12, horizonY - 14],
-    [BOARD_W * 0.25, horizonY + 4],
-    [BOARD_W * 0.38, horizonY - 18],
-    [BOARD_W * 0.52, horizonY + 2],
-    [BOARD_W * 0.65, horizonY - 12],
-    [BOARD_W * 0.78, horizonY + 6],
-    [BOARD_W * 0.90, horizonY - 10],
-    [BOARD_W, horizonY + 4],
-  ];
-  ctx.moveTo(hillPts[0][0], hillPts[0][1]);
-  for (let i = 0; i < hillPts.length - 1; i++) {
-    const mx = (hillPts[i][0] + hillPts[i + 1][0]) / 2;
-    const my = (hillPts[i][1] + hillPts[i + 1][1]) / 2;
-    ctx.quadraticCurveTo(hillPts[i][0], hillPts[i][1], mx, my);
-  }
-  ctx.lineTo(BOARD_W, BOARD_H);
-  ctx.lineTo(0, BOARD_H);
-  ctx.closePath();
-  ctx.fill();
-  // dark outline on hill top
-  ctx.strokeStyle = "#3D8C2A";
-  ctx.lineWidth = 2.5;
-  ctx.beginPath();
-  ctx.moveTo(hillPts[0][0], hillPts[0][1]);
-  for (let i = 0; i < hillPts.length - 1; i++) {
-    const mx = (hillPts[i][0] + hillPts[i + 1][0]) / 2;
-    const my = (hillPts[i][1] + hillPts[i + 1][1]) / 2;
-    ctx.quadraticCurveTo(hillPts[i][0], hillPts[i][1], mx, my);
-  }
-  ctx.stroke();
-
-  // ── Ground: flat grass fill ──
-  ctx.fillStyle = "#5AB347";
-  ctx.fillRect(0, horizonY + 2, BOARD_W, BOARD_H);
-
-  // ── Flat hand-drawn cartoon trees in background (behind grid) ──
-  function drawFlatTree(tx, ty, trunk_h, canopy_r, fillC, outlineC) {
-    // trunk
-    ctx.fillStyle = "#7A4F2A";
-    ctx.fillRect(tx - 4, ty - trunk_h, 8, trunk_h);
-    ctx.strokeStyle = "#4A2E10";
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(tx - 4, ty - trunk_h, 8, trunk_h);
-    // canopy
-    ctx.fillStyle = fillC;
-    ctx.beginPath();
-    ctx.arc(tx, ty - trunk_h, canopy_r, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = outlineC;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    // highlight dot
-    ctx.fillStyle = "rgba(255,255,255,0.25)";
-    ctx.beginPath();
-    ctx.arc(tx - canopy_r * 0.3, ty - trunk_h - canopy_r * 0.3, canopy_r * 0.3, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  // scattered background trees along horizon
-  const bgTrees = [
-    { x: BOARD_W * 0.03, y: horizonY + 8 },
-    { x: BOARD_W * 0.09, y: horizonY + 4 },
-    { x: BOARD_W * 0.17, y: horizonY + 10 },
-    { x: BOARD_W * 0.30, y: horizonY + 6 },
-    { x: BOARD_W * 0.55, y: horizonY + 8 },
-    { x: BOARD_W * 0.72, y: horizonY + 5 },
-    { x: BOARD_W * 0.84, y: horizonY + 9 },
-    { x: BOARD_W * 0.95, y: horizonY + 7 },
-  ];
-  bgTrees.forEach((t, i) => {
-    const big = i % 3 === 0;
-    drawFlatTree(t.x, t.y, big ? 22 : 16, big ? 18 : 13, "#4CAF50", "#2E7D32");
-  });
-
-  // ── Flat flowers scattered on ground ──
-  const flowers = [
-    { x: BOARD_W * 0.07, y: horizonY + 22 }, { x: BOARD_W * 0.19, y: horizonY + 30 },
-    { x: BOARD_W * 0.34, y: horizonY + 18 }, { x: BOARD_W * 0.48, y: horizonY + 28 },
-    { x: BOARD_W * 0.61, y: horizonY + 20 }, { x: BOARD_W * 0.77, y: horizonY + 26 },
-    { x: BOARD_W * 0.91, y: horizonY + 22 },
-  ];
-  const flowerColors = ["#FF6B9D", "#FFD700", "#FF8C42", "#C084FC", "#FF6B6B"];
-  flowers.forEach((f, i) => {
-    const fc = flowerColors[i % flowerColors.length];
-    // stem
-    ctx.strokeStyle = "#3D8C2A";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(f.x, f.y);
-    ctx.lineTo(f.x, f.y - 10);
-    ctx.stroke();
-    // petals
-    ctx.fillStyle = fc;
-    for (let p = 0; p < 5; p++) {
-      const pa = (p / 5) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.arc(f.x + Math.cos(pa) * 4, f.y - 10 + Math.sin(pa) * 4, 3, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    // center
-    ctx.fillStyle = "#FFD700";
-    ctx.beginPath();
-    ctx.arc(f.x, f.y - 10, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-  });
 }
 
 function drawCellDeco(ctx, x, y, deco) {
@@ -268,48 +124,31 @@ function drawCellDeco(ctx, x, y, deco) {
 }
 
 function drawGrid(ctx, theme, wave) {
-  const isMeadow = wave >= 1 && wave <= 5;
+  // Draw biome-based map
+  drawBiomeMap(ctx, wave);
 
-  if (isMeadow) {
-    drawMeadow2D(ctx);
-  } else {
-    // Non-meadow flat background
-    ctx.fillStyle = theme.bg;
-    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
-  }
-
-  // Ground tiles (checkerboard tint over the base)
+  // Ground tiles (checkerboard tint)
   for (let x = 0; x < GRID_COLS; x++) {
     for (let y = 0; y < GRID_ROWS; y++) {
       const isPath = PATH_SET.has(`${x},${y}`);
       if (!isPath) {
-        if (isMeadow) {
-          // no fill — background gradient shows through cleanly
-        } else {
-          ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
-          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        }
+        ctx.fillStyle = ((x + y) % 2 === 0) ? theme.grassA : theme.grassB;
+        ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
       }
     }
   }
 
   // Path
   PATH.forEach(([x, y], i) => {
-    if (isMeadow) {
-      // Flat 2D dirt path
-      ctx.fillStyle = "#C8964A";
-      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    } else {
-      ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
-      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    }
-    ctx.strokeStyle = isMeadow ? "#7A4F2A" : theme.pathBorder;
+    ctx.fillStyle = i % 2 === 0 ? theme.pathA : theme.pathB;
+    ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.strokeStyle = theme.pathBorder;
     ctx.lineWidth = 1;
     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   });
 
   // Grid lines
-  ctx.strokeStyle = isMeadow ? "rgba(61,140,42,0.18)" : theme.gridLine;
+  ctx.strokeStyle = theme.gridLine;
   ctx.lineWidth = 0.5;
   for (let x = 0; x <= GRID_COLS; x++) {
     ctx.beginPath();
@@ -324,14 +163,12 @@ function drawGrid(ctx, theme, wave) {
     ctx.stroke();
   }
 
-  // Meadow decorations (trees, rocks, bushes) on non-path, non-tower cells
-  if (isMeadow) {
-    for (let x = 0; x < GRID_COLS; x++) {
-      for (let y = 0; y < GRID_ROWS; y++) {
-        const key = `${x},${y}`;
-        const deco = CELL_DECO[key];
-        if (deco) drawCellDeco(ctx, x, y, deco);
-      }
+  // Cell decorations on non-path cells
+  for (let x = 0; x < GRID_COLS; x++) {
+    for (let y = 0; y < GRID_ROWS; y++) {
+      const key = `${x},${y}`;
+      const deco = CELL_DECO[key];
+      if (deco) drawCellDeco(ctx, x, y, deco);
     }
   }
 
