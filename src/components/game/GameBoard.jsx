@@ -165,6 +165,69 @@ function drawBiomeMap(ctx, wave) {
       ctx.stroke();
     }
   }
+
+  // Biome-specific atmospheric overlays
+  const isDungeon = wave >= 6 && wave <= 10;
+  const isVolcano = wave >= 11 && wave <= 15;
+  const isAbyss = wave >= 16 && wave <= 20;
+  const isShadow = wave >= 21 && wave <= 25;
+
+  // Dungeon: Dark aura with glowing runes
+  if (isDungeon) {
+    ctx.fillStyle = "rgba(50,30,100,0.15)";
+    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+    for (let i = 0; i < 12; i++) {
+      const rx = Math.random() * BOARD_W;
+      const ry = Math.random() * BOARD_H;
+      ctx.fillStyle = `rgba(138,43,226,${0.1 + Math.random() * 0.15})`;
+      ctx.beginPath();
+      ctx.arc(rx, ry, 20 + Math.random() * 30, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Volcano: Lava glow and heat haze
+  if (isVolcano) {
+    ctx.fillStyle = "rgba(150,30,0,0.12)";
+    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+    for (let i = 0; i < 10; i++) {
+      const lx = Math.random() * BOARD_W;
+      const ly = Math.random() * BOARD_H;
+      ctx.fillStyle = `rgba(255,100,0,${0.08 + Math.random() * 0.12})`;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 25 + Math.random() * 35, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Abyss: Frozen crystalline aura
+  if (isAbyss) {
+    ctx.fillStyle = "rgba(30,80,150,0.12)";
+    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+    for (let i = 0; i < 14; i++) {
+      const ax = Math.random() * BOARD_W;
+      const ay = Math.random() * BOARD_H;
+      ctx.fillStyle = `rgba(100,200,255,${0.08 + Math.random() * 0.14})`;
+      ctx.beginPath();
+      ctx.arc(ax, ay, 18 + Math.random() * 28, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Shadow Realm: Void vortex with cosmic swirls
+  if (isShadow) {
+    ctx.fillStyle = "rgba(60,20,100,0.18)";
+    ctx.fillRect(0, 0, BOARD_W, BOARD_H);
+    // Cosmic particles
+    for (let i = 0; i < 16; i++) {
+      const sx = Math.random() * BOARD_W;
+      const sy = Math.random() * BOARD_H;
+      ctx.fillStyle = `rgba(168,85,247,${0.1 + Math.random() * 0.16})`;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 22 + Math.random() * 32, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 }
 
 function drawCellDeco(ctx, x, y, deco) {
