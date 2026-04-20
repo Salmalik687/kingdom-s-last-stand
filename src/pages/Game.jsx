@@ -10,6 +10,7 @@ import GameBoard from "../components/game/GameBoard";
 import GameHUD from "../components/game/GameHUD";
 import TowerPanel from "../components/game/TowerPanel";
 import TowerInfoPanel from "../components/game/TowerInfoPanel";
+import TowerUpgradeMenu from "../components/game/TowerUpgradeMenu";
 import WaveButton from "../components/game/WaveButton";
 import GameOverModal from "../components/game/GameOverModal";
 import ComboDisplay from "../components/game/ComboDisplay";
@@ -87,6 +88,7 @@ export default function Game() {
   const [showCodex, setShowCodex] = useState(false);
   const [seenEnemies, setSeenEnemies] = useState(new Set());
   const [gloryPoints, setGloryPoints] = useState(0);
+  const [showUpgradeMenu, setShowUpgradeMenu] = useState(false);
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
   const [voidWrathActive, setVoidWrathActive] = useState(false);
@@ -1013,7 +1015,7 @@ export default function Game() {
               <TowerInfoPanel
                 tower={getSelectedTower()}
                 gold={gold}
-                onUpgrade={handleUpgrade}
+                onUpgrade={() => setShowUpgradeMenu(true)}
                 onSell={handleSell}
               />
               <WaveButton
@@ -1134,6 +1136,16 @@ export default function Game() {
 
       <CampaignIntro show={showCampaignIntro} onBegin={() => setShowCampaignIntro(false)} />
       <WaveDialogue wave={lastDialogueWave} show={wave === lastDialogueWave && !waveActive && lastDialogueWave > 0} />
+
+      {/* Tower Upgrade Menu */}
+      {showUpgradeMenu && getSelectedTower() && (
+        <TowerUpgradeMenu
+          tower={getSelectedTower()}
+          gold={gold}
+          onUpgrade={handleUpgrade}
+          onClose={() => setShowUpgradeMenu(false)}
+        />
+      )}
     </div>
   );
 }
