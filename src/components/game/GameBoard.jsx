@@ -374,13 +374,14 @@ function drawTowers(ctx, towers, selectedTowerId) {
 
     // Range circle if selected
     if (tower.id === selectedTowerId) {
+      ctx.save();
       ctx.strokeStyle = "rgba(220, 38, 38, 0.25)";
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
       ctx.arc(x, y, tower.range, 0, Math.PI * 2);
       ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.restore();
     }
   });
 }
@@ -506,21 +507,19 @@ function drawEnemies(ctx, enemies) {
 
 function drawProjectiles(ctx, projectiles) {
   projectiles.forEach(proj => {
-    ctx.fillStyle = proj.towerType === "mage" ? "#a855f7"
+    const color = proj.towerType === "mage" ? "#a855f7"
       : proj.towerType === "frost" ? "#60a5fa"
       : proj.towerType === "cannon" ? "#f97316"
       : "#fbbf24";
+
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
     ctx.beginPath();
     ctx.arc(proj.x, proj.y, proj.towerType === "cannon" ? 4 : 3, 0, Math.PI * 2);
     ctx.fill();
-
-    // Glow
-    ctx.shadowColor = ctx.fillStyle;
-    ctx.shadowBlur = 6;
-    ctx.beginPath();
-    ctx.arc(proj.x, proj.y, 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
+    ctx.restore();
   });
 }
 
@@ -530,6 +529,8 @@ function drawHoverPreview(ctx, hoverCell, selectedTowerType) {
   const cx = gx * CELL_SIZE + CELL_SIZE / 2;
   const cy = gy * CELL_SIZE + CELL_SIZE / 2;
   const base = TOWER_TYPES[selectedTowerType];
+
+  ctx.save();
 
   // Range preview
   ctx.strokeStyle = valid ? "rgba(180, 160, 100, 0.2)" : "rgba(200, 30, 30, 0.25)";
@@ -553,7 +554,8 @@ function drawHoverPreview(ctx, hoverCell, selectedTowerType) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(base.emoji, cx, cy);
-  ctx.globalAlpha = 1;
+
+  ctx.restore();
 }
 
 export default function GameBoard({
@@ -568,7 +570,13 @@ export default function GameBoard({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+
+    // Full clear + reset all state to avoid shadow/glow bleed between frames
     ctx.clearRect(0, 0, BOARD_W, BOARD_H);
+    ctx.shadowBlur = 0;
+    ctx.shadowColor = "transparent";
+    ctx.globalAlpha = 1;
+    ctx.setLineDash([]);
 
     const theme = getStageTheme(wave || 1);
     drawGrid(ctx, theme, wave || 1);
