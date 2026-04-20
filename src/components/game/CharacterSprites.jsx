@@ -24,6 +24,14 @@ export function LordAldric({ size = 100 }) {
         <circle cx="16" cy="110" r="6" fill="#c8956f"/>
         <circle cx="84" cy="110" r="6" fill="#c8956f"/>
         
+        {/* Legs */}
+        <rect x="38" y="100" width="8" height="22" rx="4" fill="#3a3a3a" stroke="#6a4a2a" strokeWidth="1"/>
+        <rect x="54" y="100" width="8" height="22" rx="4" fill="#3a3a3a" stroke="#6a4a2a" strokeWidth="1"/>
+        
+        {/* Feet - worn boots */}
+        <ellipse cx="42" cy="124" rx="6" ry="4" fill="#1a1a1a" stroke="#6a4a2a" strokeWidth="1"/>
+        <ellipse cx="58" cy="124" rx="6" ry="4" fill="#1a1a1a" stroke="#6a4a2a" strokeWidth="1"/>
+        
         {/* Neck */}
         <rect x="42" y="50" width="16" height="12" rx="4" fill="#c8956f"/>
         
