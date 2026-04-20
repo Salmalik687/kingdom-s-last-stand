@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 
 const STORY_LINES = [
-  "In the age of iron and shadow, there existed a kingdom known as Eldenmoor...",
-  "A land of golden harvests, ancient castles, and folk who knew not the taste of war.",
-  "Thou wert its guardian — Lord Aldric, last of the Stoneheart bloodline.",
-  "But darkness gathered beyond the mountains. The Dark Warlord Malgrath rose from the cursed abyss...",
-  "His armies — countless as the stars — marched upon thy homeland with hunger in their eyes.",
-  "They burned thy villages. They slew thy kin. They shattered the ancient gates of Eldenmoor.",
-  "Only thou remained. Sword drawn. Heart unbroken. Standing at the last rampart.",
-  "Thy people cry out from behind thee. The castle... thy home... must not fall.",
-  "Raise thy towers. Command thy archers. Spill the blood of thine enemies upon this sacred soil.",
-  "For Eldenmoor. For thy bloodline. For the last stand of the Kingdom!",
+  "Hearken well, good lord... for what I am about to tell thee is no mere fancy nor fireside tale.",
+  "There was once a kingdom — Eldenmoor, they called it. Green hills, honest folk, children laughing in the lanes. A good place. A real place.",
+  "Thou wert its lord and its shield. Lord Aldric Stoneheart. Aye, the very last of that bloodline.",
+  "But trouble, as it always does... came a-creeping. From beyond the Ashenmoor mountains, something ancient stirred. The Warlord Malgrath — gods forgive us — had woken.",
+  "His host was vast, my lord. Vast beyond all reckoning. Peasants turned to rot, knights twisted by darkness, demons that had no name in any tongue I know.",
+  "They did not merely march. They poured forth like a black tide — burning, breaking, howling with a hunger that fair chilled the blood.",
+  "The villages fell first. Then the outer walls. Then the gates themselves, iron and all, were sundered like dry timber.",
+  "And yet... thou didst not flee. Thou stood at the rampart — sword drawn, jaw set — as thy people wept behind thee.",
+  "They look to thee now, lord. Every man, woman, and bairn in that castle is counting on thy will and thy wit.",
+  "So build thy towers tall. Marshal every archer, every cannon, every blade thou canst spare. And do not yield — not one blessed inch.",
+  "For Eldenmoor. For thy blood. For everything that is worth a damn in this wretched and beautiful world.",
 ];
 
 function speakLine(text, onEnd) {
   if (!window.speechSynthesis) { onEnd(); return; }
   window.speechSynthesis.cancel();
   const utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.72;
-  utt.pitch = 0.6;
+  utt.rate = 0.68;
+  utt.pitch = 0.55;
   utt.volume = 1;
 
   // Try to find a deep British/English voice
@@ -207,7 +208,7 @@ export default function IntroStoryModal({ show, onBegin }) {
             <div className="flex items-center justify-center gap-2 mt-4">
               <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#ffd60a" }} />
               <span className="text-[10px] uppercase tracking-[0.35em]" style={{ color: "#6a4a20" }}>
-                The Chronicler speaks...
+                The Royal Chronicler speaks...
               </span>
               <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#ffd60a" }} />
             </div>
