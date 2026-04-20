@@ -199,7 +199,8 @@ export default function LandCompleteModal({ landNumber, show, onContinue }) {
         style={{
           background: scene.bg,
           border: `3px solid ${scene.border}`,
-          boxShadow: `0 0 80px ${scene.glow}55, 0 8px 0 #000`,
+          boxShadow: `0 0 80px ${scene.glow}55, 0 8px 0 #000, 0 0 50px ${scene.glow}22`,
+          animation: "cardFloat 3s ease-in-out infinite",
         }}>
 
         {/* Glow top bar */}
@@ -218,6 +219,7 @@ export default function LandCompleteModal({ landNumber, show, onContinue }) {
               fontFamily: "'Cinzel Decorative', serif",
               color: "#fff",
               textShadow: `0 0 30px ${scene.glow}`,
+              animation: "titleGlow 2s ease-in-out infinite",
             }}>
             {scene.title}
           </h2>
@@ -286,6 +288,14 @@ export default function LandCompleteModal({ landNumber, show, onContinue }) {
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-12px); }
+        }
+        @keyframes cardFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes titleGlow {
+          0%, 100% { filter: drop-shadow(0 0 20px currentColor); }
+          50% { filter: drop-shadow(0 0 40px currentColor); }
         }
       `}</style>
     </div>

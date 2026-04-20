@@ -317,16 +317,23 @@ export default function BossArrivalModal({ boss, onDismiss }) {
 
           {/* Boss portrait */}
           <div style={{
-            animation: "bossReveal 0.6s cubic-bezier(0.34,1.3,0.64,1) forwards",
+            animation: "bossReveal 0.8s cubic-bezier(0.34,1.3,0.64,1) forwards",
             marginBottom: 8,
+            position: "relative",
           }}>
+            {/* Pulsing glow ring around boss */}
+            <div style={{
+              position: "absolute", inset: "-30px",
+              borderRadius: "50%", border: `3px solid ${cinematic.glow}`,
+              opacity: 0.4, animation: "pulseGlow 2s ease-in-out infinite",
+            }} />
             {isShadowBoss ? (
               <DemonLord size={160} />
             ) : (
               <div style={{
                 fontSize: "clamp(80px,18vw,160px)",
                 filter: `drop-shadow(0 0 40px ${cinematic.glow}) drop-shadow(0 0 80px rgba(${cinematic.rgb},0.4))`,
-                animation: "bossFloat 3s ease-in-out infinite",
+                animation: "bossFloat 2.8s ease-in-out infinite",
                 display: "block", textAlign: "center",
               }}>
                 {cinematic.emoji}
@@ -486,6 +493,12 @@ export default function BossArrivalModal({ boss, onDismiss }) {
           100% { transform: translate(0,0) rotate(0); }
         }
         @keyframes blink { 0%,100%{opacity:0.2} 50%{opacity:1} }
+        @keyframes pulseGlow {
+          0%,100% { filter: drop-shadow(0 0 20px currentColor); }
+          50% { filter: drop-shadow(0 0 50px currentColor); }
+        }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes twinkle { 0%,100%{opacity:0.3} 50%{opacity:1} }
       `}</style>
     </div>
   );

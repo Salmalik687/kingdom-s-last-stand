@@ -343,12 +343,15 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
             transition: "bottom 0.7s cubic-bezier(0.34,1.3,0.64,1)",
             zIndex: 5,
           }}>
-          <QueenSeraphine size={110} glowColor={data.glow} glowRgb={data.glowRgb} />
+          <div style={{ animation: "charFloat 2.6s ease-in-out infinite" }}>
+            <QueenSeraphine size={110} glowColor={data.glow} glowRgb={data.glowRgb} />
+          </div>
           <div style={{
             marginTop: 6, fontSize: 11, fontWeight: 700,
             letterSpacing: "0.25em", textTransform: "uppercase",
             color: data.glow, fontFamily: "'Cinzel', serif",
             textShadow: `0 0 12px ${data.glow}`,
+            animation: "twinkle 2s ease-in-out infinite",
           }}>Queen Seraphine</div>
         </div>
       )}
@@ -363,12 +366,16 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
             transition: "bottom 0.7s cubic-bezier(0.34,1.3,0.64,1)",
             zIndex: 5,
           }}>
-          <LordAldric size={100} bobOffset={0.4} />
+          <div style={{ animation: "charFloat 2.4s ease-in-out infinite", animationDelay: "0.3s" }}>
+            <LordAldric size={100} bobOffset={0.4} />
+          </div>
           <div style={{
             marginTop: 6, fontSize: 11, fontWeight: 700,
             letterSpacing: "0.25em", textTransform: "uppercase",
             color: "#d4af70", fontFamily: "'Cinzel', serif",
             textShadow: "0 0 12px rgba(212,175,112,0.6)",
+            animation: "twinkle 2.2s ease-in-out infinite",
+            animationDelay: "0.2s",
           }}>Lord Aldric</div>
         </div>
       )}
@@ -604,6 +611,23 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
         @keyframes pulseBtn    {
           0%,100% { box-shadow: 0 6px 0 #000, 0 0 20px rgba(255,255,255,0.1); }
           50%     { box-shadow: 0 6px 0 #000, 0 0 40px rgba(255,255,255,0.25); }
+        }
+        @keyframes titleSlam {
+          0%   { transform: scale(4) translateY(-60px); opacity: 0; filter: blur(20px); }
+          60%  { transform: scale(0.95); opacity: 1; filter: blur(0); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes cardGlow {
+          0%, 100% { filter: drop-shadow(0 0 20px rgba(255,255,255,0.1)); }
+          50% { filter: drop-shadow(0 0 40px rgba(255,255,255,0.2)); }
+        }
+        @keyframes charFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-12px); }
+        }
+        @keyframes cardPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.02); }
         }
       `}</style>
     </div>
