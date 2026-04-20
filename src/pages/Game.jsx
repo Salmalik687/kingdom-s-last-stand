@@ -22,6 +22,7 @@ import IntroStoryModal from "../components/game/IntroStoryModal";
 import HallOfHeroesModal from "../components/game/HallOfHeroesModal";
 import AchievementToast from "../components/game/AchievementToast";
 import ArmorUpgradeScreen from "../components/game/ArmorUpgradeScreen";
+import BossKillReward from "../components/game/BossKillReward";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 
@@ -65,6 +66,8 @@ export default function Game() {
   const [showIntro, setShowIntro] = useState(true);
   const [hallOfHeroes, setHallOfHeroes] = useState(false);
   const [armorUpgrade, setArmorUpgrade] = useState(null); // chapter number 2-5
+  const [bossKillReward, setBossKillReward] = useState(null); // bossType string
+  const tempBuffsRef = useRef({}); // { damageBonus, fireRateBonus, rangeBonus, wavesLeft }
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
 
@@ -421,6 +424,9 @@ export default function Game() {
               scoreEarned += target.reward * 2;
               killCount++;
               playKillSound();
+              if (target.type?.startsWith("boss_")) {
+                setBossKillReward(target.type);
+              }
               enemiesRef.current = enemiesRef.current.filter(e => e.id !== target.id);
             }
           }
@@ -536,6 +542,60 @@ export default function Game() {
     };
   }, [gameOver]);
 
+  const handleBossRewardClaim = useCallback((reward) => {
+    if (!reward) { setBossKillReward(null); return; }
+    if (reward.type === "gold") setGold(g => g + reward.value);
+    if (reward.type === "lives") setLives(l => l + reward.value);
+    if (reward.type === "perm_projspeed") {
+      perkMultRef.current.projSpeedBonus = (perkMultRef.current.projSpeedBonus ?? 1) * (1 + reward.value);
+    }
+    if (reward.type === "perm_firerate") {
+      const fr = 1 - reward.value;
+      perkMultRef.current.fireRateBonus *= fr;
+      towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * fr)); });
+    }
+    if (reward.type === "temp_damage") {
+      perkMultRef.current.damageBonus *= (1 + reward.value);
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * (1 + reward.value)); });
+      tempBuffsRef.current.damageDebuff = reward.value;
+      tempBuffsRef.current.damageWaves = reward.waves;
+    }
+    if (reward.type === "temp_firerate") {
+      const fr = 1 - reward.value;
+      towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * fr)); });
+      tempBuffsRef.current.fireRateWaves = reward.waves;
+      tempBuffsRef.current.fireRateDebuff = reward.value;
+    }
+    if (reward.type === "temp_range") {
+      towersRef.current.forEach(t => { t.range *= (1 + reward.value); });
+      tempBuffsRef.current.rangeWaves = reward.waves;
+      tempBuffsRef.current.rangeDebuff = reward.value;
+    }
+    if (reward.type === "combo_life_dmg") {
+      const [livesV, dmgV] = reward.value;
+      setLives(l => l + livesV);
+      perkMultRef.current.damageBonus *= (1 + dmgV);
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * (1 + dmgV)); });
+    }
+    if (reward.type === "combo_gold_life") {
+      const [goldV, livesV] = reward.value;
+      setGold(g => g + goldV);
+      setLives(l => l + livesV);
+    }
+    if (reward.type === "pact") {
+      const [dmgV, livesV] = reward.value;
+      perkMultRef.current.damageBonus *= (1 + dmgV);
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * (1 + dmgV)); });
+      setLives(l => Math.max(1, l + livesV));
+    }
+    if (reward.type === "kill_gold") {
+      tempBuffsRef.current.killGoldBonus = reward.value;
+      tempBuffsRef.current.killGoldWaves = reward.waves;
+    }
+    setBossKillReward(null);
+    forceRender(n => n + 1);
+  }, []);
+
   const handleArmorUpgrade = useCallback((upgradeId) => {
     // Apply upgrade effects
     if (upgradeId === "iron_fist" || upgradeId === "storm_mantle") {
@@ -576,10 +636,23 @@ export default function Game() {
       });
     }
     if (upgradeId === "soul_aegis") {
-      // Double all current bonuses
       perkMultRef.current.damageBonus *= 2;
       perkMultRef.current.fireRateBonus = Math.min(perkMultRef.current.fireRateBonus, 0.5);
       perkMultRef.current.goldBonus *= 2;
+    }
+    if (upgradeId === "dungeon_ward") {
+      setLives(l => l + 4);
+    }
+    if (upgradeId === "titan_core") {
+      perkMultRef.current.damageBonus *= 1.20;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.20); });
+    }
+    if (upgradeId === "blizzard_heart") {
+      towersRef.current.forEach(t => { t.range *= 1.15; t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.90)); });
+    }
+    if (upgradeId === "void_mantle") {
+      perkMultRef.current.damageBonus *= 1.30;
+      towersRef.current.forEach(t => { t.range *= 1.50; t.damage = Math.floor(t.damage * 1.30); });
     }
 
     const wasChapter5 = armorUpgrade === 5;
@@ -799,6 +872,12 @@ export default function Game() {
       )}
 
       <IntroStoryModal show={showIntro} onBegin={(armorId) => setShowIntro(false)} />
+
+      <BossKillReward
+        bossType={bossKillReward}
+        show={!!bossKillReward}
+        onClaim={handleBossRewardClaim}
+      />
 
       {armorUpgrade && (
         <ArmorUpgradeScreen

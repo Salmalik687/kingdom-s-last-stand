@@ -617,22 +617,62 @@ export const TOWER_TYPES = {
 };
 
 export const ENEMY_TYPES = {
-  peasant:  { hp: 30,  speed: 1.2,  reward: 10,   emoji: "🧑‍🌾", name: "Peasant"   },
-  soldier:  { hp: 60,  speed: 1,    reward: 15,   emoji: "⚔️",   name: "Soldier"   },
-  knight:   { hp: 120, speed: 0.8,  reward: 25,   emoji: "🛡️",   name: "Knight"    },
-  horseman: { hp: 80,  speed: 1.8,  reward: 20,   emoji: "🐴",   name: "Horseman"  },
-  king:     { hp: 300, speed: 0.6,  reward: 100,  emoji: "👑",   name: "King"      },
-  wraith:   { hp: 200, speed: 1.4,  reward: 40,   emoji: "👻",   name: "Wraith"    },
-  demon:    { hp: 350, speed: 1.0,  reward: 60,   emoji: "😈",   name: "Demon"     },
-  golem:    { hp: 500, speed: 0.5,  reward: 80,   emoji: "🪨",   name: "Golem"     },
-  specter:  { hp: 150, speed: 2.0,  reward: 45,   emoji: "🌫️",   name: "Specter"   },
-  shadow:   { hp: 400, speed: 1.3,  reward: 70,   emoji: "🌑",   name: "Shadow"    },
+  // Land 1 — Verdant Meadow
+  peasant:     { hp: 30,   speed: 1.2,  reward: 10,   emoji: "🧑‍🌾", name: "Peasant"        },
+  soldier:     { hp: 60,   speed: 1.0,  reward: 15,   emoji: "⚔️",   name: "Soldier"        },
+  knight:      { hp: 120,  speed: 0.8,  reward: 25,   emoji: "🛡️",   name: "Knight"         },
+  horseman:    { hp: 80,   speed: 1.8,  reward: 20,   emoji: "🐴",   name: "Horseman"       },
+  // Land 2 — Dark Dungeon
+  king:        { hp: 300,  speed: 0.6,  reward: 100,  emoji: "👑",   name: "King"           },
+  wraith:      { hp: 200,  speed: 1.4,  reward: 40,   emoji: "👻",   name: "Wraith"         },
+  skeleton:    { hp: 90,   speed: 1.6,  reward: 22,   emoji: "💀",   name: "Skeleton"       },
+  necromancer: { hp: 170,  speed: 0.9,  reward: 55,   emoji: "🧙",   name: "Necromancer"    },
+  // Land 3 — Volcanic Wastes
+  demon:       { hp: 350,  speed: 1.0,  reward: 60,   emoji: "😈",   name: "Demon"          },
+  golem:       { hp: 500,  speed: 0.5,  reward: 80,   emoji: "🪨",   name: "Golem"          },
+  lavaSpawn:   { hp: 220,  speed: 1.5,  reward: 45,   emoji: "🔥",   name: "Lava Spawn"     },
+  firedrake:   { hp: 280,  speed: 1.3,  reward: 65,   emoji: "🐲",   name: "Firedrake"      },
+  // Land 4 — Frozen Abyss
+  specter:     { hp: 150,  speed: 2.0,  reward: 45,   emoji: "🌫️",   name: "Specter"        },
+  shadow:      { hp: 400,  speed: 1.3,  reward: 70,   emoji: "🌑",   name: "Shadow"         },
+  frostGiant:  { hp: 650,  speed: 0.55, reward: 95,   emoji: "🧊",   name: "Frost Giant"    },
+  iceWalker:   { hp: 180,  speed: 1.7,  reward: 48,   emoji: "❄️",   name: "Ice Walker"     },
+  // Land 5 — Shadow Realm
+  voidling:    { hp: 300,  speed: 1.6,  reward: 75,   emoji: "🕳️",   name: "Voidling"       },
+  soulReaper:  { hp: 500,  speed: 1.1,  reward: 110,  emoji: "⛓️",   name: "Soul Reaper"    },
+  doomKnight:  { hp: 800,  speed: 0.85, reward: 140,  emoji: "🏚️",   name: "Doom Knight"    },
+  abyssLord:   { hp: 1000, speed: 0.7,  reward: 180,  emoji: "🌀",   name: "Abyss Lord"     },
   // Land bosses — one boss per land (on wave 5, 10, 15, 20, 25)
-  boss_meadow:  { hp: 800,   speed: 0.7,  reward: 250,  emoji: "🐉",   name: "Forest Drake",     isBoss: true },
-  boss_dungeon: { hp: 1500,  speed: 0.6,  reward: 450,  emoji: "🧟",   name: "Dungeon Overlord", isBoss: true },
-  boss_volcano: { hp: 2800,  speed: 0.5,  reward: 750,  emoji: "🔥",   name: "Flame Titan",      isBoss: true },
-  boss_abyss:   { hp: 4500,  speed: 0.45, reward: 1200, emoji: "❄️",   name: "Frost Colossus",   isBoss: true },
-  boss_shadow:  { hp: 7000,  speed: 0.4,  reward: 2000, emoji: "💀",   name: "Shadow Sovereign", isBoss: true },
+  boss_meadow:  { hp: 1200,  speed: 0.7,  reward: 300,  emoji: "🐉",   name: "Forest Drake",     isBoss: true,
+    cinematicTitle: "THE FOREST AWAKENS",
+    cinematicDesc: "Ancient scales forged from a thousand years of darkness. It has devoured armies whole.",
+    phaseShifts: [0.5], // hp thresholds that trigger rage
+    rageMultiplier: 1.6,
+  },
+  boss_dungeon: { hp: 2200,  speed: 0.6,  reward: 550,  emoji: "🧟",   name: "Dungeon Overlord", isBoss: true,
+    cinematicTitle: "DEATH RISES FROM THE DEEP",
+    cinematicDesc: "Rotted sinew bound by fell magic. It has ruled the dark for ten thousand years.",
+    phaseShifts: [0.6, 0.3],
+    rageMultiplier: 1.8,
+  },
+  boss_volcano: { hp: 4000,  speed: 0.5,  reward: 900,  emoji: "🔥",   name: "Flame Titan",      isBoss: true,
+    cinematicTitle: "THE MOUNTAIN UNLEASHES ITS WRATH",
+    cinematicDesc: "Born from the volcano's core. Every step scorches the earth beneath its feet.",
+    phaseShifts: [0.5, 0.25],
+    rageMultiplier: 2.0,
+  },
+  boss_abyss:   { hp: 6500,  speed: 0.45, reward: 1500, emoji: "❄️",   name: "Frost Colossus",   isBoss: true,
+    cinematicTitle: "THE ETERNAL WINTER DESCENDS",
+    cinematicDesc: "A colossus of living ice whose breath extinguishes stars. Cold beyond all reckoning.",
+    phaseShifts: [0.6, 0.35, 0.15],
+    rageMultiplier: 2.2,
+  },
+  boss_shadow:  { hp: 10000, speed: 0.4,  reward: 2500, emoji: "💀",   name: "Shadow Sovereign", isBoss: true,
+    cinematicTitle: "THE END OF ALL THINGS ARRIVES",
+    cinematicDesc: "It is not a creature. It is an inevitability. The void given form. The last darkness.",
+    phaseShifts: [0.7, 0.5, 0.3, 0.1],
+    rageMultiplier: 2.5,
+  },
 };
 
 // Boss spawns on the final wave of each land
@@ -701,57 +741,59 @@ export function generateWaves(waveNumber) {
     for (let i = 0; i < count; i++)
       enemies.push({ type: "peasant", delay: i * spawnInterval });
   } else if (waveNumber <= 5) {
-    const types = ["peasant", "soldier", "peasant", "horseman"];
+    const types = ["peasant", "soldier", "horseman", "knight"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
 
   // Land 2: Dark Dungeon (waves 6–10)
   } else if (waveNumber <= 7) {
-    const types = ["soldier", "knight", "horseman", "wraith"];
+    const types = ["soldier", "skeleton", "horseman", "wraith", "necromancer"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
   } else if (waveNumber <= 10) {
-    const types = ["knight", "wraith", "horseman", "king", "wraith"];
+    const types = ["knight", "wraith", "skeleton", "king", "necromancer", "wraith"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
 
   // Land 3: Volcanic Wastes (waves 11–15)
   } else if (waveNumber <= 12) {
-    const types = ["soldier", "knight", "demon", "horseman", "golem"];
+    const types = ["lavaSpawn", "firedrake", "demon", "golem", "lavaSpawn"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
   } else if (waveNumber <= 15) {
-    const types = ["demon", "golem", "king", "knight", "demon", "golem"];
+    const types = ["demon", "golem", "firedrake", "king", "lavaSpawn", "demon"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-    if (!isBossWave && waveNumber % 2 === 0)
+    if (!isBossWave && waveNumber % 2 === 0) {
       enemies.push({ type: "golem", delay: count * spawnInterval + 800 });
+      enemies.push({ type: "firedrake", delay: count * spawnInterval + 1600 });
+    }
 
   // Land 4: Frozen Abyss (waves 16–20)
   } else if (waveNumber <= 17) {
-    const types = ["wraith", "specter", "knight", "demon", "specter", "golem"];
+    const types = ["iceWalker", "specter", "frostGiant", "shadow", "specter", "iceWalker"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
   } else if (waveNumber <= 20) {
-    const types = ["specter", "shadow", "demon", "golem", "king", "specter"];
-    for (let i = 0; i < count; i++)
-      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-    if (!isBossWave)
-      for (let k = 0; k < 2; k++)
-        enemies.push({ type: "shadow", delay: count * spawnInterval + 800 + k * 600 });
-
-  // Land 5: Shadow Realm (waves 21–25)
-  } else if (waveNumber <= 22) {
-    const types = ["shadow", "demon", "specter", "golem", "shadow", "king"];
-    for (let i = 0; i < count; i++)
-      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
-  } else {
-    const types = ["shadow", "demon", "golem", "specter", "king", "shadow", "demon"];
+    const types = ["specter", "shadow", "frostGiant", "iceWalker", "shadow", "specter"];
     for (let i = 0; i < count; i++)
       enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
     if (!isBossWave)
       for (let k = 0; k < 3; k++)
-        enemies.push({ type: "shadow", delay: count * spawnInterval + 800 + k * 500 });
+        enemies.push({ type: k % 2 === 0 ? "frostGiant" : "shadow", delay: count * spawnInterval + 800 + k * 600 });
+
+  // Land 5: Shadow Realm (waves 21–25)
+  } else if (waveNumber <= 22) {
+    const types = ["voidling", "soulReaper", "shadow", "doomKnight", "voidling", "specter"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+  } else {
+    const types = ["abyssLord", "doomKnight", "soulReaper", "voidling", "shadow", "abyssLord", "doomKnight"];
+    for (let i = 0; i < count; i++)
+      enemies.push({ type: types[i % types.length], delay: i * spawnInterval });
+    if (!isBossWave)
+      for (let k = 0; k < 4; k++)
+        enemies.push({ type: k % 2 === 0 ? "abyssLord" : "doomKnight", delay: count * spawnInterval + 800 + k * 500 });
   }
 
   // Boss at end of boss wave
@@ -780,7 +822,7 @@ export const ENEMY_MODIFIERS = {
     hpMult: 2.2,
     speedMult: 0.85,
     rewardMult: 2,
-    damageReduction: 0.4, // absorbs 40% of each hit
+    damageReduction: 0.4,
     color: "#60a5fa",
   },
   fast: {
@@ -810,6 +852,34 @@ export const ENEMY_MODIFIERS = {
     damageReduction: 0,
     color: "#f97316",
   },
+  phantom: {
+    label: "Phantom",
+    emoji: "👁️",
+    hpMult: 1.0,
+    speedMult: 1.5,
+    rewardMult: 2,
+    damageReduction: 0.25,
+    color: "#c084fc",
+    // Flickers — hard to target
+  },
+  cursed: {
+    label: "Cursed",
+    emoji: "☠️",
+    hpMult: 2.5,
+    speedMult: 1.1,
+    rewardMult: 3,
+    damageReduction: 0.35,
+    color: "#4ade80",
+  },
+  titan: {
+    label: "Titan",
+    emoji: "💪",
+    hpMult: 5.0,
+    speedMult: 0.55,
+    rewardMult: 4,
+    damageReduction: 0.65,
+    color: "#f43f5e",
+  },
 };
 
 // Pick a random modifier for a wave, or null if wave too early
@@ -820,9 +890,17 @@ function rollModifier(waveNumber) {
   if (waveNumber >= 5)  pool.push("shielded");
   if (waveNumber >= 8)  pool.push("armored");
   if (waveNumber >= 11) pool.push("berserker");
-  // Chance increases with wave: 30% at wave 3, up to 80% late game
-  const chance = Math.min(0.80, 0.30 + (waveNumber - 3) * 0.04);
+  if (waveNumber >= 14) pool.push("phantom");
+  if (waveNumber >= 17) pool.push("cursed");
+  if (waveNumber >= 21) pool.push("titan");
+  // Chance increases with wave
+  const chance = Math.min(0.88, 0.28 + (waveNumber - 3) * 0.045);
   if (Math.random() > chance) return null;
+  // In later waves, bias towards harder modifiers
+  if (waveNumber >= 20 && Math.random() < 0.4) {
+    const hard = pool.filter(m => ["titan","cursed","armored"].includes(m));
+    if (hard.length) return hard[Math.floor(Math.random() * hard.length)];
+  }
   return pool[Math.floor(Math.random() * pool.length)];
 }
 

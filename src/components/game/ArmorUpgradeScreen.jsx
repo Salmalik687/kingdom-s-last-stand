@@ -18,9 +18,10 @@ const CHAPTER_DATA = {
     queenBg: "linear-gradient(180deg, #a855f7, #6d28d9)",
     bgParticles: ["⚔️","🗡️","💫","⭐","✦"],
     upgrades: [
-      { id: "iron_fist",   emoji: "🔩", name: "Iron Fist",   desc: "Reinforced iron plates. All towers deal +15% damage.", statLabel: "Tower Damage", statVal: "+15%", color: "#60a5fa", colorRgb: "96,165,250" },
-      { id: "swift_grip",  emoji: "⚡", name: "Swift Grip",  desc: "Lightweight alloy wraps. Tower fire rate +12%.",       statLabel: "Fire Rate",    statVal: "+12%", color: "#facc15", colorRgb: "250,204,21" },
-      { id: "golden_palm", emoji: "💰", name: "Golden Palm", desc: "Blessed by the treasury. +20 gold per wave.",         statLabel: "Wave Gold",    statVal: "+20g",  color: "#fbbf24", colorRgb: "251,191,36" },
+      { id: "iron_fist",     emoji: "🔩", name: "Iron Fist",     desc: "Reinforced iron plates. All towers deal +15% damage.", statLabel: "Tower Damage", statVal: "+15%", color: "#60a5fa", colorRgb: "96,165,250" },
+      { id: "swift_grip",    emoji: "⚡", name: "Swift Grip",    desc: "Lightweight alloy wraps. Tower fire rate +12%.",       statLabel: "Fire Rate",    statVal: "+12%", color: "#facc15", colorRgb: "250,204,21" },
+      { id: "golden_palm",   emoji: "💰", name: "Golden Palm",   desc: "Blessed by the treasury. +20 gold per wave.",         statLabel: "Wave Gold",    statVal: "+20g",  color: "#fbbf24", colorRgb: "251,191,36" },
+      { id: "dungeon_ward",  emoji: "🛡️", name: "Dungeon Ward",  desc: "Bone-steel shield. Restore +4 lives immediately.",    statLabel: "Lives",        statVal: "+4",    color: "#a78bfa", colorRgb: "167,139,250" },
     ],
   },
   3: {
@@ -42,6 +43,7 @@ const CHAPTER_DATA = {
       { id: "ember_cloak",   emoji: "🔥", name: "Ember Cloak",   desc: "Wreathed in volcanic ash. Projectile speed +20%.", statLabel: "Proj. Speed",  statVal: "+20%", color: "#f97316", colorRgb: "249,115,22" },
       { id: "forge_mantle",  emoji: "⚒️", name: "Forge Mantle",  desc: "Heat-tempered weave. All tower range +10%.",       statLabel: "Tower Range",  statVal: "+10%", color: "#fb923c", colorRgb: "251,146,60" },
       { id: "cinder_shroud", emoji: "🌋", name: "Cinder Shroud", desc: "Lava-dust infused. +1 life restored immediately.", statLabel: "Lives",        statVal: "+1",   color: "#ef4444", colorRgb: "239,68,68"  },
+      { id: "titan_core",    emoji: "💎", name: "Titan Core",    desc: "Forged in the titan's heart. Tower damage +20%.",  statLabel: "Tower Damage", statVal: "+20%", color: "#fb923c", colorRgb: "251,146,60"  },
     ],
   },
   4: {
@@ -63,6 +65,7 @@ const CHAPTER_DATA = {
       { id: "frost_guard",     emoji: "🧊", name: "Frost Guard",     desc: "Glacial gauntlets. Frost slow lasts 10% longer.",    statLabel: "Slow Duration", statVal: "+10%", color: "#7dd3fc", colorRgb: "125,211,252" },
       { id: "storm_mantle",    emoji: "⛈️", name: "Storm Mantle",    desc: "Crackling with abyss energy. Tower damage +20%.",   statLabel: "Tower Damage",  statVal: "+20%", color: "#818cf8", colorRgb: "129,140,248" },
       { id: "titan_shoulders", emoji: "💪", name: "Titan Shoulders", desc: "Colossal plating. +3 lives granted immediately.",   statLabel: "Lives Granted", statVal: "+3",   color: "#a78bfa", colorRgb: "167,139,250" },
+      { id: "blizzard_heart",  emoji: "❄️", name: "Blizzard Heart",  desc: "Shard of the colossus. All range +15%, speed +10%.",statLabel: "Range+Speed",   statVal: "+15/+10%", color: "#bae6fd", colorRgb: "186,230,253" },
     ],
   },
   5: {
@@ -81,9 +84,10 @@ const CHAPTER_DATA = {
     queenBg: "linear-gradient(180deg, #e879f9, #7c3aed)",
     bgParticles: ["👑","✨","🌟","💜","🕊️"],
     upgrades: [
-      { id: "soul_aegis",    emoji: "🌟", name: "Soul Aegis",    desc: "Armour fused with thy very soul. All bonuses DOUBLED.",       statLabel: "All Bonuses",  statVal: "×2",        color: "#e879f9", colorRgb: "232,121,249" },
-      { id: "eternal_flame", emoji: "🔱", name: "Eternal Flame", desc: "Undying dragonfire. Tower damage +40%, fire rate +25%.",      statLabel: "DMG + Speed",  statVal: "+40%/+25%", color: "#ff4d6d", colorRgb: "255,77,109"  },
-      { id: "kings_resolve", emoji: "👑", name: "King's Resolve", desc: "The crown of Eldenmoor descends upon thee. +10 lives, +200 gold.", statLabel: "Lives + Gold", statVal: "+10/+200g", color: "#ffd60a", colorRgb: "255,214,10"  },
+      { id: "soul_aegis",    emoji: "🌟", name: "Soul Aegis",    desc: "Armour fused with thy very soul. All bonuses DOUBLED.",           statLabel: "All Bonuses",  statVal: "×2",        color: "#e879f9", colorRgb: "232,121,249" },
+      { id: "eternal_flame", emoji: "🔱", name: "Eternal Flame", desc: "Undying dragonfire. Tower damage +40%, fire rate +25%.",          statLabel: "DMG + Speed",  statVal: "+40%/+25%", color: "#ff4d6d", colorRgb: "255,77,109"  },
+      { id: "kings_resolve", emoji: "👑", name: "King's Resolve", desc: "The crown of Eldenmoor descends. +10 lives, +200 gold.",         statLabel: "Lives + Gold", statVal: "+10/+200g", color: "#ffd60a", colorRgb: "255,214,10"  },
+      { id: "void_mantle",   emoji: "🌀", name: "Void Mantle",   desc: "Sovereign's own cloak. All towers +50% range & damage +30%.",    statLabel: "Range+Damage", statVal: "+50/+30%",  color: "#c084fc", colorRgb: "192,132,252" },
     ],
   },
 };
@@ -99,7 +103,7 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
   const [selected, setSelected] = useState(null);
 
   const [bgParticles, setBgParticles] = useState([]);
-  const [cardVisible, setCardVisible] = useState([false, false, false]);
+  const [cardVisible, setCardVisible] = useState([false, false, false, false]);
   const [shoutScale, setShoutScale] = useState(0);
   const typeRef = useRef(null);
 
@@ -168,8 +172,8 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
   // Stagger card reveal when entering choose phase
   useEffect(() => {
     if (phase !== "choose") return;
-    setCardVisible([false, false, false]);
-    [0, 1, 2].forEach(i => setTimeout(() => setCardVisible(v => { const n = [...v]; n[i] = true; return n; }), 120 * i + 80));
+    setCardVisible([false, false, false, false]);
+    [0, 1, 2, 3].forEach(i => setTimeout(() => setCardVisible(v => { const n = [...v]; n[i] = true; return n; }), 120 * i + 80));
   }, [phase]);
 
   const advanceLine = () => {
@@ -455,7 +459,7 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
             </div>
 
             {/* Upgrade cards */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="grid grid-cols-2 gap-3 mb-4">
               {data.upgrades.map((u, i) => (
                 <button
                   key={u.id}
