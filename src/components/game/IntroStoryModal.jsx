@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ArmorSelectScreen from "./ArmorSelectScreen";
+import { LordAldric } from "./CharacterSprites";
 
 const STORY_LINES = [
   "Hearken well, good lord... for what I am about to tell thee is no mere fancy nor fireside tale.",
@@ -135,9 +136,11 @@ export default function IntroStoryModal({ show, onBegin }) {
         style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%)" }} />
 
       <div className="relative max-w-2xl w-full mx-4">
-        {/* Crown header */}
+        {/* Header with Lord Aldric */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3 animate-pulse">👑</div>
+          <div className="flex justify-center mb-2">
+            <LordAldric size={90} />
+          </div>
           <h2 className="text-2xl font-black uppercase tracking-[0.3em]"
             style={{
               fontFamily: "'Cinzel Decorative', serif",

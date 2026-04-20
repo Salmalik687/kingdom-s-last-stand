@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Skull } from "lucide-react";
+import { DemonLord } from "./CharacterSprites";
 
 export default function BossArrivalModal({ boss, onDismiss }) {
   const [visible, setVisible] = useState(false);
@@ -45,7 +45,13 @@ export default function BossArrivalModal({ boss, onDismiss }) {
           style={{ background: `linear-gradient(to right, transparent, ${boss.glowColor}99, transparent)` }}
         />
 
-        <div className="text-5xl mb-3">{boss.emoji}</div>
+        {boss.bossType === "boss_shadow" ? (
+          <div className="flex justify-center mb-1">
+            <DemonLord size={100} />
+          </div>
+        ) : (
+          <div className="text-5xl mb-3">{boss.emoji}</div>
+        )}
 
         <p className="text-[10px] uppercase tracking-[0.35em] mb-1" style={{ color: boss.glowColor + "aa" }}>
           {boss.stageLabel} — Boss Arrives

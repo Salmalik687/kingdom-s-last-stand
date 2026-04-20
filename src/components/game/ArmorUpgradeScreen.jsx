@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { QueenSeraphine, LordAldric } from "./CharacterSprites";
 
 const CHAPTER_DATA = {
   2: {
@@ -87,7 +88,7 @@ const CHAPTER_DATA = {
   },
 };
 
-const QUEEN_FRAMES = ["👸", "👸🏻", "👸"];
+
 
 export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
   const data = CHAPTER_DATA[chapter];
@@ -96,7 +97,7 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
   const [typed, setTyped] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [selected, setSelected] = useState(null);
-  const [queenFrame, setQueenFrame] = useState(0);
+
   const [bgParticles, setBgParticles] = useState([]);
   const [cardVisible, setCardVisible] = useState([false, false, false]);
   const [shoutScale, setShoutScale] = useState(0);
@@ -143,11 +144,7 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
     }
   }, [typed, lineIdx, phase, data]);
 
-  // Queen animation
-  useEffect(() => {
-    const t = setInterval(() => setQueenFrame(f => (f + 1) % QUEEN_FRAMES.length), 800);
-    return () => clearInterval(t);
-  }, []);
+
 
   // Continuous bg particles
   useEffect(() => {
@@ -310,36 +307,19 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
         </div>
       )}
 
-      {/* ── Queen character ── */}
+      {/* ── Queen Seraphine ── */}
       {phase !== "shout" && (
         <div className="absolute flex flex-col items-center pointer-events-none"
           style={{
             bottom: phase === "choose" ? "44%" : "24%",
             left: "50%",
-            transform: "translateX(-200px)",
+            transform: "translateX(-230px)",
             transition: "bottom 0.7s cubic-bezier(0.34,1.3,0.64,1)",
             zIndex: 5,
           }}>
-          {/* Crown sparkle */}
-          <div style={{ fontSize: 18, marginBottom: 2, animation: "spin 3s linear infinite", display: "inline-block" }}>✨</div>
-          {/* Queen emoji with pulse glow */}
+          <QueenSeraphine size={110} glowColor={data.glow} glowRgb={data.glowRgb} />
           <div style={{
-            fontSize: 92, lineHeight: 1,
-            filter: `drop-shadow(0 0 32px rgba(${data.glowRgb},0.8)) drop-shadow(0 0 8px rgba(${data.glowRgb},0.5))`,
-            animation: "queenBob 2s ease-in-out infinite",
-          }}>
-            {QUEEN_FRAMES[queenFrame]}
-          </div>
-          {/* Dress */}
-          <div style={{
-            width: 80, height: 34, marginTop: -8,
-            background: data.queenBg,
-            borderRadius: "50% 50% 10px 10px",
-            boxShadow: `0 0 24px rgba(${data.glowRgb},0.6), 0 0 60px rgba(${data.glowRgb},0.2)`,
-          }} />
-          {/* Name */}
-          <div style={{
-            marginTop: 8, fontSize: 11, fontWeight: 700,
+            marginTop: 6, fontSize: 11, fontWeight: 700,
             letterSpacing: "0.25em", textTransform: "uppercase",
             color: data.glow, fontFamily: "'Cinzel', serif",
             textShadow: `0 0 12px ${data.glow}`,
@@ -353,17 +333,13 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
           style={{
             bottom: phase === "choose" ? "44%" : "24%",
             left: "50%",
-            transform: "translateX(72px)",
+            transform: "translateX(80px)",
             transition: "bottom 0.7s cubic-bezier(0.34,1.3,0.64,1)",
             zIndex: 5,
           }}>
+          <LordAldric size={100} bobOffset={0.4} />
           <div style={{
-            fontSize: 80, lineHeight: 1,
-            filter: "drop-shadow(0 0 20px rgba(255,180,60,0.6))",
-            animation: "queenBob 2.4s ease-in-out 0.4s infinite",
-          }}>⚔️</div>
-          <div style={{
-            marginTop: 8, fontSize: 11, fontWeight: 700,
+            marginTop: 6, fontSize: 11, fontWeight: 700,
             letterSpacing: "0.25em", textTransform: "uppercase",
             color: "#d4af70", fontFamily: "'Cinzel', serif",
             textShadow: "0 0 12px rgba(212,175,112,0.6)",
