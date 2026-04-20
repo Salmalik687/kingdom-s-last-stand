@@ -27,6 +27,8 @@ import AbilityTree from "../components/game/AbilityTree";
 import ActiveAbilityBar from "../components/game/ActiveAbilityBar";
 import CodexModal from "../components/game/CodexModal";
 import BossHealthBar from "../components/game/BossHealthBar";
+import CampaignIntro from "../components/game/CampaignIntro";
+import WaveDialogue from "../components/game/WaveDialogue";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 
@@ -78,6 +80,8 @@ export default function Game() {
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
   const [voidWrathActive, setVoidWrathActive] = useState(false);
+  const [showCampaignIntro, setShowCampaignIntro] = useState(true);
+  const [lastDialogueWave, setLastDialogueWave] = useState(0);
   const tempBuffsRef = useRef({}); // { damageBonus, fireRateBonus, rangeBonus, wavesLeft }
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
@@ -510,6 +514,10 @@ export default function Game() {
         setWaveActive(prev => {
           if (prev) {
             setWave(w => {
+              // Show wave dialogue
+              if (lastDialogueWave !== w) {
+                setLastDialogueWave(w);
+              }
               const next = w + 1;
               // Show land complete scene after each land boss (waves 5,10,15,20,25)
               const landBossWaves = { 5: 1, 10: 2, 15: 3, 20: 4, 25: 5 };
@@ -1078,6 +1086,9 @@ export default function Game() {
         stats={achStatsRef.current}
       />
       <AchievementToast newlyUnlocked={newlyUnlocked} />
+
+      <CampaignIntro show={showCampaignIntro} onBegin={() => setShowCampaignIntro(false)} />
+      <WaveDialogue wave={lastDialogueWave} show={wave === lastDialogueWave && !waveActive && lastDialogueWave > 0} />
     </div>
   );
 }
