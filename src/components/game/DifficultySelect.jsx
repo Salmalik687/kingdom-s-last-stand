@@ -9,6 +9,7 @@ const DIFFICULTIES = [
     goldMult: 1.5,
     hpMult: 0.7,
     speedMult: 0.8,
+    dmgMult: 0.7,
     color: "#10b981",
   },
   {
@@ -19,6 +20,7 @@ const DIFFICULTIES = [
     goldMult: 1.0,
     hpMult: 1.0,
     speedMult: 1.0,
+    dmgMult: 1.0,
     color: "#3b82f6",
   },
   {
@@ -29,17 +31,19 @@ const DIFFICULTIES = [
     goldMult: 0.75,
     hpMult: 1.4,
     speedMult: 1.15,
+    dmgMult: 1.5,
     color: "#f97316",
   },
   {
     id: "nightmare",
     name: "Nightmare",
     emoji: "💀",
-    desc: "Extreme. Relentless pressure",
+    desc: "Insane. Enemies deal 2x damage (3 hearts). Very hard to win",
     goldMult: 0.5,
-    hpMult: 2.0,
-    speedMult: 1.35,
-    color: "#ef4444",
+    hpMult: 1.8,
+    speedMult: 1.3,
+    dmgMult: 2.0,
+    color: "#dc2626",
   },
 ];
 
@@ -92,7 +96,7 @@ export default function DifficultySelect({ onSelect }) {
           gridTemplateColumns: "1fr 1fr",
           gap: 16,
           marginBottom: 32,
-        }}>
+        }} className="w-full">
           {DIFFICULTIES.map((diff) => (
             <button
               key={diff.id}
@@ -179,6 +183,16 @@ export default function DifficultySelect({ onSelect }) {
                   gridColumn: "1 / -1",
                 }}>
                   {diff.speedMult > 1 ? "⚡" : "🐢"} {(diff.speedMult * 100).toFixed(0)}% Speed
+                </div>
+                <div style={{
+                  padding: 6,
+                  borderRadius: 4,
+                  background: `${diff.color}20`,
+                  color: diff.color,
+                  fontWeight: 700,
+                  gridColumn: "1 / -1",
+                }}>
+                  {diff.dmgMult > 1 ? "⚔️" : "🛡️"} {(diff.dmgMult * 100).toFixed(0)}% Damage
                 </div>
               </div>
             </button>

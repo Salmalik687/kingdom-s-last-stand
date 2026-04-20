@@ -353,8 +353,10 @@ export default function Game() {
 
       if (livesLost > 0 && !divineShieldActive) {
         playDamageSound();
+        const dmgMult = difficulty ? difficulty.dmgMult : 1;
+        const totalDamage = Math.ceil(livesLost * dmgMult);
         setLives(prev => {
-          const newLives = prev - livesLost;
+          const newLives = prev - totalDamage;
           if (newLives <= 0) {
             setGameOver(true);
           }
