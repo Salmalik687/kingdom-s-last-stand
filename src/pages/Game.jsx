@@ -19,6 +19,9 @@ import VictoryModal from "../components/game/VictoryModal";
 import LandCompleteModal from "../components/game/LandCompleteModal";
 import PerkShop from "../components/game/PerkShop";
 import IntroStoryModal from "../components/game/IntroStoryModal";
+import HallOfHeroesModal from "../components/game/HallOfHeroesModal";
+import AchievementToast from "../components/game/AchievementToast";
+import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout } from "../lib/sounds";
 
 
@@ -59,6 +62,28 @@ export default function Game() {
   const [perkShop, setPerkShop] = useState(false);
   const [perksOwned, setPerksOwned] = useState({});
   const [showIntro, setShowIntro] = useState(true);
+  const [hallOfHeroes, setHallOfHeroes] = useState(false);
+  const [unlockedAchievements, setUnlockedAchievements] = useState([]);
+  const [newlyUnlocked, setNewlyUnlocked] = useState([]);
+
+  // Achievement stats ref — updated continuously
+  const achStatsRef = useRef({
+    totalKills: 0, bossesDefeated: [], flawlessLands: 0, maxCombo: 0,
+    maxGold: 0, totalMerges: 0, mergedTypes: [], score: 0,
+    victory: false, finalLives: 20, livesAtLandStart: 20,
+  });
+  const checkAchievements = useCallback((stats) => {
+    setUnlockedAchievements(prev => {
+      const newly = checkNewAchievements(stats, prev);
+      if (newly.length > 0) {
+        setNewlyUnlocked(newly);
+        setTimeout(() => setNewlyUnlocked([]), 100);
+        return [...prev, ...newly];
+      }
+      return prev;
+    });
+  }, []);
+
   // Persistent multipliers from perks
   const perkMultRef = useRef({ goldBonus: 1, damageBonus: 1, fireRateBonus: 1, projSpeedBonus: 1 });
   const comboTimerRef = useRef(null);
@@ -121,6 +146,12 @@ export default function Game() {
         towerMapRef.current.delete(`${t2.gridX},${t2.gridY}`);
         towerMapRef.current.set(`${merged2.gridX},${merged2.gridY}`, merged2.id);
         towersRef.current = merged;
+        // Track merges for achievements
+        achStatsRef.current.totalMerges = (achStatsRef.current.totalMerges ?? 0) + 1;
+        if (!achStatsRef.current.mergedTypes.includes(resultType)) {
+          achStatsRef.current.mergedTypes = [...achStatsRef.current.mergedTypes, resultType];
+        }
+        checkAchievements({ ...achStatsRef.current });
         setMergeFlash(TOWER_TYPES[resultType]);
         setTimeout(() => setMergeFlash(false), 1800);
       } else {
@@ -422,11 +453,26 @@ export default function Game() {
           comboTimerRef.current = setTimeout(() => setCombo(0), COMBO_WINDOW);
           const comboMult = next < 5 ? 1 : next < 10 ? 2 : next < 20 ? 3 : 5;
           const totalMult = comboMult * (perkMultRef.current.goldBonus ?? 1);
-          setGold(g => g + Math.floor(goldEarned * totalMult));
+          // Track max combo
+          if (next > (achStatsRef.current.maxCombo ?? 0)) {
+            achStatsRef.current.maxCombo = next;
+          }
+          setGold(g => {
+            const ng = g + Math.floor(goldEarned * totalMult);
+            if (ng > (achStatsRef.current.maxGold ?? 0)) achStatsRef.current.maxGold = ng;
+            return ng;
+          });
           return next;
         });
       }
-      if (scoreEarned > 0) setScore(prev => prev + scoreEarned * (combo < 5 ? 1 : combo < 10 ? 2 : combo < 20 ? 3 : 5));
+      if (killCount > 0) {
+        achStatsRef.current.totalKills = (achStatsRef.current.totalKills ?? 0) + killCount;
+      }
+      if (scoreEarned > 0) setScore(prev => {
+        const ns = prev + scoreEarned * (combo < 5 ? 1 : combo < 10 ? 2 : combo < 20 ? 3 : 5);
+        achStatsRef.current.score = ns;
+        return ns;
+      });
 
       // Check wave complete
       if (waveQueueRef.current.length === 0 && enemiesRef.current.length === 0) {
@@ -436,14 +482,36 @@ export default function Game() {
               const next = w + 1;
               // Show land complete scene after each land boss (waves 5,10,15,20,25)
               const landBossWaves = { 5: 1, 10: 2, 15: 3, 20: 4, 25: 5 };
-              if (landBossWaves[w]) setTimeout(() => setLandComplete(landBossWaves[w]), 800);
+              const bossByWave = { 5: "boss_meadow", 10: "boss_dungeon", 15: "boss_volcano", 20: "boss_abyss", 25: "boss_shadow" };
+              if (landBossWaves[w]) {
+                // Track boss defeat
+                const bossType = bossByWave[w];
+                if (bossType && !achStatsRef.current.bossesDefeated.includes(bossType)) {
+                  achStatsRef.current.bossesDefeated = [...achStatsRef.current.bossesDefeated, bossType];
+                }
+                // Track flawless land
+                setLives(currentLives => {
+                  if (currentLives === achStatsRef.current.livesAtLandStart) {
+                    achStatsRef.current.flawlessLands = (achStatsRef.current.flawlessLands ?? 0) + 1;
+                  }
+                  achStatsRef.current.livesAtLandStart = currentLives;
+                  return currentLives;
+                });
+                setTimeout(() => setLandComplete(landBossWaves[w]), 800);
+              }
               return next;
             });
             // Wave bonus scales with wave number
-            setGold(g => g + 25 + wave * 5);
+            setGold(g => {
+              const ng = g + 25 + wave * 5;
+              if (ng > (achStatsRef.current.maxGold ?? 0)) achStatsRef.current.maxGold = ng;
+              return ng;
+            });
             playWaveSuccessSound();
             playVictoryShout();
             setWaveSuccess(s => !s);
+            // Check achievements after each wave
+            checkAchievements({ ...achStatsRef.current });
             // Show perk shop every 2 waves
             if (wave % 2 === 0) setTimeout(() => setPerkShop(true), 900);
             return false;
@@ -483,9 +551,16 @@ export default function Game() {
     setCombo(0);
     setLandComplete(null);
     setVictory(false);
-      setPerkShop(false);
-      setPerksOwned({});
-      setShowIntro(true);
+    setPerkShop(false);
+    setPerksOwned({});
+    setShowIntro(true);
+    setUnlockedAchievements([]);
+    setNewlyUnlocked([]);
+    achStatsRef.current = {
+      totalKills: 0, bossesDefeated: [], flawlessLands: 0, maxCombo: 0,
+      maxGold: 0, totalMerges: 0, mergedTypes: [], score: 0,
+      victory: false, finalLives: 20, livesAtLandStart: 20,
+    };
     perkMultRef.current = { goldBonus: 1, damageBonus: 1, fireRateBonus: 1, projSpeedBonus: 1 };
     if (comboTimerRef.current) clearTimeout(comboTimerRef.current);
     lastTimeRef.current = 0;
@@ -526,7 +601,26 @@ export default function Game() {
               </p>
             </div>
           </div>
-          <GameHUD lives={lives} gold={gold} wave={wave} score={score} />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setHallOfHeroes(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
+              style={{
+                background: "linear-gradient(180deg, #f59e0b, #d97706)",
+                border: "2px solid #fcd34d",
+                boxShadow: "0 2px 0 #78350f, 0 0 10px rgba(245,158,11,0.3)",
+                color: "#1c0a00",
+              }}>
+              🏛️ <span className="hidden sm:inline">Heroes</span>
+              {unlockedAchievements.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black"
+                  style={{ background: "#7c3aed", color: "#e9d5ff" }}>
+                  {unlockedAchievements.length}
+                </span>
+              )}
+            </button>
+            <GameHUD lives={lives} gold={gold} wave={wave} score={score} />
+          </div>
         </div>
       </div>
 
@@ -613,7 +707,15 @@ export default function Game() {
           const LAND_REWARDS = { 1: 300, 2: 500, 3: 750, 4: 1000, 5: 2000 };
           setGold(g => g + (LAND_REWARDS[landComplete] ?? 300));
           setLandComplete(null);
-          if (landComplete === 5) setTimeout(() => setVictory(true), 600);
+          if (landComplete === 5) {
+            setLives(currentLives => {
+              achStatsRef.current.victory = true;
+              achStatsRef.current.finalLives = currentLives;
+              checkAchievements({ ...achStatsRef.current });
+              return currentLives;
+            });
+            setTimeout(() => setVictory(true), 600);
+          }
         }}
       />
       <VictoryModal
@@ -637,6 +739,14 @@ export default function Game() {
       )}
 
       <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} />
+
+      <HallOfHeroesModal
+        show={hallOfHeroes}
+        onClose={() => setHallOfHeroes(false)}
+        unlockedIds={unlockedAchievements}
+        stats={achStatsRef.current}
+      />
+      <AchievementToast newlyUnlocked={newlyUnlocked} />
     </div>
   );
 }
