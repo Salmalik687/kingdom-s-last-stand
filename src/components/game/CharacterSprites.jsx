@@ -3,108 +3,227 @@
 // ─── LORD ALDRIC ────────────────────────────────────────────────────────────
 export function LordAldric({ size = 120, bobOffset = 0 }) {
   return (
-    <svg width={size} height={size * 1.5} viewBox="0 0 80 120" style={{ overflow: "visible", filter: "drop-shadow(0 4px 18px rgba(255,180,60,0.45))" }}>
+    <svg width={size} height={size * 1.55} viewBox="0 0 90 140" style={{ overflow: "visible", filter: "drop-shadow(0 4px 22px rgba(200,160,60,0.5)) drop-shadow(0 0 40px rgba(180,120,40,0.2))" }}>
+      <defs>
+        <radialGradient id="aldricSkin" cx="45%" cy="35%" r="60%">
+          <stop offset="0%" stopColor="#e8b888" />
+          <stop offset="60%" stopColor="#c89060" />
+          <stop offset="100%" stopColor="#a06840" />
+        </radialGradient>
+        <linearGradient id="aldricArmor" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#7a8090" />
+          <stop offset="50%" stopColor="#4a5060" />
+          <stop offset="100%" stopColor="#2a3040" />
+        </linearGradient>
+        <linearGradient id="aldricSword" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#e8e8f8" />
+          <stop offset="40%" stopColor="#b0b8d0" />
+          <stop offset="100%" stopColor="#6070a0" />
+        </linearGradient>
+        <radialGradient id="aldricShield" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#a02828" />
+          <stop offset="100%" stopColor="#4a0808" />
+        </radialGradient>
+      </defs>
       <style>{`
-        @keyframes aldricBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        @keyframes cloakSway { 0%,100% { transform: skewX(0deg); } 50% { transform: skewX(2deg); } }
-        @keyframes eyeGlow { 0%,100% { opacity:0.8; } 50% { opacity:1; } }
-        @keyframes swordGleam { 0%,100% { opacity:0; } 50% { opacity:0.9; } }
-        .aldric-body { animation: aldricBob 2.4s ease-in-out ${bobOffset}s infinite; transform-origin: 40px 110px; }
-        .aldric-cloak { animation: cloakSway 3s ease-in-out ${bobOffset}s infinite; transform-origin: 40px 80px; }
+        @keyframes aBob     { 0%,100%{transform:translateY(0)}     50%{transform:translateY(-4px)} }
+        @keyframes aCloak   { 0%,100%{transform:skewX(0deg)}       50%{transform:skewX(1.5deg)} }
+        @keyframes aGleam   { 0%,100%{opacity:0;transform:translateY(0)}   40%{opacity:0.9;transform:translateY(-4px)}  80%{opacity:0} }
+        @keyframes aEye     { 0%,100%{opacity:0.7} 50%{opacity:1} }
+        @keyframes aCape    { 0%,100%{transform:skewX(0) scaleX(1)} 50%{transform:skewX(2deg) scaleX(1.02)} }
+        @keyframes aBreath  { 0%,100%{transform:scaleY(1)}          50%{transform:scaleY(1.02)} }
+        .a-body   { animation: aBob     2.4s ease-in-out ${bobOffset}s infinite; transform-origin: 45px 128px; }
+        .a-cloak  { animation: aCape    3.2s ease-in-out ${bobOffset}s infinite; transform-origin: 45px 85px; }
+        .a-torso  { animation: aBreath  3s   ease-in-out ${bobOffset}s infinite; transform-origin: 45px 75px; }
       `}</style>
 
-      <g className="aldric-body">
-        {/* ── Boots ── */}
-        <rect x="24" y="104" width="13" height="12" rx="3" fill="#2a1a0a" />
-        <rect x="43" y="104" width="13" height="12" rx="3" fill="#2a1a0a" />
-        <rect x="22" y="108" width="16" height="7" rx="2" fill="#1a0e05" />
-        <rect x="42" y="108" width="16" height="7" rx="2" fill="#1a0e05" />
+      <g className="a-body">
 
-        {/* ── Legs ── */}
-        <rect x="26" y="87" width="12" height="20" rx="3" fill="#3a2510" />
-        <rect x="42" y="87" width="12" height="20" rx="3" fill="#3a2510" />
+        {/* ══ BOOTS ══ — armoured sabatons */}
+        <path d="M28 120 Q26 128 24 134 Q32 136 38 134 Q38 128 36 120 Z" fill="#1e1410" />
+        <path d="M22 130 Q30 136 38 134" stroke="#3a2818" strokeWidth="1.5" fill="none" />
+        <path d="M52 120 Q50 128 48 134 Q56 136 62 134 Q64 128 62 120 Z" fill="#1e1410" />
+        <path d="M48 130 Q56 136 64 134" stroke="#3a2818" strokeWidth="1.5" fill="none" />
+        {/* Sabaton plate lines */}
+        <path d="M24 132 L38 134" stroke="#4a3820" strokeWidth="0.8" opacity="0.7" />
+        <path d="M48 132 L64 134" stroke="#4a3820" strokeWidth="0.8" opacity="0.7" />
 
-        {/* ── Tabard / cloak ── */}
-        <g className="aldric-cloak">
-          <path d="M18 60 Q16 90 20 108 Q30 112 40 110 Q50 112 60 108 Q64 90 62 60 Z" fill="#8b1a1a" opacity="0.95" />
-          <path d="M20 60 Q22 90 26 105 Q34 108 40 107 Z" fill="#a02020" opacity="0.5" />
+        {/* ══ GREAVES / LEGS ══ */}
+        <path d="M28 96 Q26 112 28 120 L38 120 Q40 112 38 96 Z" fill="url(#aldricArmor)" />
+        <path d="M52 96 Q50 112 52 120 L62 120 Q64 112 62 96 Z" fill="url(#aldricArmor)" />
+        {/* Greave highlight */}
+        <path d="M30 98 Q29 112 30 118" stroke="#8090a8" strokeWidth="1" fill="none" opacity="0.5" />
+        <path d="M54 98 Q53 112 54 118" stroke="#8090a8" strokeWidth="1" fill="none" opacity="0.5" />
+        {/* Knee cap */}
+        <ellipse cx="33" cy="96" rx="6" ry="4" fill="#5a6070" />
+        <ellipse cx="57" cy="96" rx="6" ry="4" fill="#5a6070" />
+        <ellipse cx="33" cy="95" rx="4" ry="2.5" fill="#6a7080" />
+        <ellipse cx="57" cy="95" rx="4" ry="2.5" fill="#6a7080" />
+
+        {/* ══ CAPE / TABARD ══ */}
+        <g className="a-cloak">
+          <path d="M20 65 Q15 95 16 118 Q22 122 32 120 Q36 114 36 96 L36 65 Z" fill="#7a1010" opacity="0.9" />
+          <path d="M70 65 Q75 95 74 118 Q68 122 58 120 Q54 114 54 96 L54 65 Z" fill="#7a1010" opacity="0.9" />
           {/* Gold trim */}
-          <path d="M18 60 Q16 90 20 108" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.8" />
-          <path d="M62 60 Q64 90 60 108" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.8" />
-          {/* Eldenmoor crest on tabard */}
-          <path d="M36 72 L40 65 L44 72 L40 78 Z" fill="#d4af37" opacity="0.9" />
+          <path d="M20 65 Q15 95 16 118" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.85" />
+          <path d="M70 65 Q75 95 74 118" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.85" />
+          <path d="M16 118 Q22 122 32 120" stroke="#d4af37" strokeWidth="1.2" fill="none" opacity="0.7" />
+          <path d="M74 118 Q68 122 58 120" stroke="#d4af37" strokeWidth="1.2" fill="none" opacity="0.7" />
+          {/* Crest / sigil */}
+          <path d="M41 78 L45 70 L49 78 L45 85 Z" fill="#d4af37" opacity="0.9" />
+          <circle cx="45" cy="77" r="2" fill="#c8000a" opacity="0.8" />
         </g>
 
-        {/* ── Chainmail / torso ── */}
-        <rect x="22" y="52" width="36" height="26" rx="6" fill="#5a5a6a" />
-        {/* Chain pattern */}
-        {[0,1,2,3].map(row => [0,1,2,3,4].map(col => (
-          <circle key={`c${row}${col}`} cx={25 + col * 7} cy={55 + row * 6} r="2" fill="none" stroke="#7a7a8a" strokeWidth="0.7" />
-        )))}
+        {/* ══ TORSO / PLATE ARMOUR ══ */}
+        <g className="a-torso">
+          {/* Breastplate */}
+          <path d="M24 62 Q22 78 24 90 Q36 96 45 95 Q54 96 66 90 Q68 78 66 62 Q56 56 45 55 Q34 56 24 62 Z" fill="url(#aldricArmor)" />
+          {/* Breastplate highlight */}
+          <path d="M30 64 Q28 78 30 88" stroke="#8090a8" strokeWidth="1.5" fill="none" opacity="0.5" />
+          <path d="M38 58 Q36 78 38 90" stroke="#9098b0" strokeWidth="0.8" fill="none" opacity="0.3" />
+          {/* Center line */}
+          <path d="M45 58 L45 92" stroke="#6070a0" strokeWidth="0.8" fill="none" opacity="0.5" />
+          {/* Plate detailing */}
+          <path d="M30 72 Q45 76 60 72" stroke="#5a6070" strokeWidth="1" fill="none" opacity="0.6" />
+          <path d="M28 80 Q45 84 62 80" stroke="#5a6070" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Battle-worn scrapes */}
+          <path d="M35 66 Q37 68 36 71" stroke="#3a4050" strokeWidth="0.8" fill="none" opacity="0.6" />
+          <path d="M50 60 Q52 63 51 67" stroke="#3a4050" strokeWidth="0.8" fill="none" opacity="0.5" />
 
-        {/* ── Pauldrons (shoulder armour) ── */}
-        <ellipse cx="19" cy="56" rx="8" ry="5" fill="#7a7a8a" />
-        <ellipse cx="61" cy="56" rx="8" ry="5" fill="#7a7a8a" />
-        <ellipse cx="19" cy="55" rx="6" ry="3.5" fill="#5a5a6a" />
-        <ellipse cx="61" cy="55" rx="6" ry="3.5" fill="#5a5a6a" />
+          {/* Pauldrons — heavy plate shoulders */}
+          {/* Left pauldron */}
+          <path d="M14 58 Q10 62 10 70 Q14 76 22 74 Q26 68 24 60 Z" fill="#4a5060" />
+          <path d="M14 58 Q10 64 10 70" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.7" />
+          <path d="M10 70 Q14 76 22 74" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Right pauldron */}
+          <path d="M76 58 Q80 62 80 70 Q76 76 68 74 Q64 68 66 60 Z" fill="#4a5060" />
+          <path d="M76 58 Q80 64 80 70" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.7" />
+          <path d="M80 70 Q76 76 68 74" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Shoulder spikes — subtle */}
+          <path d="M12 58 L9 50 L15 56 Z" fill="#3a4050" stroke="#6a7080" strokeWidth="0.5" />
+          <path d="M78 58 L81 50 L75 56 Z" fill="#3a4050" stroke="#6a7080" strokeWidth="0.5" />
 
-        {/* ── Left arm (sword arm) ── */}
-        <rect x="10" y="55" width="10" height="26" rx="4" fill="#5a5a6a" />
-        {/* Sword */}
-        <rect x="4" y="30" width="4" height="42" rx="1" fill="#c0c0d0" />
-        <rect x="1" y="52" width="10" height="3" rx="1" fill="#d4af37" />
-        <path d="M6 28 L6 31" stroke="#e8e8f0" strokeWidth="3" strokeLinecap="round" />
-        {/* Sword gleam */}
-        <path d="M5 32 L5 48" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0" style={{ animation: "swordGleam 3s ease-in-out 1s infinite" }} />
+          {/* ══ SWORD ARM (LEFT) ══ */}
+          <path d="M10 70 Q6 76 6 88 Q8 96 14 94 Q20 90 20 80 Q18 72 14 68 Z" fill="#4a5060" />
+          <path d="M8 76 Q6 84 8 92" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Gauntlet left */}
+          <path d="M7 92 Q5 98 7 104 Q12 106 16 104 Q18 98 16 92 Z" fill="#3a4050" />
+          {/* Fingers */}
+          <path d="M7 104 Q9 108 10 104" stroke="#5a6070" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          <path d="M10 105 Q12 110 13 105" stroke="#5a6070" strokeWidth="1.5" fill="none" strokeLinecap="round" />
 
-        {/* ── Right arm ── */}
-        <rect x="60" y="55" width="10" height="26" rx="4" fill="#5a5a6a" />
-        {/* Shield */}
-        <path d="M68 52 Q76 52 76 60 Q76 70 68 76 Q60 70 60 60 Q60 52 68 52 Z" fill="#8b1a1a" stroke="#d4af37" strokeWidth="1.5" />
-        <path d="M68 56 L68 72" stroke="#d4af37" strokeWidth="1" />
-        <path d="M62 60 L74 60" stroke="#d4af37" strokeWidth="1" />
+          {/* ══ SHIELD ARM (RIGHT) ══ */}
+          <path d="M80 70 Q84 76 84 88 Q82 96 76 94 Q70 90 70 80 Q72 72 76 68 Z" fill="#4a5060" />
+          <path d="M82 76 Q84 84 82 92" stroke="#7a8090" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Shield */}
+          <path d="M82 64 Q92 66 94 76 Q94 90 82 98 Q70 90 70 76 Q70 66 82 64 Z" fill="url(#aldricShield)" />
+          <path d="M82 64 Q92 66 94 76 Q94 90 82 98 Q70 90 70 76 Q70 66 82 64" stroke="#d4af37" strokeWidth="1.5" fill="none" />
+          {/* Shield cross */}
+          <path d="M82 66 L82 96" stroke="#d4af37" strokeWidth="1.2" opacity="0.8" />
+          <path d="M72 81 L92 81" stroke="#d4af37" strokeWidth="1.2" opacity="0.8" />
+          {/* Shield boss */}
+          <circle cx="82" cy="81" r="4" fill="#d4af37" opacity="0.9" />
+          <circle cx="82" cy="81" r="2" fill="#c8000a" opacity="0.8" />
+        </g>
 
-        {/* ── Neck ── */}
-        <rect x="34" y="43" width="12" height="12" rx="4" fill="#c8956a" />
+        {/* ══ SWORD ══ — great Elden Ring longsword */}
+        {/* Blade */}
+        <path d="M6 18 L3 22 L6 108 L8 108 L11 22 Z" fill="url(#aldricSword)" />
+        <path d="M6 18 L6 108" stroke="#d0d8e8" strokeWidth="0.5" fill="none" opacity="0.6" />
+        {/* Crossguard */}
+        <path d="M0 54 Q9 52 18 54" fill="#d4af37" />
+        <path d="M0 54 Q9 52 18 54" stroke="#b8860b" strokeWidth="0.8" fill="none" />
+        {/* Grip */}
+        <rect x="5.5" y="54" width="3" height="18" rx="1" fill="#5a3010" />
+        {[0,1,2,3].map(i => <path key={i} d={`M5 ${57+i*4} Q7 ${58+i*4} 9 ${57+i*4}`} stroke="#d4af37" strokeWidth="0.6" fill="none" opacity="0.6" />)}
+        {/* Pommel */}
+        <ellipse cx="7" cy="74" rx="4" ry="3" fill="#d4af37" />
+        <circle cx="7" cy="73" r="1.5" fill="#ffe566" opacity="0.7" />
+        {/* Blade gleam animation */}
+        <path d="M7 22 L7 52" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0" style={{ animation: "aGleam 4s ease-in-out 1.5s infinite" }} />
+        {/* Blade rune glow */}
+        <path d="M7 32 Q6 40 7 48" stroke="#4a7aff" strokeWidth="0.8" fill="none" opacity="0.3" style={{ animation: "aEye 2s ease-in-out infinite" }} />
 
-        {/* ── Head ── */}
-        <ellipse cx="40" cy="34" rx="14" ry="16" fill="#d4956a" />
+        {/* ══ NECK ══ */}
+        <path d="M38 44 Q36 52 36 58 L54 58 Q54 52 52 44 Q48 40 45 40 Q42 40 38 44 Z" fill="url(#aldricSkin)" />
+        {/* Gorget (neck armor) */}
+        <path d="M33 56 Q36 60 45 62 Q54 60 57 56 Q54 54 45 54 Q36 54 33 56 Z" fill="#4a5060" />
+        <path d="M33 56 Q45 62 57 56" stroke="#6a7080" strokeWidth="0.8" fill="none" opacity="0.6" />
+
+        {/* ══ HEAD / FACE ══ */}
+        <ellipse cx="45" cy="32" rx="16" ry="18" fill="url(#aldricSkin)" />
+        {/* Jaw definition */}
+        <path d="M31 38 Q32 46 45 50 Q58 46 59 38" stroke="#a07050" strokeWidth="0.8" fill="none" opacity="0.4" />
         {/* Jaw shadow */}
-        <ellipse cx="40" cy="42" rx="10" ry="5" fill="#b87050" opacity="0.4" />
-        {/* Battle scar */}
-        <path d="M32 30 L36 34" stroke="#a06040" strokeWidth="1" strokeLinecap="round" opacity="0.7" />
-        {/* Eyes */}
-        <ellipse cx="34" cy="31" rx="3.5" ry="3" fill="white" />
-        <ellipse cx="46" cy="31" rx="3.5" ry="3" fill="white" />
-        <circle cx="34.5" cy="31.5" r="2" fill="#2a4a80" />
-        <circle cx="46.5" cy="31.5" r="2" fill="#2a4a80" />
-        <circle cx="35" cy="31" r="0.8" fill="black" />
-        <circle cx="47" cy="31" r="0.8" fill="black" />
-        <circle cx="35.8" cy="30.4" r="0.5" fill="white" />
-        <circle cx="47.8" cy="30.4" r="0.5" fill="white" />
-        {/* Eye glow */}
-        <circle cx="34.5" cy="31.5" r="2" fill="#4a7aff" opacity="0.2" style={{ animation: "eyeGlow 2s infinite" }} />
-        {/* Brows */}
-        <path d="M31 27.5 Q34 26 37 27.5" stroke="#4a2a10" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <path d="M43 27.5 Q46 26 49 27.5" stroke="#4a2a10" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        {/* Nose */}
-        <path d="M39 34 L38 38 L42 38" stroke="#a06040" strokeWidth="1" fill="none" strokeLinecap="round" />
-        {/* Mouth — determined grimace */}
-        <path d="M34 42 Q40 44 46 42" stroke="#7a4030" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        {/* Stubble */}
-        {[33,35,37,39,41,43,45,47].map((x,i) => (
-          <line key={i} x1={x} y1="41" x2={x} y2="43" stroke="#7a4030" strokeWidth="0.7" opacity="0.5" />
+        <ellipse cx="45" cy="46" rx="11" ry="5" fill="#a06840" opacity="0.25" />
+        {/* Battle scar — across cheek */}
+        <path d="M34 30 L38 35" stroke="#804828" strokeWidth="1.2" strokeLinecap="round" opacity="0.65" />
+        <path d="M35 30 L39 35" stroke="#c07858" strokeWidth="0.5" strokeLinecap="round" opacity="0.3" />
+
+        {/* ══ EYES ══ — intense, determined */}
+        <ellipse cx="38" cy="29" rx="5" ry="3.8" fill="white" />
+        <ellipse cx="52" cy="29" rx="5" ry="3.8" fill="white" />
+        {/* Iris */}
+        <circle cx="38" cy="30" r="3.2" fill="#2a4a90" />
+        <circle cx="52" cy="30" r="3.2" fill="#2a4a90" />
+        <circle cx="38" cy="30" r="2" fill="#0d1f50" />
+        <circle cx="52" cy="30" r="2" fill="#0d1f50" />
+        {/* Shine */}
+        <circle cx="39.5" cy="28.5" r="1" fill="white" opacity="0.9" />
+        <circle cx="53.5" cy="28.5" r="1" fill="white" opacity="0.9" />
+        <circle cx="37" cy="31" r="0.5" fill="white" opacity="0.4" />
+        <circle cx="51" cy="31" r="0.5" fill="white" opacity="0.4" />
+        {/* Eye glow — heroic blue */}
+        <circle cx="38" cy="30" r="3.5" fill="#4a7aff" opacity="0.18" style={{ animation: "aEye 2.5s ease-in-out infinite" }} />
+        <circle cx="52" cy="30" r="3.5" fill="#4a7aff" opacity="0.18" style={{ animation: "aEye 2.5s ease-in-out 0.5s infinite" }} />
+        {/* Heavy brow — furrowed, battle-set */}
+        <path d="M33 24 Q38 21.5 43 23.5" stroke="#3a2010" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+        <path d="M47 23.5 Q52 21.5 57 24" stroke="#3a2010" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+        {/* Brow furrow */}
+        <path d="M42 23 Q43 22 44 23" stroke="#5a3020" strokeWidth="1" fill="none" opacity="0.6" />
+        {/* Eyelid line */}
+        <path d="M33 26 Q38 24.5 43 26" stroke="#2a1810" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <path d="M47 26 Q52 24.5 57 26" stroke="#2a1810" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+
+        {/* ══ NOSE ══ — strong, masculine */}
+        <path d="M44 33 Q43 38 44 41 Q45 42.5 46 41 Q47 38 46 33" stroke="#a07050" strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.7" />
+        <ellipse cx="43.5" cy="41" rx="2" ry="1.2" fill="#906040" opacity="0.35" />
+        <ellipse cx="46.5" cy="41" rx="2" ry="1.2" fill="#906040" opacity="0.35" />
+
+        {/* ══ MOUTH ══ — determined set jaw */}
+        <path d="M37 46 Q42 44 45 45 Q48 44 53 46" stroke="#7a4030" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <path d="M39 47 Q45 49 51 47" stroke="#6a3825" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.5" />
+        {/* Stubble shadow */}
+        <ellipse cx="45" cy="46" rx="10" ry="4" fill="#7a4030" opacity="0.08" />
+        {[36,38,40,42,44,46,48,50,52,54].map((x,i) => (
+          <line key={i} x1={x} y1="44" x2={x + (i%2?0.5:-0.5)} y2="47" stroke="#5a3020" strokeWidth="0.7" opacity="0.35" />
         ))}
 
-        {/* ── Helmet ── */}
-        <path d="M26 28 Q26 14 40 12 Q54 14 54 28 Z" fill="#6a6a7a" />
-        <path d="M26 28 Q26 14 40 12 Q54 14 54 28" stroke="#9a9aaa" strokeWidth="1.5" fill="none" />
-        {/* Nose guard */}
-        <rect x="38" y="20" width="4" height="18" rx="1" fill="#5a5a6a" />
+        {/* ══ HELMET ══ — great helm with visor */}
+        {/* Main helm body */}
+        <path d="M29 28 Q29 10 45 8 Q61 10 61 28 Z" fill="#4a5060" />
+        <path d="M29 28 Q29 10 45 8 Q61 10 61 28" stroke="#7a8090" strokeWidth="1.5" fill="none" />
+        {/* Helm detail — banded plates */}
+        <path d="M30 24 Q45 22 60 24" stroke="#6a7080" strokeWidth="1" fill="none" opacity="0.7" />
+        <path d="M30 18 Q45 16 60 18" stroke="#5a6070" strokeWidth="0.8" fill="none" opacity="0.5" />
+        {/* Nose/face guard */}
+        <rect x="43" y="16" width="4" height="18" rx="1.5" fill="#3a4050" />
+        <rect x="43.5" y="17" width="1.5" height="16" rx="0.8" fill="#5a6070" opacity="0.5" />
+        {/* Visor slot */}
+        <path d="M32 26 Q38 24 43 25" stroke="#1a2030" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
+        <path d="M47 25 Q52 24 58 26" stroke="#1a2030" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.8" />
         {/* Crown on helmet */}
-        <path d="M28 22 L31 17 L34 20 L37 15 L40 18 L43 15 L46 20 L49 17 L52 22" stroke="#d4af37" strokeWidth="2" fill="none" strokeLinecap="round" />
-        {/* Helmet plume */}
-        <path d="M40 12 Q38 4 36 2 Q40 1 44 2 Q42 4 40 12" fill="#8b1a1a" opacity="0.9" />
+        <path d="M31 20 L34 14 L37 18 L40 11 L43 16 L47 16 L50 11 L53 18 L56 14 L59 20"
+          stroke="#d4af37" strokeWidth="2.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        {/* Crown gems */}
+        <circle cx="45" cy="12" r="2" fill="#ef4444" opacity="0.9" />
+        <circle cx="36" cy="15" r="1.5" fill="#d4af37" opacity="0.8" />
+        <circle cx="54" cy="15" r="1.5" fill="#d4af37" opacity="0.8" />
+        {/* Helm plume */}
+        <path d="M45 8 Q42 0 38 -4 Q42 -5 46 -5 Q48 -1 45 8" fill="#8b1a1a" opacity="0.9" />
+        <path d="M45 8 Q48 2 50 -2" stroke="#a02020" strokeWidth="2" fill="none" strokeLinecap="round" opacity="0.7" />
+        {/* Plume shimmer */}
+        <path d="M44 2 Q43 0 42 -2" stroke="#c03030" strokeWidth="1" fill="none" opacity="0.5" />
       </g>
     </svg>
   );
@@ -113,130 +232,248 @@ export function LordAldric({ size = 120, bobOffset = 0 }) {
 // ─── QUEEN SERAPHINE ────────────────────────────────────────────────────────
 export function QueenSeraphine({ size = 120, glowColor = "#e879f9", glowRgb = "232,121,249" }) {
   return (
-    <svg width={size} height={size * 1.7} viewBox="0 0 80 136" style={{ overflow: "visible", filter: `drop-shadow(0 4px 22px rgba(${glowRgb},0.55))` }}>
+    <svg width={size} height={size * 1.8} viewBox="0 0 100 180" style={{ overflow: "visible", filter: `drop-shadow(0 6px 28px rgba(${glowRgb},0.65)) drop-shadow(0 0 60px rgba(${glowRgb},0.25))` }}>
+      <defs>
+        <radialGradient id="skinGrad" cx="45%" cy="38%" r="55%">
+          <stop offset="0%" stopColor="#fce4d0" />
+          <stop offset="60%" stopColor="#f0c8a8" />
+          <stop offset="100%" stopColor="#d4a080" />
+        </radialGradient>
+        <radialGradient id="irisGrad" cx="35%" cy="30%" r="65%">
+          <stop offset="0%" stopColor="#9de4d4" />
+          <stop offset="50%" stopColor="#2a9a7a" />
+          <stop offset="100%" stopColor="#0d4a38" />
+        </radialGradient>
+        <radialGradient id="dressGrad" cx="50%" cy="20%" r="80%">
+          <stop offset="0%" stopColor="#8b2fc9" />
+          <stop offset="50%" stopColor="#5a0e8a" />
+          <stop offset="100%" stopColor="#2d0548" />
+        </radialGradient>
+        <radialGradient id="crownGrad" cx="50%" cy="0%" r="100%">
+          <stop offset="0%" stopColor="#ffe97a" />
+          <stop offset="100%" stopColor="#b8860b" />
+        </radialGradient>
+        <linearGradient id="hairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3d1060" />
+          <stop offset="40%" stopColor="#1a0535" />
+          <stop offset="100%" stopColor="#0a0020" />
+        </linearGradient>
+        <filter id="queenGlow">
+          <feGaussianBlur stdDeviation="2" result="blur" />
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
       <style>{`
-        @keyframes queenBobSvg { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        @keyframes dressFlow { 0%,100% { d: path("M14 72 Q10 110 16 130 Q40 136 64 130 Q70 110 66 72 Z"); } 50% { d: path("M14 72 Q8 110 15 130 Q40 138 65 130 Q72 110 66 72 Z"); } }
-        @keyframes hairFlow { 0%,100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
-        @keyframes jewelPulse { 0%,100% { opacity:0.7; r:3; } 50% { opacity:1; r:3.8; } }
-        @keyframes crownGlow { 0%,100% { filter: drop-shadow(0 0 4px ${glowColor}); } 50% { filter: drop-shadow(0 0 12px ${glowColor}); } }
-        .queen-body { animation: queenBobSvg 2s ease-in-out infinite; transform-origin: 40px 120px; }
-        .queen-hair { animation: hairFlow 2.5s ease-in-out infinite; transform-origin: 40px 40px; }
-        .queen-crown { animation: crownGlow 2s ease-in-out infinite; }
+        @keyframes qBob      { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        @keyframes qBreath   { 0%,100%{transform:scaleX(1)}    50%{transform:scaleX(1.015)} }
+        @keyframes qHairSway { 0%,100%{transform:skewX(0deg) translateX(0)} 50%{transform:skewX(1.5deg) translateX(1px)} }
+        @keyframes qJewel    { 0%,100%{opacity:0.8;filter:drop-shadow(0 0 3px ${glowColor})} 50%{opacity:1;filter:drop-shadow(0 0 10px ${glowColor})} }
+        @keyframes qCrown    { 0%,100%{filter:drop-shadow(0 0 5px #ffd700)} 50%{filter:drop-shadow(0 0 16px #ffd700) drop-shadow(0 0 30px ${glowColor})} }
+        @keyframes qEye      { 0%,100%{opacity:0.6} 50%{opacity:1} }
+        @keyframes qVeil     { 0%,100%{transform:translateX(0) skewY(0)} 50%{transform:translateX(2px) skewY(0.5deg)} }
+        .q-body  { animation: qBob 2.6s ease-in-out infinite; transform-origin: 50px 160px; }
+        .q-torso { animation: qBreath 3s ease-in-out infinite; transform-origin: 50px 90px; }
+        .q-hair  { animation: qHairSway 3.2s ease-in-out infinite; transform-origin: 50px 50px; }
+        .q-crown { animation: qCrown 2.4s ease-in-out infinite; }
+        .q-veil  { animation: qVeil 3.5s ease-in-out infinite; transform-origin: 50px 60px; }
       `}</style>
 
-      <g className="queen-body">
-        {/* ── Dress / gown ── */}
-        <path d="M14 72 Q8 110 14 130 Q40 138 66 130 Q72 110 66 72 Z" fill="#4a0e6e" />
-        {/* Dress gradient layers */}
-        <path d="M18 72 Q14 105 18 126 Q40 133 62 126 Q66 105 62 72 Z" fill="#6b21a8" opacity="0.6" />
-        <path d="M24 72 Q22 100 24 122 Q40 128 56 122 Q58 100 56 72 Z" fill="#9333ea" opacity="0.3" />
-        {/* Gold trim at hem */}
-        <path d="M14 130 Q40 138 66 130" stroke={glowColor} strokeWidth="2" fill="none" opacity="0.8" />
-        {/* Dress shimmer lines */}
-        <path d="M30 80 Q28 110 30 126" stroke={glowColor} strokeWidth="0.7" fill="none" opacity="0.25" />
-        <path d="M40 78 Q40 112 40 128" stroke={glowColor} strokeWidth="0.7" fill="none" opacity="0.2" />
-        <path d="M50 80 Q52 110 50 126" stroke={glowColor} strokeWidth="0.7" fill="none" opacity="0.25" />
-        {/* Stars on dress */}
-        {[[22,92],[50,88],[34,105],[55,108],[26,118],[48,120]].map(([x,y],i) => (
-          <circle key={i} cx={x} cy={y} r="1.2" fill={glowColor} opacity={0.5 + (i%3)*0.15} />
+      <g className="q-body">
+
+        {/* ══ GOWN ══ */}
+        {/* Outer gown — deep violet */}
+        <path d="M28 88 Q14 118 10 150 Q8 168 50 174 Q92 168 90 150 Q86 118 72 88 Z" fill="url(#dressGrad)" />
+        {/* Inner layer highlight */}
+        <path d="M33 88 Q22 115 20 148 Q22 162 50 167 Q78 162 80 148 Q78 115 67 88 Z" fill="#7c3aed" opacity="0.4" />
+        {/* Central panel — lighter */}
+        <path d="M40 88 Q36 115 36 148 Q43 155 50 155 Q57 155 64 148 Q64 115 60 88 Z" fill="#9333ea" opacity="0.25" />
+        {/* Gold hem trim */}
+        <path d="M10 150 Q50 174 90 150" stroke="#d4af37" strokeWidth="2.5" fill="none" opacity="0.9" />
+        <path d="M12 155 Q50 178 88 155" stroke="#ffd700" strokeWidth="1" fill="none" opacity="0.4" />
+        {/* Intricate gown embroidery lines */}
+        {[0,1,2,3].map(i => (
+          <path key={i} d={`M${38+i*5} 95 Q${36+i*5} 140 ${37+i*5} 162`} stroke={glowColor} strokeWidth="0.5" fill="none" opacity={0.12 + i*0.04} />
         ))}
-
-        {/* ── Corset / bodice ── */}
-        <rect x="22" y="52" width="36" height="24" rx="8" fill="#7c3aed" />
-        <rect x="24" y="54" width="32" height="20" rx="6" fill="#9333ea" opacity="0.5" />
-        {/* Bodice lacing */}
-        {[0,1,2].map(i => (
-          <g key={i}>
-            <line x1="34" y1={57 + i*6} x2="38" y2={59 + i*6} stroke={glowColor} strokeWidth="0.8" opacity="0.7" />
-            <line x1="42" y1={59 + i*6} x2="46" y2={57 + i*6} stroke={glowColor} strokeWidth="0.8" opacity="0.7" />
-          </g>
+        {/* Starfield on dress */}
+        {[[20,105],[72,98],[30,125],[65,118],[25,148],[75,142],[50,132],[42,112],[58,128]].map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r={i%3===0?1.5:0.9} fill={glowColor} opacity={0.3 + (i%4)*0.12} />
         ))}
-        {/* Center jewel */}
-        <circle cx="40" cy="58" r="3.5" fill={glowColor} style={{ animation: "jewelPulse 2s ease-in-out infinite" }} />
-        <circle cx="40" cy="58" r="2" fill="white" opacity="0.6" />
+        {/* Layered petticoat peek at hem */}
+        <path d="M15 158 Q50 170 85 158 Q80 166 50 172 Q20 166 15 158 Z" fill="#5a0e8a" opacity="0.5" />
 
-        {/* ── Sleeves ── */}
-        <path d="M22 53 Q10 58 8 72 Q12 78 18 74 Q20 62 26 58 Z" fill="#7c3aed" />
-        <path d="M58 53 Q70 58 72 72 Q68 78 62 74 Q60 62 54 58 Z" fill="#7c3aed" />
-        {/* Sleeve trim */}
-        <path d="M8 72 Q12 78 18 74" stroke={glowColor} strokeWidth="1" fill="none" opacity="0.7" />
-        <path d="M72 72 Q68 78 62 74" stroke={glowColor} strokeWidth="1" fill="none" opacity="0.7" />
-        {/* Hands */}
-        <ellipse cx="10" cy="75" rx="5" ry="4" fill="#e8c4a0" />
-        <ellipse cx="70" cy="75" rx="5" ry="4" fill="#e8c4a0" />
-        {/* Ring */}
-        <circle cx="72" cy="74" r="1.5" fill={glowColor} opacity="0.9" />
+        {/* ══ BODICE / CORSET ══ */}
+        <g className="q-torso">
+          {/* Main bodice */}
+          <path d="M30 70 Q26 88 28 96 L72 96 Q74 88 70 70 Q60 64 50 63 Q40 64 30 70 Z" fill="#6d28d9" />
+          <path d="M33 72 Q30 88 32 94 L68 94 Q70 88 67 72 Q58 66 50 65 Q42 66 33 72 Z" fill="#8b3cf7" opacity="0.5" />
+          {/* Bodice lacing — golden cord */}
+          <path d="M46 70 Q44 80 46 90" stroke="#d4af37" strokeWidth="0.8" fill="none" opacity="0.8" />
+          <path d="M54 70 Q56 80 54 90" stroke="#d4af37" strokeWidth="0.8" fill="none" opacity="0.8" />
+          {[0,1,2,3].map(i => (
+            <path key={i} d={`M46 ${72+i*6} Q50 ${74+i*6} 54 ${72+i*6}`} stroke="#ffd700" strokeWidth="0.8" fill="none" opacity="0.7" />
+          ))}
+          {/* Central brooch / sigil */}
+          <circle cx="50" cy="76" r="5" fill="#1a0035" stroke={glowColor} strokeWidth="1.2" />
+          <circle cx="50" cy="76" r="3" fill={glowColor} opacity="0.9" style={{ animation: "qJewel 2s ease-in-out infinite" }} />
+          <circle cx="50" cy="76" r="1.5" fill="white" opacity="0.8" />
+          {/* Gold side accents */}
+          <path d="M30 78 Q27 82 30 86" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.7" strokeLinecap="round" />
+          <path d="M70 78 Q73 82 70 86" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.7" strokeLinecap="round" />
 
-        {/* ── Neck ── */}
-        <rect x="33" y="44" width="14" height="12" rx="5" fill="#e8c4a0" />
-        {/* Necklace */}
-        <path d="M30 52 Q40 57 50 52" stroke={glowColor} strokeWidth="1" fill="none" opacity="0.9" />
-        {[34,40,46].map((x,i) => (
-          <circle key={i} cx={x} cy={i===1?56:54} r={i===1?2:1.5} fill={glowColor} opacity={i===1?1:0.8} />
-        ))}
+          {/* ══ SLEEVES ══ — flowing, Elden Ring style */}
+          {/* Left sleeve */}
+          <path d="M30 70 Q18 72 12 82 Q8 92 12 98 Q18 102 24 96 Q22 86 28 80 Z" fill="#6d28d9" />
+          <path d="M30 70 Q20 74 15 84 Q12 92 15 97" stroke="#8b3cf7" strokeWidth="1" fill="none" opacity="0.5" />
+          {/* Left sleeve trim — flowing hem */}
+          <path d="M12 98 Q18 102 24 96" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.8" />
+          {/* Right sleeve */}
+          <path d="M70 70 Q82 72 88 82 Q92 92 88 98 Q82 102 76 96 Q78 86 72 80 Z" fill="#6d28d9" />
+          <path d="M70 70 Q80 74 85 84 Q88 92 85 97" stroke="#8b3cf7" strokeWidth="1" fill="none" opacity="0.5" />
+          <path d="M88 98 Q82 102 76 96" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.8" />
 
-        {/* ── Head / face ── */}
-        <ellipse cx="40" cy="34" rx="13" ry="15" fill="#f0d0a8" />
-        {/* Cheeks */}
-        <ellipse cx="30" cy="37" rx="5" ry="3" fill="#f9a8d4" opacity="0.35" />
-        <ellipse cx="50" cy="37" rx="5" ry="3" fill="#f9a8d4" opacity="0.35" />
-        {/* Jaw */}
-        <ellipse cx="40" cy="44" rx="9" ry="4" fill="#e8c090" opacity="0.4" />
-        {/* Eyes — large, expressive */}
-        <ellipse cx="33" cy="31" rx="4.5" ry="4" fill="white" />
-        <ellipse cx="47" cy="31" rx="4.5" ry="4" fill="white" />
-        {/* Iris */}
-        <circle cx="33" cy="32" r="3" fill="#1a6a4a" />
-        <circle cx="47" cy="32" r="3" fill="#1a6a4a" />
-        <circle cx="33" cy="32" r="1.8" fill="#0d3a28" />
-        <circle cx="47" cy="32" r="1.8" fill="#0d3a28" />
-        {/* Pupil shine */}
-        <circle cx="34.2" cy="30.8" r="0.9" fill="white" />
-        <circle cx="48.2" cy="30.8" r="0.9" fill="white" />
-        {/* Eyelashes */}
-        <path d="M28.5 28 Q30 26.5 31.5 27" stroke="#1a0a10" strokeWidth="1" fill="none" strokeLinecap="round" />
-        <path d="M34.5 27 Q36 26 37.5 27.5" stroke="#1a0a10" strokeWidth="1" fill="none" strokeLinecap="round" />
-        <path d="M42.5 27.5 Q44 26 45.5 27" stroke="#1a0a10" strokeWidth="1" fill="none" strokeLinecap="round" />
-        <path d="M48.5 27 Q50 26.5 51.5 28" stroke="#1a0a10" strokeWidth="1" fill="none" strokeLinecap="round" />
-        {/* Brows — elegant arched */}
-        <path d="M29 26 Q33 23.5 37 25.5" stroke="#5a3020" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        <path d="M43 25.5 Q47 23.5 51 26" stroke="#5a3020" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        {/* Nose */}
-        <path d="M39 35 Q38 38 39.5 39 Q41 38 40 35" stroke="#c09070" strokeWidth="1" fill="none" strokeLinecap="round" />
-        {/* Lips */}
-        <path d="M34 43 Q37 41.5 40 42 Q43 41.5 46 43" fill="#d4607a" stroke="#b84060" strokeWidth="0.5" />
-        <path d="M36 43 Q40 45 44 43" fill="#d4607a" stroke="#b84060" strokeWidth="0.5" />
-        {/* Lip highlight */}
-        <path d="M37 42.5 Q40 41.5 43 42.5" stroke="rgba(255,200,200,0.5)" strokeWidth="0.8" fill="none" />
-
-        {/* ── Hair ── */}
-        <g className="queen-hair">
-          {/* Base hair */}
-          <path d="M27 24 Q24 18 26 10 Q40 6 54 10 Q56 18 53 24" fill="#1a0a30" />
-          <path d="M27 24 Q20 30 18 40 Q16 50 20 58" stroke="#1a0a30" strokeWidth="8" fill="none" strokeLinecap="round" />
-          <path d="M53 24 Q60 30 62 40 Q64 50 60 58" stroke="#1a0a30" strokeWidth="8" fill="none" strokeLinecap="round" />
-          {/* Hair waves */}
-          <path d="M20 42 Q18 50 20 58" stroke="#2d1050" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M60 42 Q62 50 60 58" stroke="#2d1050" strokeWidth="3" fill="none" strokeLinecap="round" />
-          {/* Hair sheen */}
-          <path d="M30 14 Q32 20 30 28" stroke="rgba(180,120,255,0.3)" strokeWidth="2" fill="none" strokeLinecap="round" />
-          {/* Long trailing locks */}
-          <path d="M20 58 Q16 70 18 84" stroke="#1a0a30" strokeWidth="6" fill="none" strokeLinecap="round" />
-          <path d="M60 58 Q64 70 62 84" stroke="#1a0a30" strokeWidth="6" fill="none" strokeLinecap="round" />
+          {/* ══ HANDS ══ — elegant, slender */}
+          {/* Left hand */}
+          <path d="M11 97 Q8 101 9 106 Q11 108 14 107 Q16 103 14 98 Z" fill="url(#skinGrad)" />
+          <path d="M10 102 Q8 100 7 104" stroke="#e8c0a0" strokeWidth="1" fill="none" strokeLinecap="round" />
+          <path d="M12 104 Q10 102 9 106" stroke="#e8c0a0" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+          {/* Right hand */}
+          <path d="M89 97 Q92 101 91 106 Q89 108 86 107 Q84 103 86 98 Z" fill="url(#skinGrad)" />
+          <path d="M90 102 Q92 100 93 104" stroke="#e8c0a0" strokeWidth="1" fill="none" strokeLinecap="round" />
+          <path d="M88 104 Q90 102 91 106" stroke="#e8c0a0" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+          {/* Rings */}
+          <circle cx="90" cy="103" r="2" fill="none" stroke={glowColor} strokeWidth="1.2" opacity="0.9" />
+          <circle cx="10" cy="104" r="2" fill="none" stroke="#d4af37" strokeWidth="1.2" opacity="0.9" />
         </g>
 
-        {/* ── Crown ── */}
-        <g className="queen-crown">
-          <path d="M26 18 L26 10 L32 15 L37 6 L40 12 L43 6 L48 15 L54 10 L54 18 Z" fill="#d4af37" />
-          <path d="M26 18 L54 18" stroke="#b8860b" strokeWidth="1.5" fill="none" />
+        {/* ══ NECK ══ */}
+        <path d="M41 52 Q38 60 38 68 L62 68 Q62 60 59 52 Q54 48 50 48 Q46 48 41 52 Z" fill="url(#skinGrad)" />
+        {/* Collarbone shadow */}
+        <path d="M38 66 Q50 70 62 66" stroke="#c09878" strokeWidth="0.8" fill="none" opacity="0.5" />
+        {/* Necklace — layered gold & jewels */}
+        <path d="M32 66 Q40 72 50 70 Q60 72 68 66" stroke="#d4af37" strokeWidth="1.5" fill="none" opacity="0.9" />
+        <path d="M34 68 Q40 75 50 73 Q60 75 66 68" stroke={glowColor} strokeWidth="0.8" fill="none" opacity="0.6" />
+        {/* Pendant jewels */}
+        {[36,43,50,57,64].map((x,i) => (
+          <circle key={i} cx={x} cy={i===2?73:70} r={i===2?2.5:1.5} fill={i===2?glowColor:i%2===0?"#d4af37":"#ef4444"} opacity={i===2?1:0.85} />
+        ))}
+
+        {/* ══ HEAD / FACE ══ */}
+        {/* Head shape — elegant oval */}
+        <ellipse cx="50" cy="38" rx="17" ry="19" fill="url(#skinGrad)" />
+        {/* Facial structure shadow */}
+        <ellipse cx="50" cy="50" rx="11" ry="5" fill="#c09070" opacity="0.25" />
+        <ellipse cx="44" cy="36" rx="4" ry="6" fill="#c09070" opacity="0.08" />
+        <ellipse cx="56" cy="36" rx="4" ry="6" fill="#c09070" opacity="0.08" />
+        {/* Cheeks — soft rose */}
+        <ellipse cx="36" cy="42" rx="6" ry="4" fill="#f472b6" opacity="0.22" />
+        <ellipse cx="64" cy="42" rx="6" ry="4" fill="#f472b6" opacity="0.22" />
+
+        {/* ══ EYES ══ — large, luminous, Elden Ring goddess */}
+        {/* Eye whites */}
+        <ellipse cx="39" cy="36" rx="6" ry="4.5" fill="white" />
+        <ellipse cx="61" cy="36" rx="6" ry="4.5" fill="white" />
+        {/* Iris — teal-green with gradient */}
+        <circle cx="39" cy="37" r="3.8" fill="url(#irisGrad)" />
+        <circle cx="61" cy="37" r="3.8" fill="url(#irisGrad)" />
+        {/* Inner pupil */}
+        <circle cx="39" cy="37" r="2.2" fill="#081f18" />
+        <circle cx="61" cy="37" r="2.2" fill="#081f18" />
+        {/* Pupil shine — multi-point */}
+        <circle cx="40.5" cy="35.5" r="1.1" fill="white" opacity="0.95" />
+        <circle cx="62.5" cy="35.5" r="1.1" fill="white" opacity="0.95" />
+        <circle cx="38.2" cy="38.5" r="0.5" fill="white" opacity="0.5" />
+        <circle cx="60.2" cy="38.5" r="0.5" fill="white" opacity="0.5" />
+        {/* Eye glow — magical */}
+        <circle cx="39" cy="37" r="4" fill={glowColor} opacity="0.15" style={{ animation: "qEye 3s ease-in-out infinite" }} />
+        <circle cx="61" cy="37" r="4" fill={glowColor} opacity="0.15" style={{ animation: "qEye 3s ease-in-out 0.5s infinite" }} />
+        {/* Upper eyelid / lash line */}
+        <path d="M33 33 Q39 31 45 33" stroke="#1a0820" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        <path d="M55 33 Q61 31 67 33" stroke="#1a0820" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        {/* Lashes — individual strands */}
+        {[33,36,39,42,45].map((x,i) => <line key={i} x1={x} y1="33" x2={x-0.5+i*0.3} y2={29+i%2} stroke="#1a0820" strokeWidth="0.9" strokeLinecap="round" />)}
+        {[55,58,61,64,67].map((x,i) => <line key={i} x1={x} y1="33" x2={x-0.5+i*0.3} y2={29+i%2} stroke="#1a0820" strokeWidth="0.9" strokeLinecap="round" />)}
+        {/* Lower lash line */}
+        <path d="M33 40 Q39 41.5 45 40" stroke="#3a1030" strokeWidth="0.6" fill="none" strokeLinecap="round" opacity="0.6" />
+        <path d="M55 40 Q61 41.5 67 40" stroke="#3a1030" strokeWidth="0.6" fill="none" strokeLinecap="round" opacity="0.6" />
+        {/* Eyebrows — high arched, thin, Elden Ring style */}
+        <path d="M31 28 Q36 24.5 42 27" stroke="#2a1020" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        <path d="M58 27 Q64 24.5 69 28" stroke="#2a1020" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+        {/* Brow highlight */}
+        <path d="M32 28 Q36 25 41 27" stroke="#6a3050" strokeWidth="0.6" fill="none" strokeLinecap="round" opacity="0.5" />
+
+        {/* ══ NOSE ══ — delicate, refined */}
+        <path d="M49 40 Q47 45 48 47 Q50 48.5 52 47 Q53 45 51 40" stroke="#c09070" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.7" />
+        <ellipse cx="48" cy="47" rx="1.5" ry="1" fill="#b07858" opacity="0.4" />
+        <ellipse cx="52" cy="47" rx="1.5" ry="1" fill="#b07858" opacity="0.4" />
+
+        {/* ══ LIPS ══ — full, elegant */}
+        {/* Upper lip */}
+        <path d="M40 51 Q43 49 46 50 Q48 48.5 50 49 Q52 48.5 54 50 Q57 49 60 51" fill="#c0405a" stroke="none" />
+        <path d="M40 51 Q45 49.5 50 50 Q55 49.5 60 51" fill="#d4506a" opacity="0.6" />
+        {/* Cupid's bow */}
+        <path d="M44 50 Q47 48.5 50 49.5 Q53 48.5 56 50" stroke="#e8607a" strokeWidth="0.6" fill="none" strokeLinecap="round" />
+        {/* Lower lip */}
+        <path d="M40 51 Q43 54 50 55 Q57 54 60 51" fill="#d4506a" />
+        <path d="M40 51 Q50 56 60 51" fill="#e8607a" opacity="0.3" />
+        {/* Lip highlight */}
+        <path d="M44 52.5 Q50 54.5 56 52.5" stroke="rgba(255,180,200,0.6)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+
+        {/* ══ HAIR ══ — flowing dark violet tresses */}
+        <g className="q-hair">
+          {/* Back hair mass */}
+          <path d="M33 22 Q26 18 24 10 Q36 4 50 3 Q64 4 76 10 Q74 18 67 22" fill="#1a0535" />
+          {/* Side volume — left */}
+          <path d="M33 22 Q22 28 18 42 Q15 56 17 72 Q14 80 16 92" stroke="url(#hairGrad)" strokeWidth="11" fill="none" strokeLinecap="round" />
+          {/* Side volume — right */}
+          <path d="M67 22 Q78 28 82 42 Q85 56 83 72 Q86 80 84 92" stroke="url(#hairGrad)" strokeWidth="11" fill="none" strokeLinecap="round" />
+          {/* Inner hair flow left */}
+          <path d="M33 22 Q24 32 22 48 Q20 62 22 78" stroke="#2d0850" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.7" />
+          {/* Inner hair flow right */}
+          <path d="M67 22 Q76 32 78 48 Q80 62 78 78" stroke="#2d0850" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.7" />
+          {/* Hair sheen highlights */}
+          <path d="M38 8 Q37 18 36 28" stroke="rgba(180,100,255,0.35)" strokeWidth="2" fill="none" strokeLinecap="round" />
+          <path d="M55 7 Q56 17 57 27" stroke="rgba(180,100,255,0.2)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+          {/* Long trailing tresses */}
+          <path d="M17 90 Q13 110 16 130 Q18 140 20 150" stroke="#1a0535" strokeWidth="7" fill="none" strokeLinecap="round" />
+          <path d="M83 90 Q87 110 84 130 Q82 140 80 150" stroke="#1a0535" strokeWidth="7" fill="none" strokeLinecap="round" />
+          {/* Wisp tendrils */}
+          <path d="M20 100 Q15 115 18 128" stroke="#3d1060" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+          <path d="M80 100 Q85 115 82 128" stroke="#3d1060" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.6" />
+          {/* Small face-framing wisps */}
+          <path d="M34 32 Q30 36 31 42" stroke="#3d1060" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.8" />
+          <path d="M66 32 Q70 36 69 42" stroke="#3d1060" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.8" />
+        </g>
+
+        {/* ══ VEIL ══ — translucent gossamer flowing veil */}
+        <g className="q-veil" opacity="0.35">
+          <path d="M28 18 Q20 30 16 55 Q14 72 16 90" stroke={glowColor} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M72 18 Q80 30 84 55 Q86 72 84 90" stroke={glowColor} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M28 18 Q30 35 26 60 Q24 75 22 90" stroke="rgba(255,255,255,0.4)" strokeWidth="2" fill="none" strokeLinecap="round" />
+        </g>
+
+        {/* ══ CROWN ══ — ornate, Elden Ring great-rune style */}
+        <g className="q-crown">
+          {/* Crown band */}
+          <path d="M30 20 L70 20" stroke="#b8860b" strokeWidth="4" strokeLinecap="round" />
+          <path d="M30 20 L70 20" stroke="#ffd700" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+          {/* Crown spires */}
+          <path d="M30 20 L30 10 L34 16 L38 6 L42 14 L46 4 L50 12 L54 4 L58 14 L62 6 L66 16 L70 10 L70 20 Z" fill="url(#crownGrad)" />
+          <path d="M30 20 L30 10 L34 16 L38 6 L42 14 L46 4 L50 12 L54 4 L58 14 L62 6 L66 16 L70 10 L70 20" stroke="#ffe566" strokeWidth="0.8" fill="none" opacity="0.6" />
           {/* Crown gems */}
-          <circle cx="40" cy="8" r="3" fill={glowColor} style={{ animation: "jewelPulse 1.8s ease-in-out 0.2s infinite" }} />
-          <circle cx="31" cy="13" r="2" fill="#ef4444" />
-          <circle cx="49" cy="13" r="2" fill="#22c55e" />
-          {/* Crown gold highlights */}
-          <path d="M28 18 L28 12" stroke="#ffe566" strokeWidth="0.8" opacity="0.6" />
-          <path d="M52 18 L52 12" stroke="#ffe566" strokeWidth="0.8" opacity="0.6" />
+          <circle cx="50" cy="6" r="4" fill={glowColor} style={{ animation: "qJewel 2s ease-in-out infinite" }} />
+          <circle cx="50" cy="6" r="2.2" fill="white" opacity="0.7" />
+          <circle cx="38" cy="8" r="2.5" fill="#ef4444" />
+          <circle cx="38" cy="8" r="1.2" fill="#ff8080" opacity="0.7" />
+          <circle cx="62" cy="8" r="2.5" fill="#22c55e" />
+          <circle cx="62" cy="8" r="1.2" fill="#80ff80" opacity="0.7" />
+          <circle cx="30" cy="18" r="1.8" fill={glowColor} opacity="0.8" />
+          <circle cx="70" cy="18" r="1.8" fill={glowColor} opacity="0.8" />
+          {/* Gold filigree on crown */}
+          <path d="M34 18 Q36 14 38 18" stroke="#ffe566" strokeWidth="0.7" fill="none" opacity="0.8" />
+          <path d="M62 18 Q64 14 66 18" stroke="#ffe566" strokeWidth="0.7" fill="none" opacity="0.8" />
+          {/* Floating rune above crown */}
+          <circle cx="50" cy="-2" r="5" fill="none" stroke={glowColor} strokeWidth="0.8" opacity="0.4" style={{ animation: "qJewel 3s ease-in-out infinite" }} />
+          <path d="M50 -7 L51.2 -3 L50 -1 L48.8 -3 Z" fill={glowColor} opacity="0.5" />
         </g>
       </g>
     </svg>
