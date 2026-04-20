@@ -738,7 +738,7 @@ export default function Game() {
         <GameOverModal score={score} wave={wave} onRestart={handleRestart} />
       )}
 
-      <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} />
+      <IntroStoryModal show={showIntro} onBegin={(armorId) => setShowIntro(false)} />
 
       <HallOfHeroesModal
         show={hallOfHeroes}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ArmorSelectScreen from "./ArmorSelectScreen";
 
 const STORY_LINES = [
   "Hearken well, good lord... for what I am about to tell thee is no mere fancy nor fireside tale.",
@@ -42,6 +43,7 @@ export default function IntroStoryModal({ show, onBegin }) {
   const [displayedText, setDisplayedText] = useState("");
   const [phase, setPhase] = useState("typing"); // typing | waiting | done
   const [skipped, setSkipped] = useState(false);
+  const [showArmorSelect, setShowArmorSelect] = useState(false);
   const typeRef = useRef(null);
   const lineRef = useRef(0);
 
@@ -111,6 +113,10 @@ export default function IntroStoryModal({ show, onBegin }) {
   };
 
   if (!show) return null;
+
+  if (showArmorSelect) {
+    return <ArmorSelectScreen onConfirm={(armorId) => onBegin(armorId)} />;
+  }
 
   const progress = (lineIndex / STORY_LINES.length) * 100;
 
@@ -232,7 +238,7 @@ export default function IntroStoryModal({ show, onBegin }) {
 
           {(phase === "done" || skipped) && (
             <button
-              onClick={onBegin}
+              onClick={() => setShowArmorSelect(true)}
               className="px-10 py-4 rounded-xl font-black text-base uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
               style={{
                 fontFamily: "'Cinzel Decorative', serif",
@@ -242,7 +248,7 @@ export default function IntroStoryModal({ show, onBegin }) {
                 color: "#fff8dc",
                 textShadow: "0 2px 4px rgba(0,0,0,0.6)",
               }}>
-              ⚔ &nbsp; Defend the Kingdom! &nbsp; ⚔
+              ⚔ &nbsp; Choose Thine Armour &nbsp; ⚔
             </button>
           )}
         </div>
