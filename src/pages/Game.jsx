@@ -1236,6 +1236,7 @@ export default function Game() {
                 wave={wave}
                 fastForward={fastForward}
                 onToggleFastForward={() => setFastForward(f => !f)}
+                style={{ marginTop: "-8px" }}
               />
               <div className="mt-4 rounded-xl px-3 py-2 space-y-1 text-[9px] font-semibold"
                 style={{ background: 'rgba(100,60,180,0.08)', border: '1px solid rgba(100,60,180,0.2)', color: '#5a4880' }}>
