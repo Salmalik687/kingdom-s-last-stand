@@ -65,13 +65,18 @@ export default function CharacterSelect({ onSelect }) {
     try {
       window.speechSynthesis?.cancel();
       const utter = new SpeechSynthesisUtterance(quote);
-      utter.rate = 0.88;
-      utter.pitch = current.id === "morrigan" ? 0.7 : current.id === "aurora" ? 1.3 : current.id === "seraphine" ? 1.1 : current.id === "kael" ? 0.9 : 0.8;
+      const isFemale = current.id === "seraphine" || current.id === "morrigan" || current.id === "aurora";
+      utter.rate = isFemale ? 0.9 : 0.85;
+      utter.pitch = current.id === "morrigan" ? 1.4 : current.id === "aurora" ? 1.5 : current.id === "seraphine" ? 1.35 : current.id === "kael" ? 0.85 : 0.75;
       utter.volume = 0.9;
-      // Pick a matching voice if available
+      // Pick a feminine or masculine voice
       const voices = window.speechSynthesis.getVoices();
-      const preferred = voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("female")));
-      if (preferred) utter.voice = preferred;
+      const femaleVoice = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("female"))
+        || voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("samantha") || v.name.toLowerCase().includes("karen") || v.name.toLowerCase().includes("victoria") || v.name.toLowerCase().includes("fiona") || v.name.toLowerCase().includes("moira")));
+      const maleVoice = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"))
+        || voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("daniel") || v.name.toLowerCase().includes("alex") || v.name.toLowerCase().includes("arthur")));
+      if (isFemale && femaleVoice) utter.voice = femaleVoice;
+      else if (!isFemale && maleVoice) utter.voice = maleVoice;
       window.speechSynthesis.speak(utter);
     } catch (e) {}
 
