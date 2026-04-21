@@ -1122,14 +1122,14 @@ export function generateWaves(waveNumber) {
 
   // HP scaling — steeper curve with 5-wave land bonuses
   const landNumber = Math.floor((waveNumber - 1) / 5) + 1;
-  const landScaling = 1 + (landNumber - 1) * 0.35; // +35% per land
+  const landScaling = 1 + (landNumber - 1) * 0.55; // +55% per land (was 35%)
   
   const hpMultiplier = landScaling * (waveNumber <= 10
-    ? 1 + (waveNumber - 1) * 0.25
-    : 1 + (waveNumber - 1) * 0.25 + Math.pow(waveNumber - 10, 1.5) * 0.10);
+    ? 1 + (waveNumber - 1) * 0.40           // +40% per wave early (was 25%)
+    : 1 + (waveNumber - 1) * 0.40 + Math.pow(waveNumber - 10, 1.6) * 0.18); // steeper late curve
 
-  // Speed scaling — +8% per land (every 5 waves)
-  const speedMultiplier = 1 + (landNumber - 1) * 0.08;
+  // Speed scaling — +12% per land (was 8%)
+  const speedMultiplier = 1 + (landNumber - 1) * 0.12;
 
   return enemies.map((e) => ({
     ...e,
