@@ -661,8 +661,8 @@ export default function Game() {
               if (ng > (achStatsRef.current.maxGold ?? 0)) achStatsRef.current.maxGold = ng;
               return ng;
             });
-            playWaveSuccessSound();
-            playVictoryShout();
+            const fanfareDuration = playWaveSuccessSound();
+            setTimeout(() => playVictoryShout(), fanfareDuration);
             setWaveSuccess(s => !s);
             addLog("wave", `Wave ${wave} cleared! Bonus gold awarded.`);
             // Check achievements after each wave

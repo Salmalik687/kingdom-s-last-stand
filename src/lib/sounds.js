@@ -198,11 +198,13 @@ export function playMergeSound(resultType) {
 }
 
 export function playWaveSuccessSound() {
-  // Triumphant fanfare arpeggio
+  // Triumphant fanfare arpeggio — total duration ~550ms
   const notes = [523, 659, 784, 1047];
   notes.forEach((freq, i) => {
     setTimeout(() => playTone({ frequency: freq, type: "sine", duration: 0.25, gain: 0.22 }), i * 110);
   });
+  // Return duration so callers can delay the shout
+  return notes.length * 110 + 250; // ~690ms
 }
 
 const VICTORY_SHOUTS = [
