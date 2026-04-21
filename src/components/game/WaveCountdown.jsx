@@ -27,7 +27,7 @@ export default function WaveCountdown({ waveActive, waveQueue, waveTimer }) {
   const isWarning = timeRemaining < 3000;
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none"
+    <div className="absolute bottom-8 left-8 z-10 pointer-events-none"
       style={{
         animation: isWarning ? "countdownPulse 0.4s ease-in-out infinite" : "none",
       }}>
