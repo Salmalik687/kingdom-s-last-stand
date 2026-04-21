@@ -65,18 +65,29 @@ export default function CharacterSelect({ onSelect }) {
     try {
       window.speechSynthesis?.cancel();
       const utter = new SpeechSynthesisUtterance(quote);
-      const isFemale = current.id === "seraphine" || current.id === "morrigan" || current.id === "aurora";
-      utter.rate = isFemale ? 0.9 : 0.85;
-      utter.pitch = current.id === "morrigan" ? 1.4 : current.id === "aurora" ? 1.5 : current.id === "seraphine" ? 1.35 : current.id === "kael" ? 0.85 : 0.75;
-      utter.volume = 0.9;
-      // Pick a feminine or masculine voice
       const voices = window.speechSynthesis.getVoices();
-      const femaleVoice = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("female"))
-        || voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("samantha") || v.name.toLowerCase().includes("karen") || v.name.toLowerCase().includes("victoria") || v.name.toLowerCase().includes("fiona") || v.name.toLowerCase().includes("moira")));
-      const maleVoice = voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes("male"))
-        || voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("daniel") || v.name.toLowerCase().includes("alex") || v.name.toLowerCase().includes("arthur")));
-      if (isFemale && femaleVoice) utter.voice = femaleVoice;
-      else if (!isFemale && maleVoice) utter.voice = maleVoice;
+
+      // Per-character voice profiles
+      const voiceProfiles = {
+        aldric:    { pitch: 0.6,  rate: 0.78, volume: 1.0,  keywords: ["daniel", "arthur", "alex", "male"] },
+        kael:      { pitch: 0.9,  rate: 1.05, volume: 0.85, keywords: ["alex", "oliver", "thomas", "male"] },
+        seraphine: { pitch: 1.3,  rate: 0.88, volume: 0.9,  keywords: ["samantha", "karen", "victoria", "female"] },
+        aurora:    { pitch: 1.6,  rate: 1.0,  volume: 0.9,  keywords: ["fiona", "moira", "tessa", "female"] },
+        morrigan:  { pitch: 1.1,  rate: 0.82, volume: 1.0,  keywords: ["serena", "zoe", "ava", "female"] },
+      };
+
+      const profile = voiceProfiles[current.id] || voiceProfiles.aldric;
+      utter.pitch = profile.pitch;
+      utter.rate = profile.rate;
+      utter.volume = profile.volume;
+
+      // Try to find a matching voice by keyword
+      const matched = profile.keywords.reduce((found, kw) => {
+        if (found) return found;
+        return voices.find(v => v.lang.startsWith("en") && v.name.toLowerCase().includes(kw)) || null;
+      }, null);
+      if (matched) utter.voice = matched;
+
       window.speechSynthesis.speak(utter);
     } catch (e) {}
 
