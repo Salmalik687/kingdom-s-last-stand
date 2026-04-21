@@ -59,7 +59,7 @@ export default function TowerShop({ show, gold, unlockedTowers, onPurchase, onCl
         </div>
 
         {/* Tower grid */}
-        <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, maxHeight: 384, overflowY: "auto" }}>
           {PURCHASABLE_TOWERS.map(item => {
             const tower = TOWER_TYPES[item.id];
             const isUnlocked = unlockedTowers.includes(item.id);
@@ -68,8 +68,9 @@ export default function TowerShop({ show, gold, unlockedTowers, onPurchase, onCl
             return (
               <div
                 key={item.id}
-                className="rounded-lg p-4 transition-all"
                 style={{
+                  borderRadius: 8,
+                  padding: 16,
                   background: isUnlocked
                     ? "rgba(50,100,50,0.15)"
                     : canAfford
@@ -81,11 +82,13 @@ export default function TowerShop({ show, gold, unlockedTowers, onPurchase, onCl
                       ? "1px solid rgba(167,139,250,0.4)"
                       : "1px solid rgba(100,100,100,0.2)",
                   cursor: !isUnlocked && canAfford ? "pointer" : "default",
+                  display: "flex",
+                  alignItems: "flex-start",
+                  justifyContent: "space-between",
                 }}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="text-3xl">{tower.emoji}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+                    <div style={{ fontSize: 30 }}>{tower.emoji}</div>
                     <div>
                       <h3 style={{ color: "#f0e6ff", fontWeight: 700, marginBottom: 2 }}>
                         {tower.name}
@@ -100,18 +103,21 @@ export default function TowerShop({ show, gold, unlockedTowers, onPurchase, onCl
                   </div>
 
                   {/* Purchase button */}
-                  <div className="ml-3">
+                  <div style={{ marginLeft: 12 }}>
                     {isUnlocked ? (
-                      <div className="px-3 py-1 rounded-lg text-xs font-bold uppercase"
-                        style={{ background: "rgba(100,200,100,0.3)", color: "#86efac" }}>
+                      <div style={{ padding: "4px 12px", borderRadius: 6, fontSize: 12, fontWeight: 700, textTransform: "uppercase", background: "rgba(100,200,100,0.3)", color: "#86efac" }}>
                         ✓ Unlocked
                       </div>
                     ) : (
                       <button
                         onClick={() => handlePurchase(item.id, item.cost)}
                         disabled={!canAfford}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase transition-all"
                         style={{
+                          padding: "6px 12px",
+                          borderRadius: 6,
+                          fontSize: 12,
+                          fontWeight: 700,
+                          textTransform: "uppercase",
                           background: canAfford
                             ? "linear-gradient(180deg, #7c3aed, #4c1d95)"
                             : "linear-gradient(180deg, #374151, #1f2937)",
@@ -124,23 +130,27 @@ export default function TowerShop({ show, gold, unlockedTowers, onPurchase, onCl
                         {item.cost}
                       </button>
                     )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                    </div>
+                    </div>
+                    );
+                    })}
         </div>
 
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-rgba(100,60,180,0.2)"
-          style={{ borderColor: "rgba(100,60,180,0.2)" }}>
+        <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px solid rgba(100,60,180,0.2)" }}>
           <button
             onClick={onClose}
-            className="w-full py-2 rounded-lg font-bold uppercase text-sm transition-all"
             style={{
+              width: "100%",
+              padding: "8px 0",
+              borderRadius: 8,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              fontSize: 14,
               background: "rgba(100,60,180,0.2)",
               border: "1px solid rgba(100,60,180,0.4)",
               color: "#a78bfa",
+              cursor: "pointer",
             }}
           >
             Close Shop
