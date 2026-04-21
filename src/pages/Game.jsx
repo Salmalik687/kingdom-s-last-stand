@@ -30,6 +30,7 @@ import ActiveAbilityBar from "../components/game/ActiveAbilityBar";
 import CodexModal from "../components/game/CodexModal";
 import BossHealthBar from "../components/game/BossHealthBar";
 import CampaignIntro from "../components/game/CampaignIntro";
+import WaveCountdown from "../components/game/WaveCountdown";
 import WaveDialogue from "../components/game/WaveDialogue";
 import CharacterSelect from "../components/game/CharacterSelect";
 import DifficultySelect from "../components/game/DifficultySelect";
@@ -1181,6 +1182,9 @@ export default function Game() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 max-w-xs">
               <ComboSuggestions />
             </div>
+
+            {/* Wave Countdown Timer */}
+            <WaveCountdown waveActive={waveActive} waveQueue={waveQueueRef.current} waveTimer={waveTimerRef.current} />
 
             {/* Active ability status badges */}
             <div className="flex items-center justify-center gap-2 mt-1 flex-wrap">
