@@ -420,7 +420,7 @@ export function Kael({ size = 100 }) {
       <g className="kael-body">
         {/* Arms */}
         <g className="kael-arm-l">
-          <ellipse cx="40" cy="85" rx="8" ry="26" fill="#bae6fd" stroke="#38bdf8" strokeWidth="1.5"/>
+          <ellipse cx="40" cy="85" rx="8" ry="26" fill="#0ea5e9" stroke="#38bdf8" strokeWidth="1.5"/>
           {/* Left ice gauntlet */}
           <g transform="translate(0, 10)">
             <rect x="29" y="108" width="10" height="11" rx="3" fill="#0ea5e9" stroke="#67e8f9" strokeWidth="1.2"/>
@@ -434,7 +434,7 @@ export function Kael({ size = 100 }) {
           </g>
         </g>
         <g className="kael-arm-r">
-          <ellipse cx="100" cy="85" rx="8" ry="26" fill="#bae6fd" stroke="#38bdf8" strokeWidth="1.5"/>
+          <ellipse cx="100" cy="85" rx="8" ry="26" fill="#0ea5e9" stroke="#38bdf8" strokeWidth="1.5"/>
           {/* Right ice gauntlet */}
           <g transform="translate(0, 10)">
             <rect x="101" y="108" width="10" height="11" rx="3" fill="#0ea5e9" stroke="#67e8f9" strokeWidth="1.2"/>
@@ -550,7 +550,7 @@ export function Aurora({ size = 100 }) {
       <g className="aurora-body">
         {/* Arms */}
         <g className="aurora-arm-l">
-          <ellipse cx="40" cy="86" rx="9" ry="26" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5"/>
+          <ellipse cx="40" cy="86" rx="9" ry="26" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.5"/>
           {/* Left sun gauntlet */}
           <g transform="translate(0, 10)">
             <rect x="29" y="109" width="10" height="11" rx="3" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.2"/>
@@ -564,7 +564,7 @@ export function Aurora({ size = 100 }) {
           </g>
         </g>
         <g className="aurora-arm-r">
-          <ellipse cx="100" cy="86" rx="9" ry="26" fill="#fcd34d" stroke="#f59e0b" strokeWidth="1.5"/>
+          <ellipse cx="100" cy="86" rx="9" ry="26" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.5"/>
           {/* Right sun gauntlet */}
           <g transform="translate(0, 10)">
             <rect x="101" y="109" width="10" height="11" rx="3" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.2"/>
