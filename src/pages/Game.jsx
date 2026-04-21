@@ -35,6 +35,7 @@ import WaveDialogue from "../components/game/WaveDialogue";
 import CharacterSelect from "../components/game/CharacterSelect";
 import DifficultySelect from "../components/game/DifficultySelect";
 import ModeSelect from "../components/game/ModeSelect";
+import TowerShop from "../components/game/TowerShop";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound, playPlaceSound, playWaveStartSound, playBossKillSound } from "../lib/sounds";
 import { isMuted, toggleMute } from "../lib/audioContext";
@@ -98,6 +99,8 @@ export default function Game() {
   const [showCodex, setShowCodex] = useState(false);
   const [seenEnemies, setSeenEnemies] = useState(new Set());
   const [gloryPoints, setGloryPoints] = useState(0);
+  const [showTowerShop, setShowTowerShop] = useState(false);
+  const [unlockedTowers, setUnlockedTowers] = useState([]);
   const [showUpgradeMenu, setShowUpgradeMenu] = useState(false);
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
@@ -1099,6 +1102,17 @@ export default function Game() {
               )}
             </button>
             <button
+              onClick={() => setShowTowerShop(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
+              style={{
+                background: "linear-gradient(180deg, #92400e, #b45309)",
+                border: "2px solid #f59e0b",
+                boxShadow: "0 2px 0 #78350f, 0 0 10px rgba(245,158,11,0.3)",
+                color: "#fef3c7",
+              }}>
+              🛍️ <span className="hidden sm:inline">Shop</span>
+            </button>
+            <button
               onClick={() => setShowCodex(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
               style={{
@@ -1322,6 +1336,17 @@ export default function Game() {
       )}
 
       <CodexModal show={showCodex} onClose={() => setShowCodex(false)} seenEnemies={seenEnemies} />
+      <TowerShop
+        show={showTowerShop}
+        gold={gold}
+        unlockedTowers={unlockedTowers}
+        onPurchase={(towerId, cost) => {
+          setUnlockedTowers(prev => [...prev, towerId]);
+          setGold(prev => prev - cost);
+          addLog("shop", `🛍️ Unlocked ${TOWER_TYPES[towerId].name}!`);
+        }}
+        onClose={() => setShowTowerShop(false)}
+      />
       <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} />
 
       <AbilityTree
