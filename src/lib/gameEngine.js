@@ -1283,6 +1283,7 @@ export function createProjectile(tower, enemy, overrideDamage = null) {
     speed: 5,
     damage: overrideDamage ?? tower.damage,
     towerType: tower.type,
+    towerId: tower.id,
     color: tower.color,
   };
 

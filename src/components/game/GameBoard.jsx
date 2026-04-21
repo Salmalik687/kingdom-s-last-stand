@@ -297,39 +297,169 @@ function drawGrid(ctx, theme, wave) {
   ctx.fillText("🏰", (ex + 0.5) * CELL_SIZE, (ey + 0.5) * CELL_SIZE);
 }
 
+const SKIN_OVERLAYS = {
+  ancient:   { badge: "🪨", ringColor: "#78716c" },
+  infernal:  { badge: "😈", ringColor: "#dc2626" },
+  celestial: { badge: "🌟", ringColor: "#fbbf24" },
+  shadow:    { badge: "🌑", ringColor: "#7c3aed" },
+  void:      { badge: "🌀", ringColor: "#6d28d9" },
+  doomplate: { badge: "💀", ringColor: "#450a0a" },
+};
+
 function drawTowers(ctx, towers, selectedTowerId) {
+  const now = performance.now();
+
   towers.forEach(tower => {
     const { x, y, emoji, level } = tower;
+    const customColor = tower.customColor && tower.customColor !== "default" ? tower.customColor : null;
+    const effect = tower.customEffect ?? "none";
+    const skin = tower.customSkin ?? "default";
+    const skinData = SKIN_OVERLAYS[skin];
 
-    // Base circle
-    ctx.fillStyle = "rgba(40, 30, 20, 0.8)";
+    const accentColor = customColor
+      ? { crimson: "#dc2626", amber: "#f59e0b", emerald: "#10b981", sky: "#0ea5e9",
+          violet: "#7c3aed", rose: "#f43f5e", gold: "#ffd60a", void: "#1a0a2e" }[tower.customColor] ?? "#a78bfa"
+      : (skinData?.ringColor ?? "rgba(100,60,60,0.5)");
+
+    // ── Effect: Glow / Pulse / Holy pre-draw rings ──────────────
+    if (effect === "glow" || effect === "holy") {
+      ctx.save();
+      const glowAlpha = 0.35 + Math.sin(now * 0.003) * 0.1;
+      ctx.globalAlpha = glowAlpha;
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 18;
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(x, y, CELL_SIZE * 0.42, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+
+    if (effect === "pulse") {
+      const pulsePct = (Math.sin(now * 0.004) + 1) / 2; // 0-1
+      ctx.save();
+      ctx.globalAlpha = pulsePct * 0.5;
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 2 + pulsePct * 3;
+      ctx.beginPath();
+      ctx.arc(x, y, CELL_SIZE * 0.38 + pulsePct * 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    if (effect === "lightning") {
+      // Crackling sparks
+      ctx.save();
+      ctx.strokeStyle = "#fbbf24";
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.6 + Math.random() * 0.4;
+      for (let i = 0; i < 3; i++) {
+        const angle = (now * 0.005 + i * 2.1) % (Math.PI * 2);
+        const r1 = CELL_SIZE * 0.35;
+        const r2 = r1 + 6 + Math.random() * 5;
+        ctx.beginPath();
+        ctx.moveTo(x + Math.cos(angle) * r1, y + Math.sin(angle) * r1);
+        ctx.lineTo(x + Math.cos(angle + 0.3) * r2, y + Math.sin(angle + 0.3) * r2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    if (effect === "frost") {
+      // Orbiting ice crystals
+      ctx.save();
+      ctx.font = "8px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (let i = 0; i < 4; i++) {
+        const angle = now * 0.002 + i * (Math.PI / 2);
+        const r = CELL_SIZE * 0.44;
+        ctx.fillText("❄", x + Math.cos(angle) * r, y + Math.sin(angle) * r);
+      }
+      ctx.restore();
+    }
+
+    if (effect === "void") {
+      // Spiraling dark particles
+      ctx.save();
+      for (let i = 0; i < 5; i++) {
+        const angle = now * 0.003 + i * (Math.PI * 2 / 5);
+        const r = CELL_SIZE * 0.40;
+        ctx.globalAlpha = 0.5 + Math.sin(now * 0.005 + i) * 0.3;
+        ctx.fillStyle = "#7c3aed";
+        ctx.beginPath();
+        ctx.arc(x + Math.cos(angle) * r, y + Math.sin(angle) * r, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    if (effect === "fire") {
+      // Flame flickers above
+      ctx.save();
+      ctx.font = "10px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.globalAlpha = 0.75 + Math.sin(now * 0.01) * 0.25;
+      const flicker = Math.sin(now * 0.012) * 2;
+      ctx.fillText("🔥", x + flicker, y - CELL_SIZE * 0.45);
+      ctx.globalAlpha = 1;
+      ctx.restore();
+    }
+
+    // ── Base circle ──────────────────────────────────────────────
+    ctx.fillStyle = customColor ? `${accentColor}22` : "rgba(40, 30, 20, 0.8)";
     ctx.beginPath();
     ctx.arc(x, y, CELL_SIZE * 0.38, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.strokeStyle = tower.id === selectedTowerId ? "#dc2626" : "rgba(100, 60, 60, 0.5)";
-    ctx.lineWidth = tower.id === selectedTowerId ? 2 : 1;
+    const ringColor = tower.id === selectedTowerId ? "#dc2626" : accentColor;
+    ctx.strokeStyle = ringColor;
+    ctx.lineWidth = tower.id === selectedTowerId ? 2 : customColor ? 1.5 : 1;
     ctx.beginPath();
     ctx.arc(x, y, CELL_SIZE * 0.38, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Tower emoji
+    // ── Tower emoji (skin override for badge) ─────────────────────
+    const displayEmoji = skin !== "default" && skinData ? emoji : emoji;
     ctx.font = `${CELL_SIZE * 0.5}px serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(emoji, x, y);
+    if (customColor) {
+      ctx.shadowColor = accentColor;
+      ctx.shadowBlur = 8;
+    }
+    ctx.fillText(displayEmoji, x, y);
+    ctx.shadowBlur = 0;
 
-    // Level indicator
-    if (level > 1) {
-      ctx.fillStyle = "#fbbf24";
-      ctx.font = "bold 9px sans-serif";
-      ctx.fillText("★".repeat(Math.min(level - 1, 4)), x, y + CELL_SIZE * 0.35);
+    // Skin badge (top-left corner)
+    if (skinData) {
+      ctx.font = `${CELL_SIZE * 0.24}px serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(skinData.badge, x - CELL_SIZE * 0.25, y - CELL_SIZE * 0.25);
     }
 
-    // Range circle if selected
+    // ── Level indicator ─────────────────────────────────────────
+    if (level > 1) {
+      ctx.fillStyle = customColor ? accentColor : "#fbbf24";
+      ctx.font = "bold 9px sans-serif";
+      ctx.shadowColor = customColor ? accentColor : "#fbbf24";
+      ctx.shadowBlur = customColor ? 4 : 0;
+      ctx.fillText("★".repeat(Math.min(level - 1, 4)), x, y + CELL_SIZE * 0.35);
+      ctx.shadowBlur = 0;
+    }
+
+    // ── Range circle if selected ──────────────────────────────────
     if (tower.id === selectedTowerId) {
       ctx.save();
-      ctx.strokeStyle = "rgba(220, 38, 38, 0.25)";
+      ctx.strokeStyle = customColor ? `${accentColor}44` : "rgba(220, 38, 38, 0.25)";
       ctx.lineWidth = 1;
       ctx.setLineDash([4, 4]);
       ctx.beginPath();
@@ -466,19 +596,35 @@ function drawEnemies(ctx, enemies) {
   });
 }
 
-function drawProjectiles(ctx, projectiles) {
+const CUSTOM_COLOR_HEX = {
+  crimson: "#dc2626", amber: "#f59e0b", emerald: "#10b981",
+  sky: "#0ea5e9", violet: "#7c3aed", rose: "#f43f5e",
+  gold: "#ffd60a", void: "#1a0a2e",
+};
+
+function drawProjectiles(ctx, projectiles, towers) {
+  const towerColorMap = {};
+  towers.forEach(t => {
+    if (t.customColor && t.customColor !== "default") {
+      towerColorMap[t.id] = CUSTOM_COLOR_HEX[t.customColor] ?? null;
+    }
+  });
+
   projectiles.forEach(proj => {
-    const color = proj.towerType === "mage" ? "#a855f7"
+    const baseColor = proj.towerType === "mage" ? "#a855f7"
       : proj.towerType === "frost" ? "#60a5fa"
       : proj.towerType === "cannon" ? "#f97316"
       : "#fbbf24";
 
+    const color = (proj.towerId && towerColorMap[proj.towerId]) ?? baseColor;
+    const size = proj.towerType === "cannon" ? 4 : 3;
+
     ctx.save();
     ctx.fillStyle = color;
     ctx.shadowColor = color;
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 8;
     ctx.beginPath();
-    ctx.arc(proj.x, proj.y, proj.towerType === "cannon" ? 4 : 3, 0, Math.PI * 2);
+    ctx.arc(proj.x, proj.y, size, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
   });
@@ -544,7 +690,7 @@ export default function GameBoard({
     drawGrid(ctx, theme, wave || 1);
     drawTowers(ctx, towers, selectedTowerId);
     drawEnemies(ctx, enemies);
-    drawProjectiles(ctx, projectiles);
+    drawProjectiles(ctx, projectiles, towers);
     drawHoverPreview(ctx, hoverRef.current, selectedTowerType);
 
     animFrameRef.current = requestAnimationFrame(render);

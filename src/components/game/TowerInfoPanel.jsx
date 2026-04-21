@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { TOWER_TYPES, TOWER_ABILITIES, getUnlockedAbilities } from "../../lib/gameEngine";
-import { ArrowUp, Trash2, Lock } from "lucide-react";
+import { ArrowUp, Trash2, Lock, Palette } from "lucide-react";
+import TowerCustomizationMenu from "./TowerCustomizationMenu";
 
-export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell }) {
+export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCustomize }) {
+  const [showCustomize, setShowCustomize] = useState(false);
   if (!tower) return null;
 
   const base = TOWER_TYPES[tower.type];
@@ -103,7 +106,7 @@ export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell }) {
       )}
 
       {/* Buttons */}
-      <div className="flex gap-2 px-3 pb-3">
+      <div className="flex gap-2 px-3 pb-2">
         <button
           disabled={!canUpgrade}
           onClick={() => onUpgrade(tower)}
@@ -135,6 +138,30 @@ export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell }) {
           {sellValue}g
         </button>
       </div>
+
+      {/* Customize button */}
+      <div className="px-3 pb-3">
+        <button
+          onClick={() => setShowCustomize(true)}
+          className="w-full flex items-center justify-center gap-2 rounded-lg py-2 font-black text-xs uppercase tracking-wider transition-all hover:scale-[1.02]"
+          style={{
+            background: "linear-gradient(180deg, #1e163a, #150f2e)",
+            border: "2px solid rgba(167,139,250,0.5)",
+            boxShadow: "0 2px 0 #04020a, 0 0 10px rgba(139,92,246,0.2)",
+            color: "#c4b5fd",
+          }}>
+          <Palette className="w-3 h-3" />
+          🎨 Customize Tower
+        </button>
+      </div>
+
+      {showCustomize && (
+        <TowerCustomizationMenu
+          tower={tower}
+          onApply={(id, opts) => onCustomize && onCustomize(id, opts)}
+          onClose={() => setShowCustomize(false)}
+        />
+      )}
     </div>
   );
 }

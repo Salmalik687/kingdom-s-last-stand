@@ -298,6 +298,15 @@ export default function Game() {
     forceRender(n => n + 1);
   }, []);
 
+  const handleCustomize = useCallback((towerId, opts) => {
+    const tower = towersRef.current.find(t => t.id === towerId);
+    if (!tower) return;
+    tower.customColor = opts.customColor;
+    tower.customEffect = opts.customEffect;
+    tower.customSkin = opts.customSkin;
+    forceRender(n => n + 1);
+  }, []);
+
   const handleSell = useCallback((tower) => {
     const base = TOWER_TYPES[tower.type];
     const value = Math.floor(base.cost * 0.5 * tower.level);
@@ -1177,6 +1186,7 @@ export default function Game() {
                 gold={gold}
                 onUpgrade={() => setShowUpgradeMenu(true)}
                 onSell={handleSell}
+                onCustomize={handleCustomize}
               />
               <WaveButton
                 waveActive={waveActive}
