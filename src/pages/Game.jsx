@@ -37,6 +37,7 @@ import ModeSelect from "../components/game/ModeSelect";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
 import DamagePopup from "../components/game/DamagePopup";
+import CombatLog from "../components/game/CombatLog";
 
 
 const INITIAL_GOLD = 150;
@@ -105,6 +106,15 @@ export default function Game() {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState([]);
   const [damagePopups, setDamagePopups] = useState([]);
+  const [combatLog, setCombatLog] = useState([]);
+  const combatLogIdRef = useRef(0);
+
+  const addLog = (type, text) => {
+    setCombatLog(prev => {
+      const entry = { id: ++combatLogIdRef.current, type, text };
+      return prev.length >= 80 ? [...prev.slice(-79), entry] : [...prev, entry];
+    });
+  };
 
   // Achievement stats ref — updated continuously
   const achStatsRef = useRef({
@@ -219,6 +229,7 @@ export default function Game() {
         checkAchievements({ ...achStatsRef.current });
         playMergeSound(resultType);
         setMergeFlash(TOWER_TYPES[resultType]);
+        addLog("merge", `✨ Merged into ${TOWER_TYPES[resultType].name}! (${TOWER_TYPES[resultType].emoji})`);
         setTimeout(() => setMergeFlash(false), 1800);
       } else {
         towersRef.current = newTowers;
@@ -336,6 +347,7 @@ export default function Game() {
     waveQueueRef.current = waveData;
     waveTimerRef.current = 0;
     setWaveActive(true);
+    addLog("wave", `Wave ${wave} begins — ${waveData.length} enemies incoming!`);
   }, [wave, waveActive, gameOver]);
 
   // Game loop
@@ -379,6 +391,7 @@ export default function Game() {
 
       if (livesLost > 0 && !divineShieldActive) {
         playDamageSound();
+        addLog("damage", `💔 ${livesLost} enemy reached the castle! Lives lost.`);
         const dmgMult = difficulty ? difficulty.dmgMult : 1;
         const totalDamage = Math.ceil(livesLost * dmgMult);
         setLives(prev => {
@@ -532,7 +545,10 @@ export default function Game() {
               playKillSound();
               if (target.type?.startsWith("boss_")) {
                 setBossKillReward(target.type);
-                setGloryPoints(gp => gp + 2); // +2 glory per boss kill
+                setGloryPoints(gp => gp + 2);
+                addLog("boss", `BOSS SLAIN: ${target.emoji} ${target.type.replace("boss_", "").toUpperCase()} defeated! +${target.reward} gold`);
+              } else {
+                if (Math.random() < 0.25) addLog("kill", `${target.emoji} ${target.type} slain! +${target.reward}g`);
               }
               enemiesRef.current = enemiesRef.current.filter(e => e.id !== target.id);
             }
@@ -637,6 +653,7 @@ export default function Game() {
             playWaveSuccessSound();
             playVictoryShout();
             setWaveSuccess(s => !s);
+            addLog("wave", `Wave ${wave} cleared! Bonus gold awarded.`);
             // Check achievements after each wave
             checkAchievements({ ...achStatsRef.current });
             // Show perk shop every 2 waves
@@ -662,50 +679,54 @@ export default function Game() {
 
   const handleActivateAbility = useCallback((abilityId) => {
     if (abilityId === "rain_of_arrows") {
-      // Deal 150 damage to all enemies on screen
       enemiesRef.current.forEach(e => { e.hp -= 150; });
       enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
       forceRender(n => n + 1);
+      addLog("special", "⚡ Rain of Arrows — 150 damage to ALL enemies!");
     }
     if (abilityId === "healing_aura") {
       setLives(l => l + 3);
+      addLog("heal", "💚 Healing Aura activated — +3 lives restored!");
     }
     if (abilityId === "gold_surge") {
       setGold(g => g + 80);
+      addLog("gold", "💰 Gold Surge — +80 gold claimed!");
     }
     if (abilityId === "earthquake") {
-      // Freeze all enemies for 3s
       enemiesRef.current.forEach(e => { e.frozenTimer = 3000; e.slowTimer = 3000; });
+      addLog("special", "🌍 Earthquake — all enemies FROZEN for 3 seconds!");
     }
     if (abilityId === "frost_nova") {
-      // Slow all enemies 70% for 5s
       enemiesRef.current.forEach(e => { e.slowTimer = 5000; });
+      addLog("special", "❄️ Frost Nova — all enemies slowed for 5 seconds!");
     }
     if (abilityId === "tower_overcharge") {
-      // Triple fire rate for 8 seconds
       const originalRates = towersRef.current.map(t => t.fireRate);
       towersRef.current.forEach(t => { t.fireRate = Math.max(50, Math.floor(t.fireRate / 3)); });
       setTimeout(() => {
         towersRef.current.forEach((t, i) => { t.fireRate = originalRates[i] ?? t.fireRate; });
         forceRender(n => n + 1);
       }, 8000);
+      addLog("special", "⚡ Tower Overcharge — all towers fire 3× faster for 8s!");
     }
     if (abilityId === "meteor_strike") {
-      // Kill all non-boss enemies, deal 2000 damage to bosses
       enemiesRef.current.forEach(e => {
         if (e.type?.startsWith("boss_")) { e.hp -= 2000; }
         else { e.hp = 0; }
       });
       enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
       forceRender(n => n + 1);
+      addLog("boss", "☄️ Meteor Strike — all enemies obliterated! Bosses take 2000 damage!");
     }
     if (abilityId === "divine_shield") {
       setDivineShieldActive(true);
       setTimeout(() => setDivineShieldActive(false), 10000);
+      addLog("heal", "🛡️ Divine Shield active — no lives can be lost for 10 seconds!");
     }
     if (abilityId === "void_wrath") {
       setVoidWrathActive(true);
       setTimeout(() => setVoidWrathActive(false), 6000);
+      addLog("special", "🌀 Void Wrath — all towers deal 3× damage for 6 seconds!");
     }
   }, []);
 
@@ -978,6 +999,7 @@ export default function Game() {
     setSeenEnemies(new Set());
     setUnlockedAchievements([]);
     setNewlyUnlocked([]);
+    setCombatLog([]);
     achStatsRef.current = {
       totalKills: 0, bossesDefeated: [], flawlessLands: 0, maxCombo: 0,
       maxGold: 0, totalMerges: 0, mergedTypes: [], score: 0,
@@ -1158,6 +1180,7 @@ export default function Game() {
                 onStartWave={startWave}
                 wave={wave}
               />
+              <CombatLog entries={combatLog} />
               <ComboSuggestions />
               <div className="mt-4 rounded-xl px-3 py-2 space-y-1 text-[9px] font-semibold"
                 style={{ background: 'rgba(100,60,180,0.08)', border: '1px solid rgba(100,60,180,0.2)', color: '#5a4880' }}>
