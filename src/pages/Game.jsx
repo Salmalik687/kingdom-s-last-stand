@@ -607,8 +607,8 @@ export default function Game() {
               }
               const next = w + 1;
               // Show land complete scene after each land boss (waves 5,10,15,20,25)
-              const landBossWaves = { 5: 1, 10: 2, 15: 3, 20: 4, 25: 5 };
-              const bossByWave = { 5: "boss_meadow", 10: "boss_dungeon", 15: "boss_volcano", 20: "boss_abyss", 25: "boss_shadow" };
+              const landBossWaves = { 5: 1, 10: 2, 15: 3, 20: 4, 25: 5, 30: 6, 35: 7, 40: 8, 45: 9, 50: 10 };
+              const bossByWave = { 5: "boss_meadow", 10: "boss_dungeon", 15: "boss_volcano", 20: "boss_abyss", 25: "boss_shadow", 30: "boss_demon", 35: "boss_gates", 40: "boss_corruption", 45: "boss_plague", 50: "boss_crystal" };
               if (landBossWaves[w]) {
                 // Track boss defeat
                 const bossType = bossByWave[w];
@@ -855,11 +855,72 @@ export default function Game() {
       perkMultRef.current.goldBonus *= 3;
       towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 3); t.range *= 1.5; });
     }
+    // Chapter 7 — Gate upgrades
+    if (upgradeId === "gate_shard") {
+      perkMultRef.current.damageBonus *= 1.20;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.20); });
+    }
+    if (upgradeId === "void_step") {
+      perkMultRef.current.fireRateBonus *= 0.85;
+      towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.85)); });
+    }
+    if (upgradeId === "rift_ward") { setLives(l => l + 5); }
+    if (upgradeId === "beyond_sight") {
+      towersRef.current.forEach(t => { t.range *= 1.20; });
+    }
+    // Chapter 8 — Grove upgrades
+    if (upgradeId === "grove_heart") {
+      perkMultRef.current.damageBonus *= 1.25;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.25); });
+    }
+    if (upgradeId === "root_shield") { setLives(l => l + 6); }
+    if (upgradeId === "petal_storm") {
+      perkMultRef.current.projSpeedBonus = (perkMultRef.current.projSpeedBonus ?? 1) * 1.25;
+    }
+    if (upgradeId === "verdant_soul") {
+      towersRef.current.forEach(t => { t.range *= 1.15; t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.85)); });
+    }
+    // Chapter 9 — Plague upgrades
+    if (upgradeId === "plague_cure") {
+      perkMultRef.current.damageBonus *= 1.30;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.30); });
+    }
+    if (upgradeId === "venom_coat") {
+      perkMultRef.current.fireRateBonus *= 0.80;
+      towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.80)); });
+    }
+    if (upgradeId === "healers_ward") { setLives(l => l + 8); }
+    if (upgradeId === "death_touch") {
+      perkMultRef.current.damageBonus *= 1.35;
+      perkMultRef.current.fireRateBonus *= 0.85;
+      perkMultRef.current.goldBonus *= 1.35;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.35); t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.85)); });
+    }
+    // Chapter 10 — Crystal upgrades
+    if (upgradeId === "crystal_core") {
+      perkMultRef.current.damageBonus *= 1.50;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 1.50); });
+    }
+    if (upgradeId === "scar_guardian") {
+      setLives(l => l + 10);
+      towersRef.current.forEach(t => { t.range *= 1.20; });
+    }
+    if (upgradeId === "prism_storm") {
+      perkMultRef.current.fireRateBonus *= 0.70;
+      perkMultRef.current.projSpeedBonus = (perkMultRef.current.projSpeedBonus ?? 1) * 1.30;
+      towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * 0.70)); });
+    }
+    if (upgradeId === "ascendant") {
+      perkMultRef.current.damageBonus *= 2;
+      perkMultRef.current.fireRateBonus *= 0.6;
+      perkMultRef.current.goldBonus *= 2;
+      perkMultRef.current.projSpeedBonus = (perkMultRef.current.projSpeedBonus ?? 1) * 2;
+      towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * 2); t.range *= 1.5; });
+    }
 
-    const wasChapter6 = armorUpgrade === 6;
-    const wasChapter5 = armorUpgrade === 5;
+    const wasFinalChapter = armorUpgrade >= 10;
     setArmorUpgrade(null);
-    if (wasChapter6 || wasChapter5) setTimeout(() => setVictory(true), 600);
+    if (wasFinalChapter) setTimeout(() => setVictory(true), 600);
     forceRender(n => n + 1);
   }, [armorUpgrade]);
 
@@ -1142,28 +1203,21 @@ export default function Game() {
         landNumber={landComplete}
         show={!!landComplete}
         onContinue={() => {
-          const LAND_REWARDS = { 1: 300, 2: 500, 3: 750, 4: 1000, 5: 2000 };
+          const LAND_REWARDS = { 1: 300, 2: 500, 3: 750, 4: 1000, 5: 2000, 6: 2500, 7: 3000, 8: 3500, 9: 4000, 10: 5000 };
           setGold(g => g + (LAND_REWARDS[landComplete] ?? 300));
           const completedLand = landComplete;
           setLandComplete(null);
-          if (completedLand === 6) {
+          // After each land, show the upgrade screen for the next chapter (lands 1-9 → chapters 2-10)
+          // Land 10 is the current final — show victory
+          if (completedLand >= 10) {
             setLives(currentLives => {
               achStatsRef.current.victory = true;
               achStatsRef.current.finalLives = currentLives;
               checkAchievements({ ...achStatsRef.current });
               return currentLives;
             });
-            setArmorUpgrade(6);
-          } else if (completedLand === 5) {
-            setLives(currentLives => {
-              achStatsRef.current.victory = true;
-              achStatsRef.current.finalLives = currentLives;
-              checkAchievements({ ...achStatsRef.current });
-              return currentLives;
-            });
-            setArmorUpgrade(5);
-          } else if (completedLand >= 1 && completedLand <= 4) {
-            // Chapters 2-5 show upgrade after land 1-4 respectively
+            setArmorUpgrade(10);
+          } else if (completedLand >= 1) {
             setTimeout(() => setArmorUpgrade(completedLand + 1), 400);
           }
         }}

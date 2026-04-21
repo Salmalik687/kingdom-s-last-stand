@@ -90,6 +90,94 @@ const CHAPTER_DATA = {
       { id: "void_mantle",   emoji: "🌀", name: "Void Mantle",   desc: "Sovereign's own cloak. All towers +50% range & damage +30%.",    statLabel: "Range+Damage", statVal: "+50/+30%",  color: "#c084fc", colorRgb: "192,132,252" },
     ],
   },
+  7: {
+    chapterLabel: "Chapter VII — Beyond the Shattered Gates",
+    victoryShout: "THE GATES FALL — THE BEYOND IS OURS!",
+    queenLines: [
+      "The Guardian of the Gates is destroyed. No ancient seal can hold back thy fury, my lord.",
+      "From the shards of the broken gates, our smiths have forged something extraordinary — armour imbued with dimensional power.",
+      "What lies beyond was never meant for mortal eyes. Arm thyself well, champion.",
+    ],
+    slotLabel: "The Dimensional Armour",
+    slotEmoji: "🌀",
+    glow: "#a78bfa",
+    glowRgb: "167,139,250",
+    bg: "linear-gradient(180deg, #0f0818 0%, #1a1030 60%, #25184a 100%)",
+    queenBg: "linear-gradient(180deg, #a78bfa, #5b21b6)",
+    bgParticles: ["⚔️","🛡️","💫","🌀","⚡"],
+    upgrades: [
+      { id: "gate_shard",    emoji: "🌀", name: "Gate Shard",     desc: "A fragment of the ancient seal. All towers +20% damage.",   statLabel: "Tower Damage", statVal: "+20%", color: "#a78bfa", colorRgb: "167,139,250" },
+      { id: "void_step",     emoji: "👁️", name: "Void Step",      desc: "Phantom plating. Tower fire rate +15%.",                    statLabel: "Fire Rate",    statVal: "+15%", color: "#c084fc", colorRgb: "192,132,252" },
+      { id: "rift_ward",     emoji: "🛡️", name: "Rift Ward",      desc: "Dimensional shielding. Restore +5 lives immediately.",     statLabel: "Lives",        statVal: "+5",   color: "#818cf8", colorRgb: "129,140,248" },
+      { id: "beyond_sight",  emoji: "🔭", name: "Beyond Sight",   desc: "Perceive all. All tower range +20%.",                       statLabel: "Tower Range",  statVal: "+20%", color: "#a5b4fc", colorRgb: "165,180,252" },
+    ],
+  },
+  8: {
+    chapterLabel: "Chapter VIII — The Grove's Power",
+    victoryShout: "THE CORRUPTION DIES — NATURE REBORN!",
+    queenLines: [
+      "The Corrupted Bloom dies screaming. Its foul magic dissolves into clean earth and fresh air.",
+      "From the last uncorrupted tree in the grove, our weavers pulled threads of pure life. They have made thee a gift.",
+      "Nature itself now fights alongside thee. Don this mantle and carry its blessing forward.",
+    ],
+    slotLabel: "The Life Mantle",
+    slotEmoji: "🌿",
+    glow: "#86efac",
+    glowRgb: "134,239,172",
+    bg: "linear-gradient(180deg, #0a150a 0%, #0f2a0f 60%, #1a3a1a 100%)",
+    queenBg: "linear-gradient(180deg, #86efac, #16a34a)",
+    bgParticles: ["🍂","🌿","🍃","🌸","💚"],
+    upgrades: [
+      { id: "grove_heart",   emoji: "🌿", name: "Grove Heart",    desc: "Life essence flows through. All towers +25% damage.",       statLabel: "Tower Damage", statVal: "+25%", color: "#86efac", colorRgb: "134,239,172" },
+      { id: "root_shield",   emoji: "🌳", name: "Root Shield",    desc: "Ancient bark plating. Restore +6 lives immediately.",       statLabel: "Lives",        statVal: "+6",   color: "#4ade80", colorRgb: "74,222,128"  },
+      { id: "petal_storm",   emoji: "🌸", name: "Petal Storm",    desc: "Nature's wrath. Projectile speed +25%.",                    statLabel: "Proj. Speed",  statVal: "+25%", color: "#f9a8d4", colorRgb: "249,168,212" },
+      { id: "verdant_soul",  emoji: "☘️", name: "Verdant Soul",   desc: "Life itself empowers thee. Tower range +15%, speed +15%.", statLabel: "Range+Speed",  statVal: "+15%", color: "#a7f3d0", colorRgb: "167,243,208" },
+    ],
+  },
+  9: {
+    chapterLabel: "Chapter IX — Plague Purged",
+    victoryShout: "THE PLAGUE IS CLEANSED — LIFE RETURNS!",
+    queenLines: [
+      "The Plague Mother lets out one final death rattle. The pestilence that ravaged kingdoms for millennia finally ends.",
+      "From the very antidote our alchemists brewed to survive, they have forged an armour that poisons enemies at a touch.",
+      "Wear this, my champion. Let death fear thee as much as it once feared the plague itself.",
+    ],
+    slotLabel: "The Venom Armour",
+    slotEmoji: "⚗️",
+    glow: "#d9f99d",
+    glowRgb: "217,249,157",
+    bg: "linear-gradient(180deg, #0a0a05 0%, #1a1a0a 60%, #25250f 100%)",
+    queenBg: "linear-gradient(180deg, #d9f99d, #65a30d)",
+    bgParticles: ["☠️","⚗️","🌿","🍀","✨"],
+    upgrades: [
+      { id: "plague_cure",   emoji: "⚗️", name: "Plague Cure",    desc: "Refined antidote plating. All towers +30% damage.",         statLabel: "Tower Damage", statVal: "+30%", color: "#d9f99d", colorRgb: "217,249,157" },
+      { id: "venom_coat",    emoji: "☠️", name: "Venom Coat",     desc: "Toxin-soaked armour. Fire rate +20%.",                      statLabel: "Fire Rate",    statVal: "+20%", color: "#bef264", colorRgb: "190,242,100" },
+      { id: "healers_ward",  emoji: "🌿", name: "Healer's Ward",  desc: "Blessed by survivors. Restore +8 lives immediately.",       statLabel: "Lives",        statVal: "+8",   color: "#86efac", colorRgb: "134,239,172" },
+      { id: "death_touch",   emoji: "💀", name: "Death Touch",    desc: "Terror itself. All bonuses +35% for this land.",            statLabel: "All Bonuses",  statVal: "+35%", color: "#d9f99d", colorRgb: "217,249,157" },
+    ],
+  },
+  10: {
+    chapterLabel: "Chapter X — The Crystal Shattered",
+    victoryShout: "THE CRYSTALLINE TITAN FALLS — REALITY HEALS!",
+    queenLines: [
+      "TEN LANDS, my lord. Ten horrors. Ten impossible victories. And thou hast won them ALL.",
+      "From the titan's shattered crystals, our greatest artificers have forged armour that bends the very laws of nature.",
+      "Thou art no longer merely a champion. Thou art a LEGEND. Choose thy final form.",
+    ],
+    slotLabel: "The Crystal Transcendence",
+    slotEmoji: "💎",
+    glow: "#7dd3fc",
+    glowRgb: "125,211,252",
+    bg: "linear-gradient(180deg, #080a0f 0%, #0f1420 60%, #1a2a3a 100%)",
+    queenBg: "linear-gradient(180deg, #7dd3fc, #0369a1)",
+    bgParticles: ["💎","💠","⭐","🌊","🔮"],
+    upgrades: [
+      { id: "crystal_core",  emoji: "💎", name: "Crystal Core",   desc: "Titan's heart. All tower damage +50%.",                     statLabel: "Tower Damage", statVal: "+50%", color: "#7dd3fc", colorRgb: "125,211,252" },
+      { id: "scar_guardian", emoji: "🛡️", name: "Scar Guardian",  desc: "Reality's shield. +10 lives, all range +20%.",             statLabel: "Lives+Range",  statVal: "+10/+20%", color: "#bae6fd", colorRgb: "186,230,253" },
+      { id: "prism_storm",   emoji: "🌊", name: "Prism Storm",     desc: "Light refracted to fury. Fire rate +30%, proj speed +30%.", statLabel: "Speed×2",      statVal: "+30%", color: "#e0f2fe", colorRgb: "224,242,254" },
+      { id: "ascendant",     emoji: "✨", name: "Ascendant",       desc: "Beyond mortal limits. ALL bonuses ×2 for remaining lands.", statLabel: "All Bonuses",  statVal: "×2",   color: "#7dd3fc", colorRgb: "125,211,252" },
+    ],
+  },
   6: {
     chapterLabel: "Chapter VI — The Demon Lord's Fall & Eternal Peace",
     victoryShout: "THE DEMON LORD IS SLAIN — THE REALM IS SAVED!",
@@ -272,20 +360,20 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
           style={{ background: `rgba(${data.glowRgb},0.15)`, border: `1px solid rgba(${data.glowRgb},0.4)`, color: data.glow, backdropFilter: "blur(6px)" }}>
           {data.slotEmoji}&nbsp;&nbsp;{data.chapterLabel}
         </div>
-        <div className="flex items-center gap-1.5">
-          {[1,2,3,4,5].map(c => (
-            <div key={c} className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
+          {[1,2,3,4,5,6,7,8,9,10].map(c => (
+            <div key={c} className="flex items-center gap-1">
               <div style={{
-                width: 22, height: 22, borderRadius: "50%",
+                width: 18, height: 18, borderRadius: "50%",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 9, fontWeight: 900,
+                fontSize: 8, fontWeight: 900,
                 background: c < chapter ? data.glow : c === chapter ? `linear-gradient(180deg,${data.glow},rgba(0,0,0,0.6))` : "rgba(30,20,50,0.7)",
                 border: `2px solid ${c <= chapter ? data.glow : "rgba(80,60,100,0.25)"}`,
-                boxShadow: c === chapter ? `0 0 14px ${data.glow}, 0 0 4px ${data.glow}` : "none",
+                boxShadow: c === chapter ? `0 0 10px ${data.glow}` : "none",
                 color: c <= chapter ? "#fff" : "#3a2a50",
                 transition: "all 0.3s",
               }}>{c < chapter ? "✓" : c}</div>
-              {c < 5 && <div style={{ width: 16, height: 2, borderRadius: 9, background: c < chapter ? data.glow : "rgba(80,60,100,0.2)" }} />}
+              {c < 10 && <div style={{ width: 8, height: 2, borderRadius: 9, background: c < chapter ? data.glow : "rgba(80,60,100,0.2)" }} />}
             </div>
           ))}
         </div>
@@ -483,7 +571,7 @@ export default function ArmorUpgradeScreen({ chapter, onConfirm }) {
                 </div>
               </div>
               <div style={{ fontSize: 10, color: `rgba(${data.glowRgb},0.4)`, fontFamily: "'Cinzel', serif" }}>
-                Chapter {chapter} / 5
+                Chapter {chapter} / 10
               </div>
             </div>
 
