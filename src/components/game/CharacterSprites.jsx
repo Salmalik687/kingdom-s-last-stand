@@ -379,11 +379,21 @@ export function Kael({ size = 100 }) {
         {/* Arms */}
         <g className="kael-arm-l">
           <ellipse cx="40" cy="85" rx="8" ry="26" fill="#f5f3ff" stroke="#38bdf8" strokeWidth="1"/>
-          <ellipse cx="36" cy="113" r="6" fill="#e0f2fe"/>
+          {/* Left hand */}
+          <rect x="30" y="108" width="8" height="10" rx="2" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.8"/>
+          <rect x="29" y="105" width="3.5" height="7" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="33" y="104" width="3.5" height="7" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="37" y="105" width="3" height="6" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="26" y="110" width="3" height="5" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
         </g>
         <g className="kael-arm-r">
           <ellipse cx="100" cy="85" rx="8" ry="26" fill="#f5f3ff" stroke="#38bdf8" strokeWidth="1"/>
-          <ellipse cx="104" cy="113" r="6" fill="#e0f2fe"/>
+          {/* Right hand */}
+          <rect x="102" y="108" width="8" height="10" rx="2" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.8"/>
+          <rect x="103" y="105" width="3.5" height="7" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="107" y="104" width="3.5" height="7" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="100" y="105" width="3" height="6" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
+          <rect x="111" y="110" width="3" height="5" rx="1.5" fill="#e0f2fe" stroke="#38bdf8" strokeWidth="0.7"/>
         </g>
 
         {/* Body tunic */}
@@ -489,11 +499,21 @@ export function Aurora({ size = 100 }) {
         {/* Arms */}
         <g className="aurora-arm-l">
           <ellipse cx="40" cy="86" rx="9" ry="26" fill="#fef3c7" stroke="#d97706" strokeWidth="1"/>
-          <ellipse cx="36" cy="114" r="6" fill="#fef3c7"/>
+          {/* Left hand */}
+          <rect x="30" y="109" width="8" height="10" rx="2" fill="#fef3c7" stroke="#d97706" strokeWidth="0.8"/>
+          <rect x="29" y="106" width="3.5" height="7" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="33" y="105" width="3.5" height="7" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="37" y="106" width="3" height="6" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="26" y="111" width="3" height="5" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
         </g>
         <g className="aurora-arm-r">
           <ellipse cx="100" cy="86" rx="9" ry="26" fill="#fef3c7" stroke="#d97706" strokeWidth="1"/>
-          <ellipse cx="104" cy="114" r="6" fill="#fef3c7"/>
+          {/* Right hand */}
+          <rect x="102" y="109" width="8" height="10" rx="2" fill="#fef3c7" stroke="#d97706" strokeWidth="0.8"/>
+          <rect x="103" y="106" width="3.5" height="7" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="107" y="105" width="3.5" height="7" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="100" y="106" width="3" height="6" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
+          <rect x="111" y="111" width="3" height="5" rx="1.5" fill="#fef3c7" stroke="#d97706" strokeWidth="0.7"/>
         </g>
 
         {/* Robes */}
