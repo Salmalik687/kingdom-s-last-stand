@@ -521,11 +521,12 @@ function drawHoverPreview(ctx, hoverCell, selectedTowerType) {
 
 export default function GameBoard({
   towers, enemies, projectiles, selectedTowerType,
-  towerMap, onCellClick, selectedTowerId, wave
+  towerMap, onCellClick, selectedTowerId, wave, onTowerSwap
 }) {
   const canvasRef = useRef(null);
   const hoverRef = useRef(null);
   const animFrameRef = useRef(null);
+  const dragRef = useRef(null); // { towerId, startGx, startGy }
 
   const render = useCallback(() => {
     const canvas = canvasRef.current;
@@ -554,44 +555,68 @@ export default function GameBoard({
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [render]);
 
-  const handleMouseMove = (e) => {
+  const getCellFromEvent = (e) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const scaleX = BOARD_W / rect.width;
     const scaleY = BOARD_H / rect.height;
-    const mx = (e.clientX - rect.left) * scaleX;
-    const my = (e.clientY - rect.top) * scaleY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const mx = (clientX - rect.left) * scaleX;
+    const my = (clientY - rect.top) * scaleY;
     const gx = Math.floor(mx / CELL_SIZE);
     const gy = Math.floor(my / CELL_SIZE);
+    if (gx >= 0 && gx < GRID_COLS && gy >= 0 && gy < GRID_ROWS) return { gx, gy };
+    return null;
+  };
 
-    if (gx >= 0 && gx < GRID_COLS && gy >= 0 && gy < GRID_ROWS) {
-      const isPath = PATH_SET.has(`${gx},${gy}`);
-      const hasTower = towerMap.has(`${gx},${gy}`);
-      hoverRef.current = { gx, gy, valid: !isPath && !hasTower };
-    } else {
-      hoverRef.current = null;
+  const handleMouseDown = (e) => {
+    const cell = getCellFromEvent(e);
+    if (!cell) return;
+    const key = `${cell.gx},${cell.gy}`;
+    if (towerMap.has(key)) {
+      dragRef.current = { towerId: towerMap.get(key), startGx: cell.gx, startGy: cell.gy };
     }
   };
 
-  const handleClick = (e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = BOARD_W / rect.width;
-    const scaleY = BOARD_H / rect.height;
-    const mx = (e.clientX - rect.left) * scaleX;
-    const my = (e.clientY - rect.top) * scaleY;
-    const gx = Math.floor(mx / CELL_SIZE);
-    const gy = Math.floor(my / CELL_SIZE);
+  const handleMouseMove = (e) => {
+    const cell = getCellFromEvent(e);
+    if (!cell) { hoverRef.current = null; return; }
+    const { gx, gy } = cell;
+    const isPath = PATH_SET.has(`${gx},${gy}`);
+    const hasTower = towerMap.has(`${gx},${gy}`);
+    hoverRef.current = { gx, gy, valid: !isPath && !hasTower };
+  };
 
-    if (gx >= 0 && gx < GRID_COLS && gy >= 0 && gy < GRID_ROWS) {
-      onCellClick(gx, gy);
+  const handleMouseUp = (e) => {
+    if (!dragRef.current) return;
+    const cell = getCellFromEvent(e);
+    if (cell) {
+      const { gx, gy } = cell;
+      const { startGx, startGy, towerId } = dragRef.current;
+      if (gx !== startGx || gy !== startGy) {
+        // Swap or move tower
+        if (!PATH_SET.has(`${gx},${gy}`)) {
+          onTowerSwap && onTowerSwap(towerId, startGx, startGy, gx, gy);
+        }
+        dragRef.current = null;
+        return;
+      }
     }
+    dragRef.current = null;
+  };
+
+  const handleClick = (e) => {
+    // Don't fire click if we were dragging
+    if (dragRef.current) { dragRef.current = null; return; }
+    const cell = getCellFromEvent(e);
+    if (cell) onCellClick(cell.gx, cell.gy);
   };
 
   const handleMouseLeave = () => {
     hoverRef.current = null;
+    dragRef.current = null;
   };
 
   const theme = getStageTheme(wave || 1);
@@ -611,7 +636,9 @@ export default function GameBoard({
         width={BOARD_W}
         height={BOARD_H}
         className="w-full h-auto cursor-crosshair block"
+        onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
         onClick={handleClick}
         onMouseLeave={handleMouseLeave}
       />

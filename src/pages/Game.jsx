@@ -260,6 +260,32 @@ export default function Game() {
     });
   }, []);
 
+  const handleTowerSwap = useCallback((towerId, fromGx, fromGy, toGx, toGy) => {
+    const tower = towersRef.current.find(t => t.id === towerId);
+    if (!tower) return;
+    const toKey = `${toGx},${toGy}`;
+    const fromKey = `${fromGx},${fromGy}`;
+    const occupantId = towerMapRef.current.get(toKey);
+    const occupant = occupantId ? towersRef.current.find(t => t.id === occupantId) : null;
+
+    if (occupant) {
+      // Swap positions
+      occupant.gridX = fromGx; occupant.gridY = fromGy;
+      occupant.x = fromGx * CELL_SIZE + CELL_SIZE / 2;
+      occupant.y = fromGy * CELL_SIZE + CELL_SIZE / 2;
+      towerMapRef.current.set(fromKey, occupant.id);
+    } else {
+      towerMapRef.current.delete(fromKey);
+    }
+
+    tower.gridX = toGx; tower.gridY = toGy;
+    tower.x = toGx * CELL_SIZE + CELL_SIZE / 2;
+    tower.y = toGy * CELL_SIZE + CELL_SIZE / 2;
+    towerMapRef.current.set(toKey, tower.id);
+
+    forceRender(n => n + 1);
+  }, []);
+
   const handleSell = useCallback((tower) => {
     const base = TOWER_TYPES[tower.type];
     const value = Math.floor(base.cost * 0.5 * tower.level);
@@ -1016,6 +1042,7 @@ export default function Game() {
               onCellClick={handleCellClick}
               selectedTowerId={selectedTowerId}
               wave={wave}
+              onTowerSwap={handleTowerSwap}
             />
             {selectedTowerType && (
               <p className="text-center text-xs text-red-900/60 mt-2 tracking-wide">
