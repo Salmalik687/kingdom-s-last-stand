@@ -6,7 +6,7 @@ import {
   findMergePair, mergeTowers, towerHasAbility,
 } from "../lib/gameEngine";
 import { getCharacter } from "../lib/characters";
-import GameBoard from "../components/game/GameBoard";
+import GameBoard, { spawnDeathParticles } from "../components/game/GameBoard";
 import GameHUD from "../components/game/GameHUD";
 import TowerPanel from "../components/game/TowerPanel";
 import TowerInfoPanel from "../components/game/TowerInfoPanel";
@@ -35,7 +35,7 @@ import CharacterSelect from "../components/game/CharacterSelect";
 import DifficultySelect from "../components/game/DifficultySelect";
 import ModeSelect from "../components/game/ModeSelect";
 import { checkNewAchievements } from "../lib/achievements";
-import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound } from "../lib/sounds";
+import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound, playPlaceSound, playWaveStartSound, playBossKillSound } from "../lib/sounds";
 import { isMuted, toggleMute } from "../lib/audioContext";
 import DamagePopup from "../components/game/DamagePopup";
 import CombatLog from "../components/game/CombatLog";
@@ -231,11 +231,13 @@ export default function Game() {
         }
         checkAchievements({ ...achStatsRef.current });
         playMergeSound(resultType);
+        playPlaceSound();
         setMergeFlash(TOWER_TYPES[resultType]);
         addLog("merge", `✨ Merged into ${TOWER_TYPES[resultType].name}! (${TOWER_TYPES[resultType].emoji})`);
         setTimeout(() => setMergeFlash(false), 1800);
       } else {
         towersRef.current = newTowers;
+        playPlaceSound();
       }
 
       forceRender(n => n + 1);
@@ -359,6 +361,7 @@ export default function Game() {
     waveQueueRef.current = waveData;
     waveTimerRef.current = 0;
     setWaveActive(true);
+    playWaveStartSound();
     addLog("wave", `Wave ${wave} begins — ${waveData.length} enemies incoming!`);
   }, [wave, waveActive, gameOver]);
 
@@ -525,6 +528,7 @@ export default function Game() {
                       scoreEarned += e.reward * 2;
                       killCount++;
                       playKillSound();
+                      spawnDeathParticles(e.x, e.y, false);
                     }
                   }
                 }
@@ -556,7 +560,9 @@ export default function Game() {
               scoreEarned += target.reward * 2;
               killCount++;
               playKillSound();
+              spawnDeathParticles(target.x, target.y, target.type?.startsWith("boss_"));
               if (target.type?.startsWith("boss_")) {
+                playBossKillSound();
                 setBossKillReward(target.type);
                 setGloryPoints(gp => gp + 2);
                 addLog("boss", `BOSS SLAIN: ${target.emoji} ${target.type.replace("boss_", "").toUpperCase()} defeated! +${target.reward} gold`);
@@ -588,14 +594,19 @@ export default function Game() {
       });
       // Remove enemies killed by DoT
       const dotKilled = enemiesRef.current.filter(e => e.hp <= 0);
-      dotKilled.forEach(e => { goldEarned += e.reward; scoreEarned += e.reward * 2; killCount++; });
+      dotKilled.forEach(e => { goldEarned += e.reward; scoreEarned += e.reward * 2; killCount++; spawnDeathParticles(e.x, e.y, false); });
       if (dotKilled.length > 0) enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
 
       if (goldEarned > 0) {
         // Screen shake on big hits
-        if (killCount >= 3 && shouldShake) {
-          document.body.style.animation = "none";
-          setTimeout(() => { document.body.style.animation = "screenShake 0.15s ease-in-out 6 alternate"; }, 10);
+        if (shouldShake && killCount >= 2) {
+          const el = document.getElementById("game-board-wrap");
+          if (el) {
+            el.style.animation = "none";
+            void el.offsetWidth;
+            const intensity = killCount >= 6 ? "screenShake 0.12s ease-in-out 5 alternate" : "screenShake 0.1s ease-in-out 3 alternate";
+            el.style.animation = intensity;
+          }
         }
         setCombo(prev => {
           const next = prev + killCount;
@@ -1144,7 +1155,7 @@ export default function Game() {
       <div className="max-w-7xl mx-auto px-4 py-4">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Board */}
-          <div className="flex-1">
+          <div className="flex-1" id="game-board-wrap">
             <GameBoard
               towers={towersRef.current}
               enemies={enemiesRef.current}

@@ -599,8 +599,23 @@ function drawEnemies(ctx, enemies) {
 const CUSTOM_COLOR_HEX = {
   crimson: "#dc2626", amber: "#f59e0b", emerald: "#10b981",
   sky: "#0ea5e9", violet: "#7c3aed", rose: "#f43f5e",
-  gold: "#ffd60a", void: "#1a0a2e",
+  gold: "#ffd60a", void: "#6d28d9",
 };
+
+// Per-projectile trail history: projId -> [{x,y}]
+const _trailMap = {};
+
+function getProjColor(proj, towerColorMap) {
+  if (proj.towerId && towerColorMap[proj.towerId]) return towerColorMap[proj.towerId];
+  const t = proj.towerType;
+  if (t === "mage" || t === "spellcaster" || t === "arcaneCannoneer" || t === "shadowMage" || t === "voidCannon" || t === "arcaneSiege") return "#c084fc";
+  if (t === "frost" || t === "frozenMage" || t === "blizzardTower" || t === "frostCannoneer" || t === "glacialBallista" || t === "frostStorm") return "#7dd3fc";
+  if (t === "cannon" || t === "warcannon" || t === "doomcannon" || t === "doomSiege") return "#fb923c";
+  if (t === "trebuchet" || t === "siegeEngine" || t === "infernoTrebuchet") return "#fbbf24";
+  if (t === "archer" || t === "stormArcher" || t === "arrowStorm" || t === "thunderArcher") return "#86efac";
+  if (t === "crossbow" || t === "ballista" || t === "venomCrossbow") return "#a3e635";
+  return "#fbbf24";
+}
 
 function drawProjectiles(ctx, projectiles, towers) {
   const towerColorMap = {};
@@ -610,24 +625,126 @@ function drawProjectiles(ctx, projectiles, towers) {
     }
   });
 
+  // Remove stale trails
+  const liveIds = new Set(projectiles.map(p => p.id));
+  for (const id of Object.keys(_trailMap)) {
+    if (!liveIds.has(id)) delete _trailMap[id];
+  }
+
   projectiles.forEach(proj => {
-    const baseColor = proj.towerType === "mage" ? "#a855f7"
-      : proj.towerType === "frost" ? "#60a5fa"
-      : proj.towerType === "cannon" ? "#f97316"
-      : "#fbbf24";
+    // Update trail
+    if (!_trailMap[proj.id]) _trailMap[proj.id] = [];
+    const trail = _trailMap[proj.id];
+    trail.push({ x: proj.x, y: proj.y });
+    if (trail.length > 8) trail.shift();
 
-    const color = (proj.towerId && towerColorMap[proj.towerId]) ?? baseColor;
-    const size = proj.towerType === "cannon" ? 4 : 3;
+    const color = getProjColor(proj, towerColorMap);
+    const isCannon = proj.towerType === "cannon" || proj.towerType === "warcannon" || proj.towerType === "doomcannon" || proj.towerType === "doomSiege" || proj.towerType === "siegeEngine";
+    const isMagic = proj.towerType === "mage" || proj.towerType === "spellcaster" || proj.towerType?.includes("Mage") || proj.towerType === "voidCannon" || proj.towerType === "arcaneSiege";
+    const isFrost = proj.towerType === "frost" || proj.towerType?.includes("frost") || proj.towerType?.includes("Frost") || proj.towerType?.includes("blizzard") || proj.towerType?.includes("Blizzard") || proj.towerType === "glacialBallista";
+    const size = isCannon ? 5 : isMagic ? 4 : 3;
 
+    // Draw trail
+    if (trail.length > 1) {
+      for (let i = 1; i < trail.length; i++) {
+        const alpha = (i / trail.length) * 0.55;
+        const trailSize = size * (i / trail.length) * 0.8;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+        ctx.arc(trail[i].x, trail[i].y, trailSize, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Draw main projectile
     ctx.save();
-    ctx.fillStyle = color;
     ctx.shadowColor = color;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = isCannon ? 14 : isMagic ? 16 : isFrost ? 12 : 8;
+
+    if (isCannon) {
+      // Cannon ball — darker core with bright ring
+      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size);
+      grad.addColorStop(0, "#fff8");
+      grad.addColorStop(0.4, color);
+      grad.addColorStop(1, color + "44");
+      ctx.fillStyle = grad;
+    } else if (isMagic) {
+      // Magic orb — pulsing bright core
+      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(0.3, color);
+      grad.addColorStop(1, color + "22");
+      ctx.fillStyle = grad;
+    } else if (isFrost) {
+      // Ice shard — cyan sparkle
+      ctx.fillStyle = color;
+    } else {
+      ctx.fillStyle = color;
+    }
+
     ctx.beginPath();
     ctx.arc(proj.x, proj.y, size, 0, Math.PI * 2);
     ctx.fill();
+
+    // Outer glow ring for magic
+    if (isMagic || isFrost) {
+      ctx.strokeStyle = color + "88";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size + 2, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
     ctx.restore();
   });
+}
+
+// ── Death particle pool ─────────────────────────────────────────────────────
+const _deathParticles = []; // { x, y, vx, vy, life, maxLife, color, size }
+
+export function spawnDeathParticles(x, y, isBoss = false) {
+  const count = isBoss ? 18 : 8;
+  const colors = isBoss
+    ? ["#ffd60a", "#f97316", "#ef4444", "#a855f7", "#ffffff"]
+    : ["#fbbf24", "#f87171", "#fb923c", "#ffffff"];
+  for (let i = 0; i < count; i++) {
+    const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+    const speed = (isBoss ? 3 : 1.5) + Math.random() * (isBoss ? 3 : 1.5);
+    _deathParticles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - (isBoss ? 1.5 : 0.8),
+      life: 1,
+      maxLife: 0.55 + Math.random() * 0.35,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: (isBoss ? 4 : 2) + Math.random() * (isBoss ? 4 : 2),
+    });
+  }
+}
+
+function updateAndDrawParticles(ctx, dt) {
+  for (let i = _deathParticles.length - 1; i >= 0; i--) {
+    const p = _deathParticles[i];
+    p.x += p.vx * 1.2;
+    p.y += p.vy * 1.2;
+    p.vy += 0.12; // gravity
+    p.life -= dt / p.maxLife;
+    if (p.life <= 0) { _deathParticles.splice(i, 1); continue; }
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.life) * 0.9;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
 }
 
 function drawHoverPreview(ctx, hoverCell, selectedTowerType) {
@@ -674,10 +791,14 @@ export default function GameBoard({
   const animFrameRef = useRef(null);
   const dragRef = useRef(null); // { towerId, startGx, startGy }
 
-  const render = useCallback(() => {
+  const lastRenderTimeRef = useRef(0);
+
+  const render = useCallback((timestamp) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
+    const dt = Math.min((timestamp - (lastRenderTimeRef.current || timestamp)) / 1000, 0.05);
+    lastRenderTimeRef.current = timestamp;
 
     // Full clear + reset all state to avoid shadow/glow bleed between frames
     ctx.clearRect(0, 0, BOARD_W, BOARD_H);
@@ -691,6 +812,7 @@ export default function GameBoard({
     drawTowers(ctx, towers, selectedTowerId);
     drawEnemies(ctx, enemies);
     drawProjectiles(ctx, projectiles, towers);
+    updateAndDrawParticles(ctx, dt);
     drawHoverPreview(ctx, hoverRef.current, selectedTowerType);
 
     animFrameRef.current = requestAnimationFrame(render);
