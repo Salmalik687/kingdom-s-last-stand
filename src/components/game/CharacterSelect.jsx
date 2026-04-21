@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CHARACTERS, getAllCharacters } from "../../lib/characters";
 import { LordAldric, QueenSeraphine, Morrigan, Kael, Aurora } from "./CharacterSprites";
@@ -11,6 +11,9 @@ export default function CharacterSelect({ onSelect }) {
   const typeRef = useRef(null);
   const [typedText, setTypedText] = useState("");
   const [showDetails, setShowDetails] = useState(false);
+  const [speechBubble, setSpeechBubble] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const speechRef = useRef(null);
 
   const characters = getAllCharacters();
   const current = characters[currentIndex];
@@ -34,14 +37,60 @@ export default function CharacterSelect({ onSelect }) {
     return () => clearInterval(typeRef.current);
   }, [currentIndex, isVisible, current.story, showDetails]);
 
+  // Speak the motivation quote when showDetails becomes true
+  useEffect(() => {
+    if (!showDetails) {
+      setSpeechBubble("");
+      setIsSpeaking(false);
+      if (speechRef.current) clearTimeout(speechRef.current);
+      window.speechSynthesis?.cancel();
+      return;
+    }
+
+    // Typewriter the motivation quote in the speech bubble
+    const quote = current.motivation;
+    setSpeechBubble("");
+    setIsSpeaking(true);
+    let idx = 0;
+    const timer = setInterval(() => {
+      idx++;
+      setSpeechBubble(quote.slice(0, idx));
+      if (idx >= quote.length) {
+        clearInterval(timer);
+        setIsSpeaking(false);
+      }
+    }, 32);
+
+    // Speak it with Web Speech API
+    try {
+      window.speechSynthesis?.cancel();
+      const utter = new SpeechSynthesisUtterance(quote);
+      utter.rate = 0.88;
+      utter.pitch = current.id === "morrigan" ? 0.7 : current.id === "aurora" ? 1.3 : current.id === "seraphine" ? 1.1 : current.id === "kael" ? 0.9 : 0.8;
+      utter.volume = 0.9;
+      // Pick a matching voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(v => v.lang.startsWith("en") && (v.name.toLowerCase().includes("male") || v.name.toLowerCase().includes("female")));
+      if (preferred) utter.voice = preferred;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {}
+
+    return () => {
+      clearInterval(timer);
+      window.speechSynthesis?.cancel();
+    };
+  }, [showDetails, current.id, current.motivation]);
+
   const handleNext = () => {
     setCurrentIndex((prev) => (prev + 1) % characters.length);
     setShowDetails(false);
+    setSpeechBubble("");
   };
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + characters.length) % characters.length);
     setShowDetails(false);
+    setSpeechBubble("");
   };
 
   const handleSelect = () => {
@@ -119,25 +168,70 @@ export default function CharacterSelect({ onSelect }) {
             boxShadow: `0 0 60px ${current.color}40, inset 0 1px 0 rgba(138,85,200,0.1)`,
             backdropFilter: "blur(10px)",
           }}>
-            {/* Character sprite - clickable */}
-            <div
-              style={{
-                marginBottom: 16,
-                filter: `drop-shadow(0 0 20px ${current.color})`,
-                display: "flex",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "transform 0.2s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              onClick={() => setSelectedCharForStats(current)}
-            >
-              {current.id === "aldric" && <LordAldric size={100} />}
-              {current.id === "seraphine" && <QueenSeraphine size={100} />}
-              {current.id === "morrigan" && <Morrigan size={100} />}
-              {current.id === "kael" && <Kael size={100} />}
-              {current.id === "aurora" && <Aurora size={100} />}
+            {/* Character sprite + speech bubble */}
+            <div style={{ position: "relative", marginBottom: 16, display: "flex", justifyContent: "center" }}>
+              {/* Speech bubble */}
+              {speechBubble && (
+                <div style={{
+                  position: "absolute",
+                  top: -10,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "min(320px, 90vw)",
+                  background: "linear-gradient(135deg, rgba(10,4,20,0.97), rgba(30,10,50,0.97))",
+                  border: `2px solid ${current.color}`,
+                  borderRadius: 12,
+                  padding: "10px 14px",
+                  fontSize: 12,
+                  fontFamily: "'Cinzel', serif",
+                  fontStyle: "italic",
+                  color: "#f0e6ff",
+                  lineHeight: 1.6,
+                  textAlign: "left",
+                  boxShadow: `0 0 20px ${current.color}50`,
+                  zIndex: 20,
+                  animation: "fadeSlideUp 0.3s both",
+                  pointerEvents: "none",
+                }}>
+                  <span style={{ color: current.color, fontWeight: 900, fontStyle: "normal", marginRight: 4 }}>
+                    {current.name}:
+                  </span>
+                  "{speechBubble}
+                  {isSpeaking && <span style={{ opacity: 0.7, animation: "blink 0.5s ease-in-out infinite" }}>▌</span>}"
+                  {/* Bubble tail pointing down toward character */}
+                  <div style={{
+                    position: "absolute",
+                    bottom: -10,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: 0,
+                    height: 0,
+                    borderLeft: "10px solid transparent",
+                    borderRight: "10px solid transparent",
+                    borderTop: `10px solid ${current.color}`,
+                  }}/>
+                </div>
+              )}
+
+              <div
+                style={{
+                  marginTop: speechBubble ? 80 : 0,
+                  filter: `drop-shadow(0 0 20px ${current.color})`,
+                  display: "flex",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "transform 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                onClick={() => setSelectedCharForStats(current)}
+              >
+                {current.id === "aldric" && <LordAldric size={100} />}
+                {current.id === "seraphine" && <QueenSeraphine size={100} />}
+                {current.id === "morrigan" && <Morrigan size={100} />}
+                {current.id === "kael" && <Kael size={100} />}
+                {current.id === "aurora" && <Aurora size={100} />}
+              </div>
             </div>
 
             {/* Character name and title */}
