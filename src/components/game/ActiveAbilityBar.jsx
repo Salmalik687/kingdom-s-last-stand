@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { ABILITY_TREE } from "./AbilityTree";
+import AbilityVisualEffect from "./AbilityVisualEffect";
 
 export default function ActiveAbilityBar({ unlockedAbilities, onActivate, disabled }) {
-  const [cooldowns, setCooldowns] = useState({}); // abilityId -> remaining seconds
+  const [cooldowns, setCooldowns] = useState({});
   const [activating, setActivating] = useState(null);
+  const [activeEffect, setActiveEffect] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -31,6 +33,7 @@ export default function ActiveAbilityBar({ unlockedAbilities, onActivate, disabl
     const cd = cooldowns[ability.id] ?? 0;
     if (cd > 0) return;
     setActivating(ability.id);
+    setActiveEffect(ability.id);
     setCooldowns(prev => ({ ...prev, [ability.id]: ability.cooldown }));
     onActivate(ability.id);
     setTimeout(() => setActivating(null), 600);
@@ -123,6 +126,12 @@ export default function ActiveAbilityBar({ unlockedAbilities, onActivate, disabl
           </button>
         );
       })}
+      {activeEffect && (
+        <AbilityVisualEffect
+          abilityId={activeEffect}
+          onDone={() => setActiveEffect(null)}
+        />
+      )}
       <style>{`
         @keyframes abilityFlash {
           0%   { opacity: 0.8; transform: scale(1); }
