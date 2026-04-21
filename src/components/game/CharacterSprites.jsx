@@ -53,11 +53,21 @@ export function LordAldric({ size = 100 }) {
         {/* Arms */}
         <g className="al-arm-l">
           <ellipse cx="42" cy="88" rx="9" ry="26" fill="#c8956f" stroke="#8a6040" strokeWidth="1"/>
-          <circle cx="40" cy="118" r="6" fill="#c8956f"/>
+          {/* Left hand */}
+          <rect x="31" y="110" width="9" height="11" rx="2" fill="#c8956f" stroke="#8a6040" strokeWidth="0.8"/>
+          <rect x="30" y="107" width="3.5" height="7" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="34" y="106" width="3.5" height="7" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="38" y="107" width="3" height="6" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="27" y="112" width="3" height="5" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
         </g>
         <g className="al-arm-r">
           <ellipse cx="98" cy="88" rx="9" ry="26" fill="#c8956f" stroke="#8a6040" strokeWidth="1"/>
-          <circle cx="100" cy="118" r="6" fill="#c8956f"/>
+          {/* Right hand */}
+          <rect x="100" y="110" width="9" height="11" rx="2" fill="#c8956f" stroke="#8a6040" strokeWidth="0.8"/>
+          <rect x="101" y="107" width="3.5" height="7" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="105" y="106" width="3.5" height="7" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="98" y="107" width="3" height="6" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
+          <rect x="109" y="112" width="3" height="5" rx="1.5" fill="#c8956f" stroke="#8a6040" strokeWidth="0.7"/>
         </g>
 
         {/* Body - Heavy armor */}
@@ -161,11 +171,21 @@ export function QueenSeraphine({ size = 120 }) {
         {/* Arms */}
         <g className="ser-arm-l">
           <path d="M32 98 Q22 106 19 126 L26 131 Q27 114 36 104 Z" fill="#2a6a4a" opacity="0.85"/>
-          <ellipse cx="19" cy="126" rx="6" ry="7" fill="#f0d4b8"/>
+          {/* Left hand */}
+          <rect x="12" y="121" width="9" height="11" rx="2" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.8"/>
+          <rect x="11" y="118" width="3.5" height="7" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="15" y="117" width="3.5" height="7" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="19" y="118" width="3" height="6" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="8" y="123" width="3" height="5" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
         </g>
         <g className="ser-arm-r">
           <path d="M108 98 Q118 106 121 126 L114 131 Q113 114 104 104 Z" fill="#2a6a4a" opacity="0.85"/>
-          <ellipse cx="121" cy="126" rx="6" ry="7" fill="#f0d4b8"/>
+          {/* Right hand */}
+          <rect x="119" y="121" width="9" height="11" rx="2" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.8"/>
+          <rect x="120" y="118" width="3.5" height="7" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="124" y="117" width="3.5" height="7" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="117" y="118" width="3" height="6" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
+          <rect x="128" y="123" width="3" height="5" rx="1.5" fill="#f0d4b8" stroke="#c8a080" strokeWidth="0.7"/>
         </g>
 
         {/* Gown */}
@@ -271,13 +291,23 @@ export function Morrigan({ size = 100 }) {
         {/* Arms */}
         <g className="mor-arm-l">
           <ellipse cx="38" cy="88" rx="8" ry="28" fill="#2a0a3a"/>
-          <ellipse cx="34" cy="118" rx="6" ry="7" fill="#e8d0f0"/>
-          <circle cx="34" cy="118" r="10" fill="#7c3aed" opacity="0.15" className="mor-aura"/>
+          {/* Left hand */}
+          <rect x="27" y="113" width="9" height="11" rx="2" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.8"/>
+          <rect x="26" y="110" width="3.5" height="7" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="30" y="109" width="3.5" height="7" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="34" y="110" width="3" height="6" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="23" y="115" width="3" height="5" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <circle cx="31" cy="118" r="9" fill="#7c3aed" opacity="0.15" className="mor-aura"/>
         </g>
         <g className="mor-arm-r">
           <ellipse cx="102" cy="88" rx="8" ry="28" fill="#2a0a3a"/>
-          <ellipse cx="106" cy="118" rx="6" ry="7" fill="#e8d0f0"/>
-          <circle cx="106" cy="118" r="10" fill="#7c3aed" opacity="0.15" className="mor-aura"/>
+          {/* Right hand */}
+          <rect x="104" y="113" width="9" height="11" rx="2" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.8"/>
+          <rect x="105" y="110" width="3.5" height="7" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="109" y="109" width="3.5" height="7" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="102" y="110" width="3" height="6" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <rect x="113" y="115" width="3" height="5" rx="1.5" fill="#e8d0f0" stroke="#9b4dca" strokeWidth="0.7"/>
+          <circle cx="109" cy="118" r="9" fill="#7c3aed" opacity="0.15" className="mor-aura"/>
         </g>
 
         {/* Robes */}
