@@ -1179,7 +1179,7 @@ export default function Game() {
               </p>
             )}
             {/* Merge Recipes — centered horizontally, lower on board */}
-            <div className="absolute top-3/4 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 max-w-xs">
+            <div className="absolute top-[85%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 max-w-xs">
               <ComboSuggestions />
             </div>
 
