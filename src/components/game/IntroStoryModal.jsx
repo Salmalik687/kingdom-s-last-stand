@@ -58,7 +58,7 @@ export default function IntroStoryModal({ show, onBegin }) {
     lineRef.current = 0;
   }, [show]);
 
-  // Typewriter + voice per line
+  // Typewriter + voice per line — advance only when BOTH typing AND speech are done
   useEffect(() => {
     if (!show || skipped) return;
 
@@ -68,6 +68,22 @@ export default function IntroStoryModal({ show, onBegin }) {
     setDisplayedText("");
     setPhase("typing");
 
+    let typingDone = false;
+    let speechDone = false;
+
+    const tryAdvance = () => {
+      if (!typingDone || !speechDone) return;
+      setTimeout(() => {
+        const next = lineIndex + 1;
+        if (next < STORY_LINES.length) {
+          setLineIndex(next);
+        } else {
+          setPhase("done");
+        }
+      }, 500);
+    };
+
+    // Typewriter
     let charIdx = 0;
     typeRef.current = setInterval(() => {
       charIdx++;
@@ -75,26 +91,22 @@ export default function IntroStoryModal({ show, onBegin }) {
       if (charIdx >= line.length) {
         clearInterval(typeRef.current);
         setPhase("waiting");
+        typingDone = true;
+        tryAdvance();
       }
-    }, 32);
+    }, 28);
 
-    // Speak the line
-    // Wait for voices to load
+    // Speech — speed matches typing (28ms * chars ≈ duration)
     const trySpeak = () => {
       speakLine(line, () => {
-        // After speech ends, auto-advance after short pause
-        setTimeout(() => {
-          const next = lineIndex + 1;
-          if (next < STORY_LINES.length) {
-            setLineIndex(next);
-          } else {
-            setPhase("done");
-          }
-        }, 600);
+        speechDone = true;
+        tryAdvance();
       });
     };
 
-    if (window.speechSynthesis.getVoices().length === 0) {
+    if (!window.speechSynthesis) {
+      speechDone = true;
+    } else if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.onvoiceschanged = trySpeak;
     } else {
       trySpeak();
@@ -102,7 +114,7 @@ export default function IntroStoryModal({ show, onBegin }) {
 
     return () => {
       clearInterval(typeRef.current);
-      window.speechSynthesis.cancel();
+      window.speechSynthesis?.cancel();
     };
   }, [lineIndex, show, skipped]);
 
