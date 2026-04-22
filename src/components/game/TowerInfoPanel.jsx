@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { TOWER_TYPES, TOWER_ABILITIES, getUnlockedAbilities } from "../../lib/gameEngine";
-import { ArrowUp, Trash2, Lock, Palette, GitBranch } from "lucide-react";
+import { ArrowUp, Trash2, Lock, Palette, GitBranch, TrendingUp } from "lucide-react";
 import TowerCustomizationMenu from "./TowerCustomizationMenu";
 import { getUpgradePaths } from "../../lib/towerUpgradePaths";
 
-export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCustomize }) {
+export default function TowerInfoPanel({ tower, gold, onUpgrade, onLevelUp, onSell, onCustomize }) {
   const [showCustomize, setShowCustomize] = useState(false);
   if (!tower) return null;
 
@@ -148,6 +148,30 @@ export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCusto
           </div>
         </div>
       )}
+
+      {/* Level Up button */}
+      <div className="px-3 pb-2">
+        <button
+          onClick={() => canUpgrade && (onLevelUp ? onLevelUp(tower) : onUpgrade(tower))}
+          disabled={!canUpgrade}
+          className="w-full flex items-center justify-center gap-1.5 rounded-lg py-2.5 font-black text-xs transition-all hover:scale-[1.02]"
+          style={{
+            background: canUpgrade
+              ? "linear-gradient(180deg, #22c55e, #15803d)"
+              : "linear-gradient(180deg, #1a2a1a, #111a11)",
+            border: canUpgrade ? "2px solid #86efac" : "2px solid #1a3a1a",
+            boxShadow: canUpgrade ? "0 3px 0 #052e16, 0 0 16px rgba(34,197,94,0.3)" : "0 3px 0 #050f05",
+            color: canUpgrade ? "#fff" : "#2a4a2a",
+            cursor: canUpgrade ? "pointer" : "not-allowed",
+          }}>
+          <TrendingUp className="w-3.5 h-3.5" />
+          {tower.level >= 5
+            ? "Max Level"
+            : canUpgrade
+            ? `⬆ Level Up — ${upgradeCost}g`
+            : `⬆ Level Up — ${upgradeCost}g (need ${upgradeCost - gold}g more)`}
+        </button>
+      </div>
 
       {/* Buttons */}
       <div className="flex gap-2 px-3 pb-2">

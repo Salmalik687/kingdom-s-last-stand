@@ -1401,6 +1401,7 @@ export default function Game() {
               <TowerInfoPanel
                 tower={getSelectedTower()}
                 gold={gold}
+                onLevelUp={handleUpgrade}
                 onUpgrade={() => setShowUpgradeMenu(true)}
                 onSell={handleSell}
                 onCustomize={handleCustomize}
