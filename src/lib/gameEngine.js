@@ -547,7 +547,7 @@ export const TOWER_TYPES = {
     isMerged: true,
   },
   doomcannon: {
-    name: "Doomsday Cannon",
+    name: "Homelander",
     cost: 0,
     damage: 160,
     range: 5,
