@@ -10,49 +10,50 @@ const TIER_STYLES = {
   LEGEND:{ bg: "rgba(30,0,60,0.7)",    border: "rgba(255,214,10,0.6)",   label: "bg-yellow-900/60 text-yellow-200", dot: "#ffd60a" },
 };
 
+// All names match exactly what appears in the game (tower names from gameEngine.js TOWER_TYPES)
 const COMBOS = [
-  // ── Basic Merges ────────────────────────────────────────────────────────
-  { a: "🧝 Archer",    b: "💣 Cannon",       result: "🎯 Siege Ballista",      resultDesc: "Fast & devastating",              color: "#fbbf24", tier: "MERGE" },
-  { a: "💣 Cannon",    b: "💣 Cannon",        result: "🔴 War Cannon",           resultDesc: "Brutal heavy fire",               color: "#f87171", tier: "MERGE" },
-  { a: "🧝 Archer",    b: "🧝 Archer",        result: "⚡ Storm Archer",          resultDesc: "Lightning-fast volley",           color: "#fde68a", tier: "MERGE" },
-  { a: "🏹 Crossbow",  b: "🧝 Archer",        result: "🏹⚡ Arrow Storm",         resultDesc: "Rapid bolt volley",               color: "#fde68a", tier: "MERGE" },
-  { a: "🏹 Crossbow",  b: "🏹 Crossbow",      result: "🏹🏹 Twin Crossbow",       resultDesc: "Double rapid-fire poison bolts",  color: "#84cc16", tier: "MERGE" },
-  { a: "💣 Cannon",    b: "⚙️ Trebuchet",     result: "⚙️ Siege Engine",         resultDesc: "Ultimate siege power",            color: "#fdba74", tier: "MERGE" },
-  { a: "💣 Cannon",    b: "🪨 Catapult",      result: "💣🪨 War Machine",         resultDesc: "Heavy barrage",                   color: "#fcd34d", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "🔮 Mage",          result: "🌀 Spellcaster",           resultDesc: "Arcane barrage",                  color: "#c4b5fd", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "❄️ Frost",         result: "🧊 Frozen Mage",           resultDesc: "Slows & deals magic dmg",         color: "#67e8f9", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "💣 Cannon",        result: "🔵 Arcane Cannoneer",      resultDesc: "Heavy arcane shells",             color: "#d8b4fe", tier: "MERGE" },
-  { a: "❄️ Frost",     b: "❄️ Frost",         result: "❄️🌀 Blizzard Tower",     resultDesc: "Powerful AoE slow",               color: "#7dd3fc", tier: "MERGE" },
-  { a: "❄️ Frost",     b: "💣 Cannon",        result: "🧊💣 Frost Cannoneer",     resultDesc: "Freezing heavy shells",           color: "#93c5fd", tier: "MERGE" },
+  // ── Basic Merges (base towers only) ────────────────────────────────────
+  { a: "🧝 Archer Tower",   b: "💣 Cannon Tower",    result: "🎯 Siege Ballista",     resultDesc: "Fast & devastating",             color: "#fbbf24", tier: "MERGE" },
+  { a: "💣 Cannon Tower",   b: "💣 Cannon Tower",    result: "🔴 War Cannon",          resultDesc: "Brutal heavy fire",              color: "#f87171", tier: "MERGE" },
+  { a: "🧝 Archer Tower",   b: "🧝 Archer Tower",   result: "🧝⚡ Storm Archer",       resultDesc: "Lightning-fast volley",          color: "#fde68a", tier: "MERGE" },
+  { a: "🏹 Crossbow Tower", b: "🧝 Archer Tower",   result: "🏹⚡ Arrow Storm",        resultDesc: "Rapid bolt volley",              color: "#fde68a", tier: "MERGE" },
+  { a: "🏹 Crossbow Tower", b: "🏹 Crossbow Tower", result: "🏹🏹 Twin Crossbow",      resultDesc: "Double rapid-fire poison bolts", color: "#84cc16", tier: "MERGE" },
+  { a: "💣 Cannon Tower",   b: "⚙️ Trebuchet",      result: "⚙️ Siege Engine",        resultDesc: "Ultimate siege power",           color: "#fdba74", tier: "MERGE" },
+  { a: "💣 Cannon Tower",   b: "🪨 Catapult",       result: "💣🪨 War Machine",        resultDesc: "Heavy barrage",                  color: "#fcd34d", tier: "MERGE" },
+  { a: "🔮 Mage Tower",     b: "🔮 Mage Tower",     result: "🌀 Spellcaster",          resultDesc: "Arcane barrage",                 color: "#c4b5fd", tier: "MERGE" },
+  { a: "🔮 Mage Tower",     b: "❄️ Frost Tower",    result: "🧊 Frozen Mage",          resultDesc: "Slows & deals magic dmg",        color: "#67e8f9", tier: "MERGE" },
+  { a: "🔮 Mage Tower",     b: "💣 Cannon Tower",   result: "🔵 Arcane Cannoneer",     resultDesc: "Heavy arcane shells",            color: "#d8b4fe", tier: "MERGE" },
+  { a: "❄️ Frost Tower",    b: "❄️ Frost Tower",    result: "❄️🌀 Blizzard Tower",    resultDesc: "Powerful AoE slow",              color: "#7dd3fc", tier: "MERGE" },
+  { a: "❄️ Frost Tower",    b: "💣 Cannon Tower",   result: "🧊💣 Frost Cannoneer",    resultDesc: "Freezing heavy shells",          color: "#93c5fd", tier: "MERGE" },
 
   // ── Advanced Merges ─────────────────────────────────────────────────────
-  { a: "⚙️ Trebuchet", b: "🪨 Catapult",      result: "🔥⚙️ Inferno Trebuchet",  resultDesc: "Volcanic long-range siege",       color: "#fca5a5", tier: "NEW"   },
-  { a: "🔮 Mage",      b: "🧝 Archer",        result: "🌑🔮 Shadow Mage",         resultDesc: "Poison & slow bolts",             color: "#a5b4fc", tier: "NEW"   },
-  { a: "🔮 Mage",      b: "🔴 War Cannon",    result: "🌀💣 Void Cannon",         resultDesc: "Arcane void explosions",          color: "#c084fc", tier: "NEW"   },
-  { a: "⚡ Storm Arch.",b: "🔮 Mage",          result: "⚡🏹 Thunder Archer",      resultDesc: "Lightning chain volley",          color: "#fef08a", tier: "NEW"   },
-  { a: "🏹 Crossbow",  b: "🔮 Mage",          result: "☠️🏹 Venom Crossbow",      resultDesc: "Rapid arcane poison bolts",       color: "#86efac", tier: "NEW"   },
-  { a: "🌀 Spellcast.",b: "⚙️ Trebuchet",     result: "🌀⚙️ Arcane Siege",       resultDesc: "Arcane boulders with AoE",        color: "#e879f9", tier: "NEW"   },
-  { a: "❄️ Frost",     b: "🎯 Ballista",      result: "🧊🎯 Glacial Ballista",    resultDesc: "Freezing piercing bolts",         color: "#a5f3fc", tier: "NEW"   },
-  { a: "❄️ Blizzard",  b: "🏹⚡ Arrow Storm", result: "❄️⚡ Frost Storm",         resultDesc: "Freezing rapid volley",           color: "#bae6fd", tier: "NEW"   },
+  { a: "⚙️ Trebuchet",      b: "🪨 Catapult",        result: "🔥⚙️ Inferno Trebuchet", resultDesc: "Volcanic long-range siege",      color: "#fca5a5", tier: "NEW"   },
+  { a: "🔮 Mage Tower",     b: "🧝 Archer Tower",    result: "🌑🔮 Shadow Mage",        resultDesc: "Poison & slow bolts",            color: "#a5b4fc", tier: "NEW"   },
+  { a: "🔮 Mage Tower",     b: "🔴 War Cannon",      result: "🌀💣 Void Cannon",        resultDesc: "Arcane void explosions",         color: "#c084fc", tier: "NEW"   },
+  { a: "🧝⚡ Storm Archer",  b: "🔮 Mage Tower",     result: "⚡🏹 Thunder Archer",     resultDesc: "Lightning chain volley",         color: "#fef08a", tier: "NEW"   },
+  { a: "🏹 Crossbow Tower", b: "🔮 Mage Tower",      result: "☠️🏹 Venom Crossbow",    resultDesc: "Rapid arcane poison bolts",      color: "#86efac", tier: "NEW"   },
+  { a: "🌀 Spellcaster",    b: "⚙️ Trebuchet",       result: "🌀⚙️ Arcane Siege",      resultDesc: "Arcane boulders with AoE",      color: "#e879f9", tier: "NEW"   },
+  { a: "❄️ Frost Tower",    b: "🎯 Siege Ballista",  result: "🧊🎯 Glacial Ballista",   resultDesc: "Freezing piercing bolts",        color: "#a5f3fc", tier: "NEW"   },
+  { a: "❄️🌀 Blizzard Tower",b: "🏹⚡ Arrow Storm",   result: "❄️⚡ Frost Storm",        resultDesc: "Freezing rapid volley",         color: "#bae6fd", tier: "NEW"   },
 
   // ── Epic Merges ─────────────────────────────────────────────────────────
-  { a: "⚡ Storm Arch.",b: "❄️ Frost",         result: "👻🏹 Phantom Archer",      resultDesc: "Ghost arrows phasing armor",      color: "#c084fc", tier: "EPIC"  },
-  { a: "☠️🏹 Venom CB", b: "🎯 Ballista",      result: "☠️🎯 Plague Ballista",     resultDesc: "Plague-tipped piercing bolts",    color: "#4ade80", tier: "EPIC"  },
-  { a: "🧊💣 Frost Can.",b: "💣🪨 War Mach.",   result: "🧊🔥 Frostfire Cannon",    resultDesc: "Alternates freeze and burn",      color: "#38bdf8", tier: "EPIC"  },
-  { a: "🔵 Arc. Canon.",b: "🌑🔮 Shadow Mage",  result: "💀🔮 Soul Reaper Tower",   resultDesc: "Harvests souls for bonus dmg",    color: "#fb7185", tier: "EPIC"  },
-  { a: "⚙️ Siege Eng.", b: "⚡🏹 Thunder Arch.",result: "⚡⚙️ Tempest Engine",      resultDesc: "Thunderstorm siege weapon",       color: "#facc15", tier: "EPIC"  },
-  { a: "🌑🔮 Shadow Mg.",b: "🌀💣 Void Cannon", result: "🕳️🔮 Abyssal Mage",       resultDesc: "Dark matter obliteration blasts", color: "#6d28d9", tier: "EPIC"  },
-  { a: "🧊🎯 Glacial B.",b: "⚡🏹 Thunder Arch.",result: "✨🎯 Celestial Ballista",  resultDesc: "Divine light piercing bolts",     color: "#fde68a", tier: "EPIC"  },
+  { a: "🧝⚡ Storm Archer",  b: "❄️ Frost Tower",    result: "👻🏹 Phantom Archer",     resultDesc: "Ghost arrows phasing armor",     color: "#c084fc", tier: "EPIC"  },
+  { a: "☠️🏹 Venom Crossbow",b: "🎯 Siege Ballista", result: "☠️🎯 Plague Ballista",    resultDesc: "Plague-tipped piercing bolts",   color: "#4ade80", tier: "EPIC"  },
+  { a: "🧊💣 Frost Cannoneer",b:"💣🪨 War Machine",  result: "🧊🔥 Frostfire Cannon",   resultDesc: "Alternates freeze and burn",     color: "#38bdf8", tier: "EPIC"  },
+  { a: "🔵 Arcane Cannoneer",b: "🌑🔮 Shadow Mage",  result: "💀🔮 Soul Reaper Tower",  resultDesc: "Harvests souls for bonus dmg",   color: "#fb7185", tier: "EPIC"  },
+  { a: "⚙️ Siege Engine",   b: "⚡🏹 Thunder Archer", result: "⚡⚙️ Tempest Engine",    resultDesc: "Thunderstorm siege weapon",      color: "#facc15", tier: "EPIC"  },
+  { a: "🌑🔮 Shadow Mage",   b: "🌀💣 Void Cannon",  result: "🕳️🔮 Abyssal Mage",      resultDesc: "Dark matter obliteration blasts",color: "#6d28d9", tier: "EPIC"  },
+  { a: "🧊🎯 Glacial Ballista",b:"⚡🏹 Thunder Archer",result: "✨🎯 Celestial Ballista", resultDesc: "Divine light piercing bolts",    color: "#fde68a", tier: "EPIC"  },
 
   // ── Mega Merges ─────────────────────────────────────────────────────────
-  { a: "🔴 War Cannon", b: "🎯 Ballista",      result: "💥 Doomsday Cannon",      resultDesc: "The ultimate destroyer",          color: "#fca5a5", tier: "MEGA"  },
-  { a: "💥 Doom Cannon",b: "💣🪨 War Mach.",    result: "💀💣 Ruin Cannon",         resultDesc: "Catastrophic ground devastation", color: "#f43f5e", tier: "MEGA"  },
-  { a: "🌀💣 Void Can.",b: "💥 Doom Cannon",    result: "🔴🔮 Crimson Spire",       resultDesc: "Crimson void destruction",        color: "#dc2626", tier: "MEGA"  },
-  { a: "🔥⚙️ Inferno T.",b: "❄️⚡ Frost Storm", result: "⚡🪨 Storm Siege",         resultDesc: "Blizzard and lightning siege",    color: "#e0f2fe", tier: "MEGA"  },
+  { a: "🔴 War Cannon",     b: "🎯 Siege Ballista",  result: "💥 Homelander",           resultDesc: "The ultimate destroyer",         color: "#fca5a5", tier: "MEGA"  },
+  { a: "💥 Homelander",     b: "💣🪨 War Machine",   result: "💀💣 Ruin Cannon",         resultDesc: "Catastrophic ground devastation",color: "#f43f5e", tier: "MEGA"  },
+  { a: "🌀💣 Void Cannon",  b: "💥 Homelander",      result: "🔴🔮 Crimson Spire",       resultDesc: "Crimson void destruction",       color: "#dc2626", tier: "MEGA"  },
+  { a: "🔥⚙️ Inferno Trebuchet",b:"❄️⚡ Frost Storm", result: "⚡🪨 Storm Siege",        resultDesc: "Blizzard and lightning siege",   color: "#e0f2fe", tier: "MEGA"  },
 
   // ── Ultra / Legend Merges ───────────────────────────────────────────────
-  { a: "⚙️ Siege Eng.", b: "💥 Doom Cannon",   result: "💥⚙️ Doom Siege",         resultDesc: "Total annihilation engine",       color: "#fda4af", tier: "ULTRA" },
-  { a: "💥⚙️ Doom Siege",b: "🌀⚙️ Arcane Siege",result: "🌀⚙️ Void Siege",         resultDesc: "Ultimate arcane siege behemoth",  color: "#e879f9", tier: "LEGEND"},
+  { a: "⚙️ Siege Engine",   b: "💥 Homelander",      result: "💥⚙️ Doom Siege",         resultDesc: "Total annihilation engine",      color: "#fda4af", tier: "ULTRA" },
+  { a: "💥⚙️ Doom Siege",   b: "🌀⚙️ Arcane Siege",  result: "🌀⚙️ Void Siege",         resultDesc: "Ultimate arcane siege behemoth", color: "#e879f9", tier: "LEGEND"},
 ];
 
 const TIER_GROUPS = ["LEGEND", "ULTRA", "MEGA", "EPIC", "NEW", "MERGE"];
