@@ -643,6 +643,19 @@ const PROJ_CONFIG = {
   frostStorm:      { color: "#93c5fd", size: 5, shape: "ice", glow: 18 },
   // War Machine family — deep red
   warMachine:      { color: "#ef4444", size: 6, shape: "orb", glow: 18 },
+  // New Epic / Mega / Ultra / Legend towers
+  dualCrossbow:    { color: "#84cc16", size: 3, shape: "bolt",    glow: 10 },
+  phantomArcher:   { color: "#c084fc", size: 3, shape: "arrow",   glow: 14 },
+  ruinCannon:      { color: "#f43f5e", size: 8, shape: "orb",     glow: 26 },
+  abyssalMage:     { color: "#6d28d9", size: 6, shape: "magic",   glow: 22 },
+  tempestEngine:   { color: "#facc15", size: 7, shape: "boulder", glow: 20 },
+  soulReaper:      { color: "#fb7185", size: 5, shape: "magic",   glow: 20 },
+  frostfireCannon: { color: "#38bdf8", size: 5, shape: "orb",     glow: 16 },
+  celestialBallista:{ color: "#fde68a",size: 4, shape: "bolt",    glow: 18 },
+  voidSiege:       { color: "#7c3aed", size: 9, shape: "magic",   glow: 30 },
+  plagueBalista:   { color: "#4ade80", size: 4, shape: "bolt",    glow: 12 },
+  stormSiege:      { color: "#e0f2fe", size: 8, shape: "boulder", glow: 24 },
+  crimsonSpire:    { color: "#dc2626", size: 7, shape: "magic",   glow: 26 },
 };
 
 function getProjConfig(proj, towerColorMap) {

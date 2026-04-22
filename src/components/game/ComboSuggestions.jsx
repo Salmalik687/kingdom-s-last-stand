@@ -4,49 +4,65 @@ import { ChevronDown, ChevronUp, Swords } from "lucide-react";
 const TIER_STYLES = {
   MERGE: { bg: "rgba(60,40,10,0.5)",   border: "rgba(180,120,40,0.35)",  label: "bg-amber-900/60 text-amber-300",   dot: "#d97706" },
   NEW:   { bg: "rgba(20,10,60,0.5)",   border: "rgba(120,80,220,0.4)",   label: "bg-indigo-900/60 text-indigo-300", dot: "#818cf8" },
+  EPIC:  { bg: "rgba(10,30,60,0.6)",   border: "rgba(56,189,248,0.45)",  label: "bg-sky-900/60 text-sky-200",       dot: "#38bdf8" },
   MEGA:  { bg: "rgba(60,10,10,0.5)",   border: "rgba(200,40,40,0.4)",    label: "bg-red-900/60 text-red-300",       dot: "#f87171" },
-  ULTRA: { bg: "rgba(80,5,20,0.6)",    border: "rgba(240,60,80,0.5)",    label: "bg-rose-900/60 text-rose-200",     dot: "#fb7185" },
+  ULTRA: { bg: "rgba(80,5,80,0.6)",    border: "rgba(200,60,240,0.55)",  label: "bg-purple-900/60 text-purple-200", dot: "#e879f9" },
+  LEGEND:{ bg: "rgba(30,0,60,0.7)",    border: "rgba(255,214,10,0.6)",   label: "bg-yellow-900/60 text-yellow-200", dot: "#ffd60a" },
 };
 
 const COMBOS = [
-  // ── Cannon tree ──────────────────────────────────────────────
-  { a: "🧝 Archer",    b: "💣 Cannon",       result: "🎯 Siege Ballista",      resultDesc: "Fast & devastating",         color: "#fbbf24", tier: "MERGE" },
-  { a: "💣 Cannon",    b: "💣 Cannon",        result: "🔴 War Cannon",           resultDesc: "Brutal heavy fire",          color: "#f87171", tier: "MERGE" },
-  { a: "🔴 War Cannon",b: "🎯 Ballista",      result: "💥 Doomsday Cannon",      resultDesc: "Ultimate destroyer",         color: "#fca5a5", tier: "MEGA"  },
+  // ── Basic Merges ────────────────────────────────────────────────────────
+  { a: "🧝 Archer",    b: "💣 Cannon",       result: "🎯 Siege Ballista",      resultDesc: "Fast & devastating",              color: "#fbbf24", tier: "MERGE" },
+  { a: "💣 Cannon",    b: "💣 Cannon",        result: "🔴 War Cannon",           resultDesc: "Brutal heavy fire",               color: "#f87171", tier: "MERGE" },
+  { a: "🧝 Archer",    b: "🧝 Archer",        result: "⚡ Storm Archer",          resultDesc: "Lightning-fast volley",           color: "#fde68a", tier: "MERGE" },
+  { a: "🏹 Crossbow",  b: "🧝 Archer",        result: "🏹⚡ Arrow Storm",         resultDesc: "Rapid bolt volley",               color: "#fde68a", tier: "MERGE" },
+  { a: "🏹 Crossbow",  b: "🏹 Crossbow",      result: "🏹🏹 Twin Crossbow",       resultDesc: "Double rapid-fire poison bolts",  color: "#84cc16", tier: "MERGE" },
+  { a: "💣 Cannon",    b: "⚙️ Trebuchet",     result: "⚙️ Siege Engine",         resultDesc: "Ultimate siege power",            color: "#fdba74", tier: "MERGE" },
+  { a: "💣 Cannon",    b: "🪨 Catapult",      result: "💣🪨 War Machine",         resultDesc: "Heavy barrage",                   color: "#fcd34d", tier: "MERGE" },
+  { a: "🔮 Mage",      b: "🔮 Mage",          result: "🌀 Spellcaster",           resultDesc: "Arcane barrage",                  color: "#c4b5fd", tier: "MERGE" },
+  { a: "🔮 Mage",      b: "❄️ Frost",         result: "🧊 Frozen Mage",           resultDesc: "Slows & deals magic dmg",         color: "#67e8f9", tier: "MERGE" },
+  { a: "🔮 Mage",      b: "💣 Cannon",        result: "🔯 Arcane Cannoneer",      resultDesc: "Heavy arcane shells",             color: "#d8b4fe", tier: "MERGE" },
+  { a: "❄️ Frost",     b: "❄️ Frost",         result: "❄️🌀 Blizzard Tower",     resultDesc: "Powerful AoE slow",               color: "#7dd3fc", tier: "MERGE" },
+  { a: "❄️ Frost",     b: "💣 Cannon",        result: "🧊💣 Frost Cannoneer",     resultDesc: "Freezing heavy shells",           color: "#93c5fd", tier: "MERGE" },
 
-  // ── Archer tree ──────────────────────────────────────────────
-  { a: "🧝 Archer",    b: "🧝 Archer",        result: "⚡ Storm Archer",          resultDesc: "Lightning-fast volley",      color: "#fde68a", tier: "MERGE" },
-  { a: "🏹 Crossbow",  b: "🧝 Archer",        result: "🏹⚡ Arrow Storm",         resultDesc: "Rapid bolt volley",          color: "#fde68a", tier: "MERGE" },
+  // ── Advanced Merges ─────────────────────────────────────────────────────
+  { a: "⚙️ Trebuchet", b: "🪨 Catapult",      result: "🔥⚙️ Inferno Trebuchet",  resultDesc: "Volcanic long-range siege",       color: "#fca5a5", tier: "NEW"   },
+  { a: "🔮 Mage",      b: "🧝 Archer",        result: "🌑🔮 Shadow Mage",         resultDesc: "Poison & slow bolts",             color: "#a5b4fc", tier: "NEW"   },
+  { a: "🔮 Mage",      b: "🔴 War Cannon",    result: "🌀💣 Void Cannon",         resultDesc: "Arcane void explosions",          color: "#c084fc", tier: "NEW"   },
+  { a: "⚡ Storm Arch.",b: "🔮 Mage",          result: "⚡🏹 Thunder Archer",      resultDesc: "Lightning chain volley",          color: "#fef08a", tier: "NEW"   },
+  { a: "🏹 Crossbow",  b: "🔮 Mage",          result: "☠️🏹 Venom Crossbow",      resultDesc: "Rapid arcane poison bolts",       color: "#86efac", tier: "NEW"   },
+  { a: "🌀 Spellcast.",b: "⚙️ Trebuchet",     result: "🔯⚙️ Arcane Siege",       resultDesc: "Arcane boulders with AoE",        color: "#e879f9", tier: "NEW"   },
+  { a: "❄️ Frost",     b: "🎯 Ballista",      result: "🧊🎯 Glacial Ballista",    resultDesc: "Freezing piercing bolts",         color: "#a5f3fc", tier: "NEW"   },
+  { a: "❄️ Blizzard",  b: "🏹⚡ Arrow Storm", result: "❄️⚡ Frost Storm",         resultDesc: "Freezing rapid volley",           color: "#bae6fd", tier: "NEW"   },
 
-  // ── Siege tree ───────────────────────────────────────────────
-  { a: "💣 Cannon",    b: "⚙️ Trebuchet",     result: "⚙️ Siege Engine",         resultDesc: "Ultimate siege power",       color: "#fdba74", tier: "MERGE" },
-  { a: "💣 Cannon",    b: "🪨 Catapult",      result: "💣🪨 War Machine",         resultDesc: "Heavy barrage",              color: "#fcd34d", tier: "MERGE" },
-  { a: "⚙️ Trebuchet", b: "🪨 Catapult",      result: "🔥⚙️ Inferno Trebuchet",  resultDesc: "Volcanic long-range siege",  color: "#fca5a5", tier: "NEW"   },
-  { a: "⚙️ Siege Eng.",b: "💥 Doom Cannon",   result: "💥⚙️ Doom Siege",         resultDesc: "Total annihilation",         color: "#fda4af", tier: "ULTRA" },
+  // ── Epic Merges ─────────────────────────────────────────────────────────
+  { a: "⚡ Storm Arch.",b: "❄️ Frost",         result: "👻🏹 Phantom Archer",      resultDesc: "Ghost arrows phasing armor",      color: "#c084fc", tier: "EPIC"  },
+  { a: "☠️🏹 Venom CB", b: "🎯 Ballista",      result: "☠️🎯 Plague Ballista",     resultDesc: "Plague-tipped piercing bolts",    color: "#4ade80", tier: "EPIC"  },
+  { a: "🧊💣 Frost Can.",b: "💣🪨 War Mach.",   result: "🧊🔥 Frostfire Cannon",    resultDesc: "Alternates freeze and burn",      color: "#38bdf8", tier: "EPIC"  },
+  { a: "🔯 Arc. Canon.",b: "🌑🔮 Shadow Mage",  result: "💀🔮 Soul Reaper Tower",   resultDesc: "Harvests souls for bonus dmg",    color: "#fb7185", tier: "EPIC"  },
+  { a: "⚙️ Siege Eng.", b: "⚡🏹 Thunder Arch.",result: "⚡⚙️ Tempest Engine",      resultDesc: "Thunderstorm siege weapon",       color: "#facc15", tier: "EPIC"  },
+  { a: "🌑🔮 Shadow Mg.",b: "🌀💣 Void Cannon", result: "🕳️🔮 Abyssal Mage",       resultDesc: "Dark matter obliteration blasts", color: "#6d28d9", tier: "EPIC"  },
+  { a: "🧊🎯 Glacial B.",b: "⚡🏹 Thunder Arch.",result: "✨🎯 Celestial Ballista",  resultDesc: "Divine light piercing bolts",     color: "#fde68a", tier: "EPIC"  },
 
-  // ── Mage tree ────────────────────────────────────────────────
-  { a: "🔮 Mage",      b: "🔮 Mage",          result: "🌀 Spellcaster",           resultDesc: "Arcane barrage",             color: "#c4b5fd", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "❄️ Frost",         result: "🧊 Frozen Mage",           resultDesc: "Slows & deals magic dmg",    color: "#67e8f9", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "💣 Cannon",        result: "🔯 Arcane Cannoneer",      resultDesc: "Heavy arcane shells",        color: "#d8b4fe", tier: "MERGE" },
-  { a: "🔮 Mage",      b: "🧝 Archer",        result: "🌑🔮 Shadow Mage",         resultDesc: "Poison & slow bolts",        color: "#a5b4fc", tier: "NEW"   },
-  { a: "🔮 Mage",      b: "🔴 War Cannon",    result: "🌀💣 Void Cannon",         resultDesc: "Arcane void explosions",     color: "#c084fc", tier: "NEW"   },
-  { a: "⚡ Storm Arch.",b: "🔮 Mage",          result: "⚡🏹 Thunder Archer",      resultDesc: "Lightning chain volley",     color: "#fef08a", tier: "NEW"   },
-  { a: "🏹 Crossbow",  b: "🔮 Mage",          result: "☠️🏹 Venom Crossbow",      resultDesc: "Rapid arcane poison bolts",  color: "#86efac", tier: "NEW"   },
-  { a: "🌀 Spellcast.", b: "⚙️ Trebuchet",    result: "🔯⚙️ Arcane Siege",       resultDesc: "Arcane boulders with AoE",   color: "#e879f9", tier: "NEW"   },
+  // ── Mega Merges ─────────────────────────────────────────────────────────
+  { a: "🔴 War Cannon", b: "🎯 Ballista",      result: "💥 Doomsday Cannon",      resultDesc: "The ultimate destroyer",          color: "#fca5a5", tier: "MEGA"  },
+  { a: "💥 Doom Cannon",b: "💣🪨 War Mach.",    result: "💀💣 Ruin Cannon",         resultDesc: "Catastrophic ground devastation", color: "#f43f5e", tier: "MEGA"  },
+  { a: "🌀💣 Void Can.",b: "💥 Doom Cannon",    result: "🔴🔮 Crimson Spire",       resultDesc: "Crimson void destruction",        color: "#dc2626", tier: "MEGA"  },
+  { a: "🔥⚙️ Inferno T.",b: "❄️⚡ Frost Storm", result: "⚡🪨 Storm Siege",         resultDesc: "Blizzard and lightning siege",    color: "#e0f2fe", tier: "MEGA"  },
 
-  // ── Frost tree ───────────────────────────────────────────────
-  { a: "❄️ Frost",     b: "❄️ Frost",         result: "❄️🌀 Blizzard Tower",     resultDesc: "Powerful AoE slow",          color: "#7dd3fc", tier: "MERGE" },
-  { a: "❄️ Frost",     b: "💣 Cannon",        result: "🧊💣 Frost Cannoneer",     resultDesc: "Freezing heavy shells",      color: "#93c5fd", tier: "MERGE" },
-  { a: "❄️ Frost",     b: "🎯 Ballista",      result: "🧊🎯 Glacial Ballista",    resultDesc: "Freezing piercing bolts",    color: "#a5f3fc", tier: "NEW"   },
-  { a: "❄️ Blizzard",  b: "🏹⚡ Arrow Storm", result: "❄️⚡ Frost Storm",         resultDesc: "Freezing rapid volley",      color: "#bae6fd", tier: "NEW"   },
+  // ── Ultra / Legend Merges ───────────────────────────────────────────────
+  { a: "⚙️ Siege Eng.", b: "💥 Doom Cannon",   result: "💥⚙️ Doom Siege",         resultDesc: "Total annihilation engine",       color: "#fda4af", tier: "ULTRA" },
+  { a: "💥⚙️ Doom Siege",b: "🔯⚙️ Arcane Siege",result: "🌀⚙️ Void Siege",         resultDesc: "Ultimate arcane siege behemoth",  color: "#e879f9", tier: "LEGEND"},
 ];
 
-const TIER_GROUPS = ["ULTRA", "MEGA", "NEW", "MERGE"];
+const TIER_GROUPS = ["LEGEND", "ULTRA", "MEGA", "EPIC", "NEW", "MERGE"];
 const GROUP_LABELS = {
-  ULTRA: "⚠ Ultra Merges",
-  MEGA:  "💥 Mega Merges",
-  NEW:   "✨ Advanced Merges",
-  MERGE: "⚙ Basic Merges",
+  LEGEND: "👑 Legend Merges",
+  ULTRA:  "⚠ Ultra Merges",
+  MEGA:   "💥 Mega Merges",
+  EPIC:   "🌟 Epic Merges",
+  NEW:    "✨ Advanced Merges",
+  MERGE:  "⚙ Basic Merges",
 };
 
 export default function ComboSuggestions() {
