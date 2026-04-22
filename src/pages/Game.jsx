@@ -1379,7 +1379,7 @@ export default function Game() {
       <AchievementToast newlyUnlocked={newlyUnlocked} />
 
       <CampaignIntro show={showCampaignIntro} onBegin={() => setShowCampaignIntro(false)} />
-      <WaveDialogue wave={lastDialogueWave} show={wave === lastDialogueWave && !waveActive && lastDialogueWave > 0} />
+      <WaveDialogue wave={lastDialogueWave} show={wave === lastDialogueWave && !waveActive && lastDialogueWave > 0} character={characterData} />
 
       {/* Tower Upgrade Menu */}
       {showUpgradeMenu && getSelectedTower() && (

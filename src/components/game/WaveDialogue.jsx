@@ -123,11 +123,19 @@ const SPEAKER_ICONS = {
   "Aurora":          "✨",
 };
 
-export default function WaveDialogue({ wave, show }) {
+export default function WaveDialogue({ wave, show, character }) {
   const [typed, setTyped] = useState("");
   const [isTyping, setIsTyping] = useState(true);
   const typeRef = useRef(null);
-  const dialogue = WAVE_DIALOGUES[wave];
+  const rawDialogue = WAVE_DIALOGUES[wave];
+
+  // Replace "Lord Aldric" speaker with the selected character
+  const dialogue = rawDialogue && rawDialogue.speaker === "Lord Aldric" && character && character.name !== "Lord Aldric"
+    ? { ...rawDialogue, speaker: character.name }
+    : rawDialogue;
+
+  const speakerColor = SPEAKER_COLORS[dialogue?.speaker] ?? character?.color ?? "#c9915a";
+  const speakerIcon = SPEAKER_ICONS[dialogue?.speaker] ?? character?.emoji ?? "⚔";
 
   useEffect(() => {
     if (!show || !dialogue) {
@@ -171,10 +179,10 @@ export default function WaveDialogue({ wave, show }) {
 
       <div style={{
         background: "linear-gradient(160deg, rgba(10,4,20,0.96) 0%, rgba(20,10,30,0.96) 100%)",
-        border: `2px solid ${SPEAKER_COLORS[dialogue.speaker] ?? "#5a9a7a"}99`,
+        border: `2px solid ${speakerColor}99`,
         borderRadius: 12,
         padding: "16px 20px",
-        boxShadow: `0 0 40px ${SPEAKER_COLORS[dialogue.speaker] ?? "#5a9a7a"}44, 0 8px 24px rgba(0,0,0,0.6)`,
+        boxShadow: `0 0 40px ${speakerColor}44, 0 8px 24px rgba(0,0,0,0.6)`,
         backdropFilter: "blur(8px)",
       }}>
         {/* Speaker name */}
@@ -183,12 +191,12 @@ export default function WaveDialogue({ wave, show }) {
           fontWeight: 900,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          color: SPEAKER_COLORS[dialogue.speaker] ?? "#5a9a7a",
+          color: speakerColor,
           fontFamily: "'Cinzel', serif",
           marginBottom: 6,
-          textShadow: `0 0 10px ${SPEAKER_COLORS[dialogue.speaker] ?? "#5a9a7a"}88`,
+          textShadow: `0 0 10px ${speakerColor}88`,
         }}>
-          {SPEAKER_ICONS[dialogue.speaker] ?? "⚔"} {dialogue.speaker}
+          {speakerIcon} {dialogue.speaker}
         </div>
 
         {/* Dialogue text */}
