@@ -177,6 +177,7 @@ export default function Game() {
   const towerMapRef = useRef(_initMap);
   const waveQueueRef = useRef([]);
   const waveTimerRef = useRef(0);
+  const waveEnemiesSpawnedRef = useRef(false); // true once at least one enemy has been spawned this wave
   const gameLoopRef = useRef(null);
   const lastTimeRef = useRef(0);
 
@@ -383,6 +384,7 @@ export default function Game() {
     const waveData = generateWaves(wave);
     waveQueueRef.current = waveData;
     waveTimerRef.current = 0;
+    waveEnemiesSpawnedRef.current = false;
     setWaveActive(true);
     playWaveStartSound();
     addLog("wave", `Wave ${wave} begins — ${waveData.length} enemies incoming!`);
@@ -406,6 +408,7 @@ export default function Game() {
           const waveScaling = 1 + (wave - 1) * 0.12; // 12% health increase per wave
           const enemy = createEnemy(nextEnemy.type, nextEnemy.hpMultiplier * diffMult * waveScaling, nextEnemy.modifier, nextEnemy.speedMultiplier * diffSpeed);
           enemiesRef.current = [...enemiesRef.current, enemy];
+          waveEnemiesSpawnedRef.current = true;
           // Track for Codex
           setSeenEnemies(prev => prev.has(nextEnemy.type) ? prev : new Set([...prev, nextEnemy.type]));
           if (nextEnemy.isBoss) {
@@ -664,8 +667,8 @@ export default function Game() {
         return ns;
       });
 
-      // Check wave complete
-      if (waveQueueRef.current.length === 0 && enemiesRef.current.length === 0) {
+      // Check wave complete — only after at least one enemy has been spawned
+      if (waveEnemiesSpawnedRef.current && waveQueueRef.current.length === 0 && enemiesRef.current.length === 0) {
         setWaveActive(prev => {
           if (prev) {
             setWave(w => {
