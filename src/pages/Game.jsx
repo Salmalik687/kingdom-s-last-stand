@@ -36,6 +36,8 @@ import CharacterSelect from "../components/game/CharacterSelect";
 import DifficultySelect from "../components/game/DifficultySelect";
 import ModeSelect from "../components/game/ModeSelect";
 import TowerShop from "../components/game/TowerShop";
+import CharacterSkillTree from "../components/game/CharacterSkillTree";
+import { computeSkillBonuses, getAbilityMods } from "../lib/skillTrees";
 import { checkNewAchievements } from "../lib/achievements";
 import { playKillSound, playDamageSound, playWaveSuccessSound, playVictoryShout, playMergeSound, playPlaceSound, playWaveStartSound, playBossKillSound } from "../lib/sounds";
 import { isMuted, toggleMute } from "../lib/audioContext";
@@ -101,6 +103,9 @@ export default function Game() {
   const [gloryPoints, setGloryPoints] = useState(0);
   const [showTowerShop, setShowTowerShop] = useState(false);
   const [unlockedTowers, setUnlockedTowers] = useState([]);
+  const [showSkillTree, setShowSkillTree] = useState(false);
+  const [unlockedSkills, setUnlockedSkills] = useState([]);
+  const [skillPoints, setSkillPoints] = useState(0);
   const [showUpgradeMenu, setShowUpgradeMenu] = useState(false);
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
@@ -686,6 +691,8 @@ export default function Game() {
             checkAchievements({ ...achStatsRef.current });
             // Show perk shop every 2 waves
             if (wave % 2 === 0) setTimeout(() => setPerkShop(true), 900);
+            // Skill point every 5 waves
+            if (wave % 5 === 0) setSkillPoints(sp => sp + 1);
             return false;
           }
           return prev;
@@ -707,15 +714,28 @@ export default function Game() {
   }, [gameOver, fastForward]);
 
   const handleActivateAbility = useCallback((abilityId) => {
+    const abilityMods = getAbilityMods(selectedCharacter, unlockedSkills);
     if (abilityId === "rain_of_arrows") {
-      enemiesRef.current.forEach(e => { e.hp -= 150; });
-      enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
+      const dmg = abilityMods.has("rain_of_arrows_power") ? 225 : 150;
+      if (abilityMods.has("rain_of_arrows_double")) {
+        enemiesRef.current.forEach(e => { e.hp -= dmg; });
+        enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
+        setTimeout(() => {
+          enemiesRef.current.forEach(e => { e.hp -= dmg; });
+          enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
+          forceRender(n => n + 1);
+        }, 600);
+      } else {
+        enemiesRef.current.forEach(e => { e.hp -= dmg; });
+        enemiesRef.current = enemiesRef.current.filter(e => e.hp > 0);
+      }
       forceRender(n => n + 1);
-      addLog("special", "⚡ Rain of Arrows — 150 damage to ALL enemies!");
+      addLog("special", `⚡ Rain of Arrows — ${dmg} damage to ALL enemies!${abilityMods.has("rain_of_arrows_double") ? " (Double volley!)" : ""}`);
     }
     if (abilityId === "healing_aura") {
-      setLives(l => l + 3);
-      addLog("heal", "💚 Healing Aura activated — +3 lives restored!");
+      const lives = abilityMods.has("healing_aura_double") ? 6 : 3;
+      setLives(l => l + lives);
+      addLog("heal", `💚 Healing Aura activated — +${lives} lives restored!`);
     }
     if (abilityId === "gold_surge") {
       setGold(g => g + 80);
@@ -726,8 +746,9 @@ export default function Game() {
       addLog("special", "🌍 Earthquake — all enemies FROZEN for 3 seconds!");
     }
     if (abilityId === "frost_nova") {
-      enemiesRef.current.forEach(e => { e.slowTimer = 5000; });
-      addLog("special", "❄️ Frost Nova — all enemies slowed for 5 seconds!");
+      const dur = abilityMods.has("frost_nova_extend") ? 8000 : 5000;
+      enemiesRef.current.forEach(e => { e.slowTimer = dur; });
+      addLog("special", `❄️ Frost Nova — all enemies slowed for ${dur / 1000}s!`);
     }
     if (abilityId === "tower_overcharge") {
       const originalRates = towersRef.current.map(t => t.fireRate);
@@ -748,16 +769,17 @@ export default function Game() {
       addLog("boss", "☄️ Meteor Strike — all enemies obliterated! Bosses take 2000 damage!");
     }
     if (abilityId === "divine_shield") {
+      const duration = abilityMods.has("divine_shield_extend") ? 20000 : 10000;
       setDivineShieldActive(true);
-      setTimeout(() => setDivineShieldActive(false), 10000);
-      addLog("heal", "🛡️ Divine Shield active — no lives can be lost for 10 seconds!");
+      setTimeout(() => setDivineShieldActive(false), duration);
+      addLog("heal", `🛡️ Divine Shield active — no lives can be lost for ${duration / 1000}s!`);
     }
     if (abilityId === "void_wrath") {
       setVoidWrathActive(true);
       setTimeout(() => setVoidWrathActive(false), 6000);
       addLog("special", "🌀 Void Wrath — all towers deal 3× damage for 6 seconds!");
     }
-  }, []);
+  }, [selectedCharacter, unlockedSkills]);
 
   const handleBossRewardClaim = useCallback((reward) => {
     if (!reward) { setBossKillReward(null); return; }
@@ -812,6 +834,36 @@ export default function Game() {
     setBossKillReward(null);
     forceRender(n => n + 1);
   }, []);
+
+  const handleUnlockSkill = useCallback((node) => {
+    setSkillPoints(sp => {
+      if (sp < 1) return sp;
+      setUnlockedSkills(prev => {
+        const next = [...prev, node.id];
+        // Apply passive bonuses to existing towers
+        const bonuses = computeSkillBonuses(selectedCharacter, next);
+        if (node.effect.damageMult) {
+          towersRef.current.forEach(t => { t.damage = Math.floor(t.damage * (1 + node.effect.damageMult)); });
+        }
+        if (node.effect.rangeMult) {
+          towersRef.current.forEach(t => { t.range *= (1 + node.effect.rangeMult); });
+        }
+        if (node.effect.fireRateMult) {
+          towersRef.current.forEach(t => { t.fireRate = Math.max(150, Math.floor(t.fireRate * (1 + node.effect.fireRateMult))); });
+        }
+        if (node.effect.goldMult) {
+          perkMultRef.current.goldBonus = (perkMultRef.current.goldBonus ?? 1) * (1 + node.effect.goldMult);
+        }
+        if (node.effect.lives) {
+          setLives(l => l + node.effect.lives);
+        }
+        addLog("special", `🔮 Skill unlocked: ${node.name}!`);
+        forceRender(n => n + 1);
+        return next;
+      });
+      return sp - 1;
+    });
+  }, [selectedCharacter]);
 
   const handleUnlockAbility = useCallback((ability) => {
     setGloryPoints(gp => {
@@ -1025,6 +1077,9 @@ export default function Game() {
     setVoidWrathActive(false);
     setShowAbilityTree(false);
     setShowCodex(false);
+    setShowSkillTree(false);
+    setUnlockedSkills([]);
+    setSkillPoints(0);
     setSeenEnemies(new Set());
     setUnlockedAchievements([]);
     setNewlyUnlocked([]);
@@ -1084,6 +1139,23 @@ export default function Game() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowSkillTree(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
+              style={{
+                background: `linear-gradient(180deg, ${characterData.color}cc, ${characterData.color}88)`,
+                border: `2px solid ${characterData.color}`,
+                boxShadow: `0 2px 0 #000, 0 0 10px ${characterData.color}44`,
+                color: "#fff",
+              }}>
+              🔮 <span className="hidden sm:inline">Skills</span>
+              {skillPoints > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 rounded-full text-[9px] font-black"
+                  style={{ background: characterData.color, color: "#fff" }}>
+                  {skillPoints}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => setShowAbilityTree(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
@@ -1348,6 +1420,17 @@ export default function Game() {
         onClose={() => setShowTowerShop(false)}
       />
       <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} characterId={selectedCharacter} />
+
+      <CharacterSkillTree
+        show={showSkillTree}
+        characterId={selectedCharacter}
+        character={characterData}
+        wave={wave}
+        unlockedSkills={unlockedSkills}
+        skillPoints={skillPoints}
+        onUnlock={handleUnlockSkill}
+        onClose={() => setShowSkillTree(false)}
+      />
 
       <AbilityTree
         show={showAbilityTree}
