@@ -45,6 +45,8 @@ import { isMuted, toggleMute } from "../lib/audioContext";
 import DamagePopup from "../components/game/DamagePopup";
 import CombatLog from "../components/game/CombatLog";
 import MergeFusionEffect from "../components/game/MergeFusionEffect";
+import ForgeShop from "../components/game/ForgeShop";
+import { FORGE_UPGRADES, applyForgeBonusToTower } from "../lib/forgeUpgrades";
 
 
 const INITIAL_GOLD = 150;
@@ -109,6 +111,8 @@ export default function Game() {
   const [unlockedSkills, setUnlockedSkills] = useState([]);
   const [skillPoints, setSkillPoints] = useState(0);
   const [showUpgradeMenu, setShowUpgradeMenu] = useState(false);
+  const [showForgeShop, setShowForgeShop] = useState(false);
+  const [forgeRanks, setForgeRanks] = useState({}); // { upgradeId: rank }
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
   const [voidWrathActive, setVoidWrathActive] = useState(false);
@@ -220,6 +224,8 @@ export default function Game() {
       if (characterData.stats.rangeBonus > 0) {
         tower.range *= (1 + characterData.stats.rangeBonus);
       }
+      // Apply forge bonuses to new tower
+      applyForgeBonusToTower(tower, forgeRanks);
       if (characterData.stats.costReduction > 0) {
         // Already spent the full cost, but this affects tower quality
       }
@@ -237,6 +243,7 @@ export default function Game() {
         towerMapRef.current.delete(`${t1.gridX},${t1.gridY}`);
         towerMapRef.current.delete(`${t2.gridX},${t2.gridY}`);
         towerMapRef.current.set(`${merged2.gridX},${merged2.gridY}`, merged2.id);
+        applyForgeBonusToTower(merged2, forgeRanks);
         towersRef.current = merged;
         // Track merges for achievements
         achStatsRef.current.totalMerges = (achStatsRef.current.totalMerges ?? 0) + 1;
@@ -900,6 +907,28 @@ export default function Game() {
     });
   }, [selectedTowerId]);
 
+  const handleForgeBuy = useCallback((upg, cost) => {
+    setGold(prev => {
+      if (prev < cost) return prev;
+      setForgeRanks(ranks => {
+        const newRanks = { ...ranks, [upg.id]: (ranks[upg.id] ?? 0) + 1 };
+        // Apply the delta bonus to all existing towers of this type
+        towersRef.current.forEach(tower => {
+          if (tower.type !== upg.towerType) return;
+          if (upg.effect.damageMult)       tower.damage   = Math.floor(tower.damage   * (1 + upg.effect.damageMult));
+          if (upg.effect.fireRateMult)     tower.fireRate  = Math.max(60, Math.floor(tower.fireRate * (1 + upg.effect.fireRateMult)));
+          if (upg.effect.rangeMult)        tower.range    *= (1 + upg.effect.rangeMult);
+          if (upg.effect.splashMult)       tower.upgradePath_splashRadius = ((tower.upgradePath_splashRadius ?? 72) * (1 + upg.effect.splashMult));
+          if (upg.effect.slowDurationBonus) tower.forgeSlow = (tower.forgeSlow ?? 0) + upg.effect.slowDurationBonus;
+        });
+        addLog("merge", `🔨 Forge: ${upg.name} upgraded! (Rank ${newRanks[upg.id]}/${upg.maxRank})`);
+        forceRender(n => n + 1);
+        return newRanks;
+      });
+      return prev - cost;
+    });
+  }, []);
+
   const handleUnlockAbility = useCallback((ability) => {
     setGloryPoints(gp => {
       if (gp < ability.cost) return gp;
@@ -1119,6 +1148,8 @@ export default function Game() {
     setUnlockedAchievements([]);
     setNewlyUnlocked([]);
     setCombatLog([]);
+    setForgeRanks({});
+    setShowForgeShop(false);
     achStatsRef.current = {
       totalKills: 0, bossesDefeated: [], flawlessLands: 0, maxCombo: 0,
       maxGold: 0, totalMerges: 0, mergedTypes: [], score: 0,
@@ -1207,6 +1238,17 @@ export default function Game() {
                   {gloryPoints}✨
                 </span>
               )}
+            </button>
+            <button
+              onClick={() => setShowForgeShop(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-black text-xs uppercase tracking-wider transition-all hover:scale-105"
+              style={{
+                background: "linear-gradient(180deg, #78350f, #451a03)",
+                border: "2px solid #f59e0b",
+                boxShadow: "0 2px 0 #78350f, 0 0 10px rgba(245,158,11,0.3)",
+                color: "#fef3c7",
+              }}>
+              🔨 <span className="hidden sm:inline">Forge</span>
             </button>
             <button
               onClick={() => setShowTowerShop(true)}
@@ -1497,6 +1539,14 @@ export default function Game() {
         stats={achStatsRef.current}
       />
       <AchievementToast newlyUnlocked={newlyUnlocked} />
+
+      <ForgeShop
+        show={showForgeShop}
+        gold={gold}
+        forgeRanks={forgeRanks}
+        onBuy={handleForgeBuy}
+        onClose={() => setShowForgeShop(false)}
+      />
 
       <CampaignIntro show={showCampaignIntro} onBegin={() => setShowCampaignIntro(false)} />
       <WaveDialogue wave={lastDialogueWave} show={wave === lastDialogueWave && !waveActive && lastDialogueWave > 0} character={characterData} />
