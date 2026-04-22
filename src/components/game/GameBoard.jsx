@@ -605,16 +605,48 @@ const CUSTOM_COLOR_HEX = {
 // Per-projectile trail history: projId -> [{x,y}]
 const _trailMap = {};
 
-function getProjColor(proj, towerColorMap) {
-  if (proj.towerId && towerColorMap[proj.towerId]) return towerColorMap[proj.towerId];
-  const t = proj.towerType;
-  if (t === "mage" || t === "spellcaster" || t === "arcaneCannoneer" || t === "shadowMage" || t === "voidCannon" || t === "arcaneSiege") return "#c084fc";
-  if (t === "frost" || t === "frozenMage" || t === "blizzardTower" || t === "frostCannoneer" || t === "glacialBallista" || t === "frostStorm") return "#7dd3fc";
-  if (t === "cannon" || t === "warcannon" || t === "doomcannon" || t === "doomSiege") return "#fb923c";
-  if (t === "trebuchet" || t === "siegeEngine" || t === "infernoTrebuchet") return "#fbbf24";
-  if (t === "archer" || t === "stormArcher" || t === "arrowStorm" || t === "thunderArcher") return "#86efac";
-  if (t === "crossbow" || t === "ballista" || t === "venomCrossbow") return "#a3e635";
-  return "#fbbf24";
+// Per-tower-type projectile appearance config
+const PROJ_CONFIG = {
+  // Archers — bright green arrow
+  archer:          { color: "#4ade80", size: 3, shape: "arrow", glow: 8 },
+  stormArcher:     { color: "#22c55e", size: 3, shape: "arrow", glow: 10 },
+  arrowStorm:      { color: "#86efac", size: 3, shape: "arrow", glow: 12 },
+  thunderArcher:   { color: "#a3e635", size: 3, shape: "arrow", glow: 12 },
+  // Crossbow/Ballista — sharp yellow-lime bolt
+  crossbow:        { color: "#facc15", size: 3, shape: "bolt", glow: 8 },
+  ballista:        { color: "#eab308", size: 4, shape: "bolt", glow: 12 },
+  venomCrossbow:   { color: "#84cc16", size: 3, shape: "bolt", glow: 10 },
+  // Cannon — fiery orange orb
+  cannon:          { color: "#f97316", size: 5, shape: "orb", glow: 14 },
+  warcannon:       { color: "#ea580c", size: 6, shape: "orb", glow: 18 },
+  doomcannon:      { color: "#dc2626", size: 7, shape: "orb", glow: 22 },
+  doomSiege:       { color: "#b91c1c", size: 7, shape: "orb", glow: 22 },
+  // Trebuchet/Siege — yellow boulder
+  trebuchet:       { color: "#fbbf24", size: 6, shape: "boulder", glow: 14 },
+  siegeEngine:     { color: "#f59e0b", size: 7, shape: "boulder", glow: 16 },
+  infernoTrebuchet:{ color: "#ff6b00", size: 7, shape: "boulder", glow: 20 },
+  // Mage — purple magic orb
+  mage:            { color: "#c084fc", size: 4, shape: "magic", glow: 16 },
+  spellcaster:     { color: "#a855f7", size: 5, shape: "magic", glow: 18 },
+  arcaneCannoneer: { color: "#7c3aed", size: 5, shape: "magic", glow: 18 },
+  shadowMage:      { color: "#6d28d9", size: 5, shape: "magic", glow: 18 },
+  voidCannon:      { color: "#4c1d95", size: 6, shape: "magic", glow: 20 },
+  arcaneSiege:     { color: "#8b5cf6", size: 6, shape: "magic", glow: 20 },
+  // Frost — icy cyan shard
+  frost:           { color: "#38bdf8", size: 4, shape: "ice", glow: 12 },
+  frozenMage:      { color: "#7dd3fc", size: 4, shape: "ice", glow: 14 },
+  blizzardTower:   { color: "#bae6fd", size: 5, shape: "ice", glow: 16 },
+  frostCannoneer:  { color: "#0ea5e9", size: 5, shape: "ice", glow: 14 },
+  glacialBallista: { color: "#e0f2fe", size: 5, shape: "ice", glow: 16 },
+  frostStorm:      { color: "#93c5fd", size: 5, shape: "ice", glow: 18 },
+  // War Machine family — deep red
+  warMachine:      { color: "#ef4444", size: 6, shape: "orb", glow: 18 },
+};
+
+function getProjConfig(proj, towerColorMap) {
+  const customColor = proj.towerId && towerColorMap[proj.towerId];
+  const base = PROJ_CONFIG[proj.towerType] ?? { color: "#fbbf24", size: 4, shape: "orb", glow: 8 };
+  return { ...base, color: customColor || base.color };
 }
 
 function drawProjectiles(ctx, projectiles, towers) {
@@ -631,29 +663,28 @@ function drawProjectiles(ctx, projectiles, towers) {
     if (!liveIds.has(id)) delete _trailMap[id];
   }
 
+  const now = performance.now();
+
   projectiles.forEach(proj => {
+    const cfg = getProjConfig(proj, towerColorMap);
+    const { color, size, shape, glow } = cfg;
+
     // Update trail
     if (!_trailMap[proj.id]) _trailMap[proj.id] = [];
     const trail = _trailMap[proj.id];
     trail.push({ x: proj.x, y: proj.y });
-    if (trail.length > 8) trail.shift();
+    if (trail.length > 10) trail.shift();
 
-    const color = getProjColor(proj, towerColorMap);
-    const isCannon = proj.towerType === "cannon" || proj.towerType === "warcannon" || proj.towerType === "doomcannon" || proj.towerType === "doomSiege" || proj.towerType === "siegeEngine";
-    const isMagic = proj.towerType === "mage" || proj.towerType === "spellcaster" || proj.towerType?.includes("Mage") || proj.towerType === "voidCannon" || proj.towerType === "arcaneSiege";
-    const isFrost = proj.towerType === "frost" || proj.towerType?.includes("frost") || proj.towerType?.includes("Frost") || proj.towerType?.includes("blizzard") || proj.towerType?.includes("Blizzard") || proj.towerType === "glacialBallista";
-    const size = isCannon ? 5 : isMagic ? 4 : 3;
-
-    // Draw trail
+    // ── Trail ────────────────────────────────────────────────────
     if (trail.length > 1) {
       for (let i = 1; i < trail.length; i++) {
-        const alpha = (i / trail.length) * 0.55;
-        const trailSize = size * (i / trail.length) * 0.8;
+        const alpha = (i / trail.length) * 0.5;
+        const trailSize = size * (i / trail.length) * 0.75;
         ctx.save();
         ctx.globalAlpha = alpha;
         ctx.fillStyle = color;
         ctx.shadowColor = color;
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 4;
         ctx.beginPath();
         ctx.arc(trail[i].x, trail[i].y, trailSize, 0, Math.PI * 2);
         ctx.fill();
@@ -661,43 +692,118 @@ function drawProjectiles(ctx, projectiles, towers) {
       }
     }
 
-    // Draw main projectile
+    // ── Main projectile by shape ─────────────────────────────────
     ctx.save();
     ctx.shadowColor = color;
-    ctx.shadowBlur = isCannon ? 14 : isMagic ? 16 : isFrost ? 12 : 8;
+    ctx.shadowBlur = glow;
 
-    if (isCannon) {
-      // Cannon ball — darker core with bright ring
-      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size);
-      grad.addColorStop(0, "#fff8");
-      grad.addColorStop(0.4, color);
-      grad.addColorStop(1, color + "44");
-      ctx.fillStyle = grad;
-    } else if (isMagic) {
-      // Magic orb — pulsing bright core
-      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size);
-      grad.addColorStop(0, "#ffffff");
-      grad.addColorStop(0.3, color);
-      grad.addColorStop(1, color + "22");
-      ctx.fillStyle = grad;
-    } else if (isFrost) {
-      // Ice shard — cyan sparkle
+    // Compute direction angle from trail for arrow/bolt shapes
+    const dx = trail.length > 1 ? proj.x - trail[trail.length - 2].x : 1;
+    const dy = trail.length > 1 ? proj.y - trail[trail.length - 2].y : 0;
+    const angle = Math.atan2(dy, dx);
+
+    if (shape === "arrow") {
+      // Thin elongated needle — green
+      ctx.translate(proj.x, proj.y);
+      ctx.rotate(angle);
       ctx.fillStyle = color;
-    } else {
-      ctx.fillStyle = color;
-    }
-
-    ctx.beginPath();
-    ctx.arc(proj.x, proj.y, size, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Outer glow ring for magic
-    if (isMagic || isFrost) {
-      ctx.strokeStyle = color + "88";
+      ctx.beginPath();
+      ctx.moveTo(size * 2.5, 0);
+      ctx.lineTo(-size * 1.5, -size * 0.7);
+      ctx.lineTo(-size * 0.8, 0);
+      ctx.lineTo(-size * 1.5, size * 0.7);
+      ctx.closePath();
+      ctx.fill();
+      // Shaft
+      ctx.strokeStyle = color + "aa";
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.arc(proj.x, proj.y, size + 2, 0, Math.PI * 2);
+      ctx.moveTo(-size * 1.5, 0);
+      ctx.lineTo(-size * 3, 0);
       ctx.stroke();
+
+    } else if (shape === "bolt") {
+      // Crossbow bolt — yellow diamond
+      ctx.translate(proj.x, proj.y);
+      ctx.rotate(angle);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(size * 2.2, 0);
+      ctx.lineTo(0, -size * 0.8);
+      ctx.lineTo(-size * 2, 0);
+      ctx.lineTo(0, size * 0.8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.shadowBlur = glow * 1.4;
+
+    } else if (shape === "orb") {
+      // Cannon ball — radial gradient with bright core
+      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size);
+      grad.addColorStop(0, "#ffffff99");
+      grad.addColorStop(0.35, color);
+      grad.addColorStop(1, color + "33");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size, 0, Math.PI * 2);
+      ctx.fill();
+      // Hot-spot ring
+      ctx.strokeStyle = "#ffffff55";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size * 0.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+    } else if (shape === "boulder") {
+      // Trebuchet boulder — rough circle with dark outline
+      const grad = ctx.createRadialGradient(proj.x - size * 0.3, proj.y - size * 0.3, 0, proj.x, proj.y, size);
+      grad.addColorStop(0, "#ffffffaa");
+      grad.addColorStop(0.4, color);
+      grad.addColorStop(1, "#00000066");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#00000055";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+    } else if (shape === "magic") {
+      // Magic orb — pulsing white core + outer ring
+      const pulse = 0.8 + Math.sin(now * 0.012 + proj.x) * 0.2;
+      const grad = ctx.createRadialGradient(proj.x, proj.y, 0, proj.x, proj.y, size * pulse);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(0.25, color);
+      grad.addColorStop(1, color + "11");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      // Outer sparkle ring
+      ctx.strokeStyle = color + "99";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(proj.x, proj.y, size * pulse + 2.5, 0, Math.PI * 2);
+      ctx.stroke();
+
+    } else if (shape === "ice") {
+      // Ice shard — pointed star / crystal
+      ctx.translate(proj.x, proj.y);
+      ctx.rotate(angle + now * 0.006);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const r = i % 2 === 0 ? size * 1.4 : size * 0.6;
+        i === 0 ? ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r)
+                : ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+      }
+      ctx.closePath();
+      ctx.fill();
+      // Inner white gleam
+      ctx.fillStyle = "#ffffff66";
+      ctx.beginPath();
+      ctx.arc(0, 0, size * 0.4, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     ctx.restore();
