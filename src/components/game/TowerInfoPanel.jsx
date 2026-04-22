@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { TOWER_TYPES, TOWER_ABILITIES, getUnlockedAbilities } from "../../lib/gameEngine";
-import { ArrowUp, Trash2, Lock, Palette } from "lucide-react";
+import { ArrowUp, Trash2, Lock, Palette, GitBranch } from "lucide-react";
 import TowerCustomizationMenu from "./TowerCustomizationMenu";
+import { getUpgradePaths } from "../../lib/towerUpgradePaths";
 
 export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCustomize }) {
   const [showCustomize, setShowCustomize] = useState(false);
@@ -12,6 +13,8 @@ export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCusto
   const sellValue = Math.floor(base.cost * 0.6 * tower.level);
   const canUpgrade = gold >= upgradeCost && tower.level < 5;
   const stars = Array.from({ length: 5 }, (_, i) => i < tower.level);
+  const paths = getUpgradePaths(tower.type);
+  const chosenPath = tower.chosenUpgradePath ?? null;
 
   const unlockedAbilities = getUnlockedAbilities(tower);
   const allAbilities = TOWER_ABILITIES[tower.type] ?? {};
@@ -105,23 +108,63 @@ export default function TowerInfoPanel({ tower, gold, onUpgrade, onSell, onCusto
         </div>
       )}
 
+      {/* Path progress indicator */}
+      {paths && (
+        <div className="px-3 pb-2">
+          <div className="text-[9px] font-bold uppercase tracking-widest mb-1.5" style={{ color: "#6b5fa0" }}>
+            <GitBranch className="inline w-2.5 h-2.5 mr-1" />Upgrade Paths
+          </div>
+          <div className="grid grid-cols-2 gap-1">
+            {(["A", "B"]).map(pk => {
+              const pd = paths[pk];
+              const active = chosenPath === pk;
+              const locked = chosenPath !== null && chosenPath !== pk;
+              const purchased = tower.upgradePurchased ?? new Set();
+              const count = pd.tiers.filter(t => purchased.has(t.id)).length;
+              return (
+                <div key={pk} className="rounded-lg px-2 py-1.5"
+                  style={{
+                    background: active ? `${pd.color}18` : "rgba(30,20,60,0.3)",
+                    border: `1px solid ${active ? pd.color + "55" : locked ? "rgba(30,20,60,0.4)" : pd.color + "22"}`,
+                    opacity: locked ? 0.4 : 1,
+                  }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: active ? pd.color : "#5a4880", marginBottom: 2 }}>
+                    {pd.icon} {pd.label}
+                  </div>
+                  <div className="flex gap-0.5">
+                    {pd.tiers.map((t, i) => (
+                      <div key={i} style={{
+                        flex: 1, height: 3, borderRadius: 2,
+                        background: purchased.has(t.id) ? pd.color : "rgba(60,40,100,0.3)",
+                      }} />
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 8, color: active ? pd.color + "aa" : "#3a2a60", marginTop: 2 }}>
+                    {count}/{pd.tiers.length} {active ? "active" : locked ? "locked" : "available"}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Buttons */}
       <div className="flex gap-2 px-3 pb-2">
         <button
-          disabled={!canUpgrade}
           onClick={() => onUpgrade(tower)}
-          className="flex-1 flex items-center justify-center gap-1 rounded-lg py-2 font-black text-xs transition-all"
+          className="flex-1 flex items-center justify-center gap-1 rounded-lg py-2 font-black text-xs transition-all hover:scale-[1.02]"
           style={{
-            background: canUpgrade
-              ? "linear-gradient(180deg, #ffd60a, #e09c00)"
+            background: paths
+              ? "linear-gradient(180deg, #7c3aed, #4c1d95)"
               : "linear-gradient(180deg, #2d2a3e, #1e1b2e)",
-            border: `2px solid ${canUpgrade ? "#ffe566" : "#3d3960"}`,
-            boxShadow: canUpgrade ? "0 3px 0 #7a5200" : "0 3px 0 #0a0814",
-            color: canUpgrade ? "#3a2000" : "#4a4670",
-            cursor: canUpgrade ? "pointer" : "not-allowed",
+            border: paths ? "2px solid #a78bfa" : "2px solid #3d3960",
+            boxShadow: paths ? "0 3px 0 #1e0a4a" : "0 3px 0 #0a0814",
+            color: paths ? "#e9d5ff" : "#4a4670",
+            cursor: "pointer",
           }}>
-          <ArrowUp className="w-3 h-3" />
-          {tower.level >= 5 ? "MAX" : `💰${upgradeCost}`}
+          <GitBranch className="w-3 h-3" />
+          {paths ? "Paths" : "No Paths"}
         </button>
 
         <button

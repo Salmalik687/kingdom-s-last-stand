@@ -1,222 +1,294 @@
 import { useState } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
+import { X, Lock, CheckCircle2, ChevronRight } from "lucide-react";
 import { TOWER_TYPES } from "../../lib/gameEngine";
+import { getUpgradePaths, getPurchasedTiers } from "../../lib/towerUpgradePaths";
 
-export default function TowerUpgradeMenu({ tower, gold, onUpgrade, onClose }) {
-  const [expanded, setExpanded] = useState(null);
+export default function TowerUpgradeMenu({ tower, gold, onBuyUpgrade, onClose }) {
+  const [hoveredTier, setHoveredTier] = useState(null);
 
   if (!tower) return null;
 
   const base = TOWER_TYPES[tower.type];
-  const upgradeCost = Math.floor(base.upgradeCost * tower.level);
-  const canUpgrade = gold >= upgradeCost && tower.level < 5;
+  const paths = getUpgradePaths(tower.type);
+  const chosenPath = tower.chosenUpgradePath ?? null;
 
-  const upgrades = [
-    {
-      id: "damage",
-      name: "Damage",
-      icon: "⚔️",
-      desc: `Increase attack power. Next: ${(Math.floor(base.damage * (1 + tower.level * 0.4)) + Math.floor(base.damage * 0.4)).toString()}`,
-      bonus: `+${Math.floor(base.damage * 0.4)} dmg`,
-      color: "#ef4444",
-    },
-    {
-      id: "range",
-      icon: "📡",
-      name: "Range",
-      desc: "Extend attack range by 10%",
-      bonus: "+10% range",
-      color: "#3b82f6",
-    },
-    {
-      id: "firerate",
-      icon: "⚡",
-      name: "Attack Speed",
-      desc: "Reduce fire rate by 8%",
-      bonus: "8% faster",
-      color: "#f59e0b",
-    },
-  ];
+  if (!paths) {
+    return (
+      <div className="fixed inset-0 z-[140] flex items-center justify-center" onClick={onClose}
+        style={{ background: "rgba(0,0,0,0.75)" }}>
+        <div className="max-w-sm mx-4 rounded-xl p-6 text-center" onClick={e => e.stopPropagation()}
+          style={{ background: "linear-gradient(160deg,#0e0a1e,#08060f)", border: "2px solid rgba(100,60,180,0.4)" }}>
+          <div className="text-4xl mb-4">{tower.emoji}</div>
+          <p style={{ color: "#a78bfa", fontFamily: "'Cinzel', serif", fontSize: 13 }}>
+            No upgrade paths available for this tower yet.
+          </p>
+          <button onClick={onClose} className="mt-4 px-6 py-2 rounded-lg text-xs font-black uppercase tracking-widest"
+            style={{ background: "rgba(100,60,180,0.2)", border: "1px solid rgba(167,139,250,0.4)", color: "#a78bfa", cursor: "pointer" }}>
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const handleUpgrade = () => {
-    if (canUpgrade) {
-      onUpgrade(tower);
-    }
+  const pathData = {
+    A: { ...paths.A, tiers: getPurchasedTiers(tower, "A") },
+    B: { ...paths.B, tiers: getPurchasedTiers(tower, "B") },
   };
 
-  return (
-    <div className="fixed inset-0 z-[140] flex items-center justify-center" onClick={onClose}
-      style={{ background: "rgba(0,0,0,0.7)" }}>
+  const isPathLocked = (pathKey) => chosenPath !== null && chosenPath !== pathKey;
 
-      <div className="w-full max-w-sm mx-4 rounded-xl p-6 pointer-events-auto"
+  return (
+    <div className="fixed inset-0 z-[140] flex items-center justify-center"
+      onClick={onClose}
+      style={{ background: "rgba(0,0,0,0.85)", backdropFilter: "blur(4px)" }}>
+
+      <div className="w-full max-w-xl mx-3 rounded-2xl overflow-hidden pointer-events-auto"
+        onClick={e => e.stopPropagation()}
         style={{
-          background: "linear-gradient(160deg, rgba(10,4,20,0.98) 0%, rgba(20,10,30,0.98) 100%)",
-          border: "2px solid rgba(138,85,200,0.5)",
-          boxShadow: "0 0 60px rgba(138,85,200,0.3), inset 0 1px 0 rgba(138,85,200,0.1)",
-          backdropFilter: "blur(10px)",
-        }}
-        onClick={(e) => e.stopPropagation()}>
+          background: "linear-gradient(160deg, #0e0a1e 0%, #08060f 100%)",
+          border: "2px solid rgba(139,92,246,0.5)",
+          boxShadow: "0 0 60px rgba(139,92,246,0.2), 0 20px 40px rgba(0,0,0,0.8)",
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}>
 
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-2">
-            <div style={{ fontSize: 28 }}>{base.emoji}</div>
-            <button onClick={onClose} className="text-stone-400 hover:text-stone-200 text-xl font-bold">✕</button>
-          </div>
-          <h2 style={{
-            fontSize: 18, fontWeight: 900, color: "#e9d5ff",
-            fontFamily: "'Cinzel', serif", letterSpacing: "0.05em", marginBottom: 2
-          }}>
-            {base.name}
-          </h2>
-          <p style={{ fontSize: 11, color: "rgba(240,230,255,0.6)", fontFamily: "'Cinzel', serif" }}>
-            Level {tower.level}/5
-          </p>
-        </div>
-
-        {/* Level progress bar */}
-        <div className="mb-6">
-          <div style={{
-            display: "flex", gap: 4, marginBottom: 8
-          }}>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} style={{
-                flex: 1, height: 4, borderRadius: 2,
-                background: i < tower.level ? "#7c3aed" : "rgba(100,60,180,0.2)",
-                boxShadow: i < tower.level ? "0 0 8px #7c3aed" : "none"
-              }} />
-            ))}
-          </div>
-          <div style={{
-            fontSize: 11, color: "rgba(240,230,255,0.7)", textAlign: "center",
-            fontFamily: "'Cinzel', serif"
-          }}>
-            Upgrade Cost: {canUpgrade ? `💰 ${upgradeCost}` : tower.level === 5 ? "✓ MAX LEVEL" : `❌ Need ${upgradeCost - gold} more gold`}
-          </div>
-        </div>
-
-        {/* Current stats */}
-        <div className="mb-6 p-3 rounded-lg" style={{ background: "rgba(100,60,180,0.1)", border: "1px solid rgba(100,60,180,0.2)" }}>
-          <p style={{ fontSize: 10, color: "#a78bfa", fontWeight: 700, marginBottom: 6, letterSpacing: "0.2em" }}>CURRENT STATS</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <div>
-              <div style={{ fontSize: 9, color: "rgba(240,230,255,0.5)", marginBottom: 2 }}>Damage</div>
-              <div style={{ fontSize: 14, fontWeight: 900, color: "#ef4444" }}>{tower.damage}</div>
+        <div className="flex items-center justify-between px-5 pt-5 pb-4"
+          style={{ borderBottom: "1px solid rgba(139,92,246,0.2)" }}>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
+              style={{ background: "rgba(139,92,246,0.2)", border: "1.5px solid rgba(167,139,250,0.4)" }}>
+              {tower.emoji}
             </div>
             <div>
-              <div style={{ fontSize: 9, color: "rgba(240,230,255,0.5)", marginBottom: 2 }}>Fire Rate</div>
-              <div style={{ fontSize: 14, fontWeight: 900, color: "#f59e0b" }}>{Math.round(tower.fireRate)}ms</div>
-            </div>
-            <div style={{ gridColumn: "1 / -1" }}>
-              <div style={{ fontSize: 9, color: "rgba(240,230,255,0.5)", marginBottom: 2 }}>Range</div>
-              <div style={{ fontSize: 14, fontWeight: 900, color: "#3b82f6" }}>{(tower.range / 48).toFixed(1)} tiles</div>
+              <h2 style={{ fontFamily: "'Cinzel Decorative', serif", fontSize: 16, fontWeight: 900, color: "#e9d5ff" }}>
+                {base.name}
+              </h2>
+              <div className="flex items-center gap-3 mt-1">
+                <span style={{ fontSize: 10, color: "#7c6faa", fontWeight: 700 }}>
+                  ⚔ {tower.damage} DMG &nbsp;·&nbsp; 🎯 {(tower.range / 48).toFixed(1)} RNG &nbsp;·&nbsp; ⚡ {(1000 / tower.fireRate).toFixed(1)}/s
+                </span>
+              </div>
             </div>
           </div>
+          <button onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:bg-white/10"
+            style={{ color: "#7c6faa", cursor: "pointer" }}>
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
-        {/* Upgrade benefits - collapsible */}
-        <div className="space-y-2 mb-6">
-          {upgrades.map((upg) => (
-            <div key={upg.id} style={{
-              border: `1px solid ${upg.color}40`,
-              borderRadius: 8,
-              overflow: "hidden",
-              background: `${upg.color}15`
-            }}>
-              <button
-                onClick={() => setExpanded(expanded === upg.id ? null : upg.id)}
+        {/* Gold */}
+        <div className="px-5 py-3 flex items-center gap-2"
+          style={{ borderBottom: "1px solid rgba(139,92,246,0.12)" }}>
+          <span className="text-lg">💰</span>
+          <span style={{ fontWeight: 900, color: "#ffd60a", fontSize: 15 }}>{gold}</span>
+          <span style={{ color: "#5a4880", fontSize: 11 }}>gold available</span>
+          {chosenPath && (
+            <div className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black"
+              style={{
+                background: `rgba(${chosenPath === "A" ? "245,158,11" : "59,130,246"},0.15)`,
+                border: `1px solid ${chosenPath === "A" ? "#f59e0b" : "#3b82f6"}44`,
+                color: chosenPath === "A" ? "#f59e0b" : "#60a5fa",
+              }}>
+              {paths[chosenPath].icon} Path {chosenPath} — {paths[chosenPath].label}
+            </div>
+          )}
+        </div>
+
+        {/* Path info banner — when no path chosen */}
+        {!chosenPath && (
+          <div className="mx-5 mt-4 px-4 py-2.5 rounded-xl text-center"
+            style={{ background: "rgba(139,92,246,0.08)", border: "1px dashed rgba(139,92,246,0.3)" }}>
+            <p style={{ fontSize: 10, color: "#7c6faa", fontFamily: "'Cinzel', serif", letterSpacing: "0.1em" }}>
+              ⚔ Choose a specialization path — once chosen, the other path is locked forever
+            </p>
+          </div>
+        )}
+
+        {/* Two-column paths */}
+        <div className="grid grid-cols-2 gap-4 p-5">
+          {(["A", "B"]).map(pathKey => {
+            const pd = pathData[pathKey];
+            const locked = isPathLocked(pathKey);
+            const chosen = chosenPath === pathKey;
+
+            return (
+              <div key={pathKey}
                 style={{
-                  width: "100%",
-                  padding: "10px 12px",
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  background: "transparent", border: "none", cursor: "pointer",
-                  color: upg.color
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ fontSize: 16 }}>{upg.icon}</div>
-                  <div style={{ textAlign: "left" }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: upg.color }}>{upg.name}</div>
-                    <div style={{ fontSize: 9, color: `${upg.color}aa` }}>{upg.bonus}</div>
-                  </div>
-                </div>
-                {expanded === upg.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-              {expanded === upg.id && (
-                <div style={{
-                  padding: "0 12px 10px 12px",
-                  borderTop: `1px solid ${upg.color}40`,
-                  fontSize: 11,
-                  color: "rgba(240,230,255,0.7)",
-                  fontFamily: "'Cinzel', serif"
+                  borderRadius: 16,
+                  border: chosen
+                    ? `2px solid ${pd.color}88`
+                    : locked
+                    ? "2px solid rgba(40,30,70,0.4)"
+                    : `2px solid ${pd.color}33`,
+                  background: locked
+                    ? "rgba(10,8,20,0.6)"
+                    : chosen
+                    ? `rgba(${pd.color === "#f59e0b" ? "245,158,11" : pd.color === "#10b981" ? "16,185,129" : pd.color === "#a855f7" ? "168,85,247" : pd.color === "#ef4444" ? "239,68,68" : pd.color === "#38bdf8" ? "56,189,248" : pd.color === "#06b6d4" ? "6,182,212" : pd.color === "#3b82f6" ? "59,130,246" : pd.color === "#f97316" ? "249,115,22" : pd.color === "#78716c" ? "120,113,108" : pd.color === "#818cf8" ? "129,140,248" : "139,92,246"},0.08)`
+                    : "rgba(15,10,30,0.8)",
+                  opacity: locked ? 0.45 : 1,
+                  transition: "all 0.2s",
+                  overflow: "hidden",
                 }}>
-                  {upg.desc}
+
+                {/* Path Header */}
+                <div className="flex items-center gap-2 px-4 py-3"
+                  style={{ borderBottom: `1px solid ${locked ? "rgba(40,30,70,0.3)" : pd.color + "22"}` }}>
+                  <span style={{ fontSize: 18 }}>{pd.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div style={{
+                      fontSize: 11, fontWeight: 900, fontFamily: "'Cinzel', serif",
+                      color: locked ? "#3a2a60" : pd.color,
+                      letterSpacing: "0.05em",
+                    }}>
+                      {pd.label}
+                    </div>
+                    <div style={{ fontSize: 9, color: locked ? "#2a1a50" : "#5a4880", marginTop: 1 }}>
+                      {pd.desc}
+                    </div>
+                  </div>
+                  {locked && <Lock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#3a2a60" }} />}
+                  {chosen && (
+                    <div className="text-[8px] font-black px-1.5 py-0.5 rounded-full"
+                      style={{ background: pd.color, color: "#000" }}>ACTIVE</div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
+
+                {/* Tiers */}
+                <div className="px-3 py-3 flex flex-col gap-2">
+                  {pd.tiers.map((tier, idx) => {
+                    const canAfford = gold >= tier.cost;
+                    const isHovered = hoveredTier === tier.id;
+
+                    return (
+                      <button
+                        key={tier.id}
+                        disabled={!tier.available || tier.purchased || locked}
+                        onClick={() => tier.available && !tier.purchased && !locked && onBuyUpgrade(tier.id, tier.cost)}
+                        onMouseEnter={() => setHoveredTier(tier.id)}
+                        onMouseLeave={() => setHoveredTier(null)}
+                        style={{
+                          width: "100%",
+                          borderRadius: 10,
+                          padding: "10px",
+                          textAlign: "left",
+                          cursor: tier.purchased ? "default" : tier.available && !locked ? "pointer" : "not-allowed",
+                          background: tier.purchased
+                            ? `${pd.color}22`
+                            : tier.available && !locked
+                            ? isHovered && canAfford
+                              ? `${pd.color}18`
+                              : "rgba(20,15,40,0.6)"
+                            : "rgba(10,8,20,0.4)",
+                          border: tier.purchased
+                            ? `1.5px solid ${pd.color}66`
+                            : tier.available && !locked
+                            ? isHovered
+                              ? `1.5px solid ${pd.color}88`
+                              : `1.5px solid ${pd.color}22`
+                            : "1.5px solid rgba(30,20,60,0.4)",
+                          transform: isHovered && tier.available && !locked && !tier.purchased ? "translateY(-1px)" : "none",
+                          transition: "all 0.15s",
+                        }}>
+
+                        {/* Tier row */}
+                        <div className="flex items-start gap-2">
+                          {/* Status icon */}
+                          <div style={{
+                            width: 22, height: 22, borderRadius: "50%", flexShrink: 0, marginTop: 1,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            background: tier.purchased
+                              ? pd.color
+                              : tier.available && !locked
+                              ? `${pd.color}22`
+                              : "rgba(20,15,40,0.5)",
+                            border: tier.purchased
+                              ? "none"
+                              : `1px solid ${tier.available && !locked ? pd.color + "44" : "rgba(30,20,60,0.3)"}`,
+                          }}>
+                            {tier.purchased
+                              ? <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "#fff" }} />
+                              : tier.available && !locked
+                              ? <span style={{ fontSize: 10 }}>{tier.icon}</span>
+                              : <Lock className="w-2.5 h-2.5" style={{ color: "#3a2a60" }} />
+                            }
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div style={{
+                              fontSize: 11, fontWeight: 900,
+                              color: tier.purchased ? pd.color : tier.available && !locked ? "#e9d5ff" : "#3a2a60",
+                              fontFamily: "'Cinzel', serif",
+                            }}>
+                              {tier.name}
+                            </div>
+                            <div style={{
+                              fontSize: 9, lineHeight: 1.4, marginTop: 2,
+                              color: tier.purchased ? pd.color + "aa" : tier.available && !locked ? "#7c6faa" : "#2a1a50",
+                            }}>
+                              {tier.desc}
+                            </div>
+
+                            {/* Cost badge / Purchased / Can't afford */}
+                            {!tier.purchased && (
+                              <div className="mt-2 flex items-center gap-1.5">
+                                {tier.available && !locked ? (
+                                  <div style={{
+                                    display: "inline-flex", alignItems: "center", gap: 4,
+                                    padding: "2px 8px", borderRadius: 999, fontSize: 10, fontWeight: 900,
+                                    background: canAfford ? `${pd.color}22` : "rgba(80,20,20,0.4)",
+                                    border: `1px solid ${canAfford ? pd.color + "66" : "rgba(200,50,50,0.4)"}`,
+                                    color: canAfford ? pd.color : "#ef4444",
+                                  }}>
+                                    💰 {tier.cost}
+                                    {!canAfford && <span style={{ fontSize: 8 }}>— need {tier.cost - gold} more</span>}
+                                  </div>
+                                ) : (
+                                  <div style={{ fontSize: 8, color: "#2a1a50" }}>
+                                    {locked ? "Path locked" : "Unlock tier " + idx + " first"}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {tier.purchased && (
+                              <div style={{ fontSize: 8, color: pd.color, fontWeight: 700, marginTop: 2 }}>
+                                ✓ Upgraded
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Connector arrow to next tier */}
+                        {idx < pd.tiers.length - 1 && !tier.purchased && (
+                          <div className="flex justify-center mt-2">
+                            <ChevronRight className="w-3 h-3 rotate-90" style={{ color: pd.color + "44" }} />
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Upgrade button */}
-        <button
-          onClick={handleUpgrade}
-          disabled={!canUpgrade}
-          style={{
-            width: "100%",
-            padding: "12px",
-            borderRadius: 8,
-            fontSize: 13,
-            fontWeight: 900,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            fontFamily: "'Cinzel', serif",
-            background: canUpgrade
-              ? "linear-gradient(180deg, #7c3aed, #5b21b6)"
-              : "linear-gradient(180deg, #3a2a5a, #2a1a4a)",
-            border: canUpgrade ? "2px solid #a78bfa" : "2px solid rgba(100,60,180,0.3)",
-            color: canUpgrade ? "#e9d5ff" : "#8a6fb5",
-            cursor: canUpgrade ? "pointer" : "not-allowed",
-            boxShadow: canUpgrade ? "0 6px 0 #2a1a4a, 0 0 20px rgba(168,85,250,0.5)" : "none",
-            transition: "all 0.3s",
-          }}
-          onMouseEnter={(e) => {
-            if (canUpgrade) e.target.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = "translateY(0)";
-          }}
-        >
-          {canUpgrade ? `⬆ Upgrade for ${upgradeCost} Gold` : tower.level === 5 ? "✓ MAX LEVEL" : "❌ Not Enough Gold"}
-        </button>
-
-        {/* Sell option */}
-        <button
-          onClick={onClose}
-          style={{
-            width: "100%",
-            padding: "10px",
-            marginTop: 8,
-            borderRadius: 6,
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            textTransform: "uppercase",
-            background: "transparent",
-            border: "1px solid rgba(100,60,180,0.3)",
-            color: "#a78bfa",
-            cursor: "pointer",
-            fontFamily: "'Cinzel', serif",
-            transition: "all 0.3s"
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = "rgba(100,60,180,0.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = "transparent";
-          }}
-        >
-          Close
-        </button>
+        {/* Footer */}
+        <div className="px-5 pb-5">
+          <button onClick={onClose}
+            className="w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-[1.01]"
+            style={{
+              background: "rgba(139,92,246,0.1)",
+              border: "1.5px solid rgba(139,92,246,0.3)",
+              color: "#a78bfa",
+              cursor: "pointer",
+            }}>
+            ⚔ Return to Battle
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import GameHUD from "../components/game/GameHUD";
 import TowerPanel from "../components/game/TowerPanel";
 import TowerInfoPanel from "../components/game/TowerInfoPanel";
 import TowerUpgradeMenu from "../components/game/TowerUpgradeMenu";
+import { applyUpgradeTier } from "../lib/towerUpgradePaths";
 import WaveButton from "../components/game/WaveButton";
 import GameOverModal from "../components/game/GameOverModal";
 import ComboDisplay from "../components/game/ComboDisplay";
@@ -446,9 +447,9 @@ export default function Game() {
         const newProjs = [];
 
         // Multi-shot: fire at multiple enemies
-        const multiCount = towerHasAbility(tower, "multishot")
-          ? (tower.type === "arrowStorm" ? 3 : 2)
-          : 1;
+        const baseMulti = towerHasAbility(tower, "multishot") ? (tower.type === "arrowStorm" ? 3 : 2) : 1;
+        const pathMulti = tower.upgradePath_trishot ? 3 : tower.upgradePath_multishot ? 2 : 1;
+        const multiCount = Math.max(baseMulti, pathMulti);
         const targets = inRange.slice(0, multiCount);
         targets.forEach(t => newProjs.push(createProjectile(tower, t)));
 
@@ -493,13 +494,18 @@ export default function Game() {
               critical: isCritical,
             }]);
 
+            // Stun (from upgrade path)
+            if (proj.appliesStun) {
+              target.frozenTimer = proj.stunDuration ?? 1000;
+            }
+
             // Slow / freeze effects
             if (proj.towerType === "frost" || TOWER_TYPES[proj.towerType]?.appliesSlow || proj.appliesSlow) {
-              target.slowTimer = proj.freezeDuration ?? 2000;
+              target.slowTimer = proj.slowDuration ?? 2000;
             }
             if (proj.appliesFreeze) {
               target.slowTimer = 1500;
-              target.frozenTimer = 1500; // full stop
+              target.frozenTimer = proj.freezeDuration ?? 1500;
             }
 
             // Burn / poison DoT
@@ -864,6 +870,19 @@ export default function Game() {
       return sp - 1;
     });
   }, [selectedCharacter]);
+
+  const handleBuyPathUpgrade = useCallback((tierId, cost) => {
+    const tower = getSelectedTower();
+    if (!tower) return;
+    setGold(prev => {
+      if (prev < cost) return prev;
+      const actualCost = applyUpgradeTier(tower, tierId);
+      if (actualCost === 0) return prev; // already purchased or invalid
+      addLog("merge", `🔧 ${TOWER_TYPES[tower.type].name} upgraded: tier unlocked!`);
+      forceRender(n => n + 1);
+      return prev - actualCost;
+    });
+  }, [selectedTowerId]);
 
   const handleUnlockAbility = useCallback((ability) => {
     setGloryPoints(gp => {
@@ -1469,7 +1488,7 @@ export default function Game() {
         <TowerUpgradeMenu
           tower={getSelectedTower()}
           gold={gold}
-          onUpgrade={handleUpgrade}
+          onBuyUpgrade={handleBuyPathUpgrade}
           onClose={() => setShowUpgradeMenu(false)}
         />
       )}

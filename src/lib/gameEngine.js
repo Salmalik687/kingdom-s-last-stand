@@ -1323,6 +1323,53 @@ export function createProjectile(tower, enemy, overrideDamage = null) {
     proj.appliesSlow = true;
   }
 
+  // ── Branching upgrade path flags ────────────────────────────────────────
+  if (tower.upgradePath_splash) {
+    proj.splashRadius = tower.upgradePath_splashRadius ?? CELL_SIZE * 1.5;
+    proj.splashDamage = Math.floor(proj.damage * 0.55);
+  }
+  if (tower.upgradePath_burn) {
+    proj.burnDuration = tower.upgradePath_burnDuration ?? 3000;
+  }
+  if (tower.upgradePath_poison || tower.upgradePath_deepPoison) {
+    proj.poisonDuration = tower.upgradePath_deepPoison ? 6000 : 3000;
+  }
+  if (tower.upgradePath_armorBreak) {
+    proj.armorBreak = Math.max(proj.armorBreak ?? 0, tower.upgradePath_armorBreak);
+  }
+  if (tower.upgradePath_slow) {
+    proj.appliesSlow = true;
+  }
+  if (tower.upgradePath_slowDuration) {
+    proj.slowDuration = tower.upgradePath_slowDuration;
+  }
+  if (tower.upgradePath_freeze) {
+    proj.appliesFreeze = true;
+    proj.freezeDuration = tower.upgradePath_freezeDuration ?? 1500;
+  }
+  if (tower.upgradePath_chain) {
+    proj.chain = true;
+  }
+  if (tower.upgradePath_pierce) {
+    proj.pierce = true;
+  }
+  if (tower.upgradePath_freezeChance && Math.random() < tower.upgradePath_freezeChance) {
+    proj.appliesFreeze = true;
+    proj.freezeDuration = 1500;
+  }
+  if (tower.upgradePath_slowField) {
+    proj.slowField = true;
+    proj.appliesSlow = true;
+  }
+  if (tower.upgradePath_aoeSlowField) {
+    proj.appliesSlow = true;
+  }
+  // Stun on hit
+  if (tower.upgradePath_stunChance && Math.random() < tower.upgradePath_stunChance) {
+    proj.appliesStun = true;
+    proj.stunDuration = tower.upgradePath_stunDuration ?? 1000;
+  }
+
   return proj;
 }
 
