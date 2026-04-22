@@ -26,6 +26,7 @@ import HallOfHeroesModal from "../components/game/HallOfHeroesModal";
 import AchievementToast from "../components/game/AchievementToast";
 import ArmorUpgradeScreen from "../components/game/ArmorUpgradeScreen";
 import BossKillReward from "../components/game/BossKillReward";
+import MergeConfirmModal from "../components/game/MergeConfirmModal";
 import AbilityTree from "../components/game/AbilityTree";
 import ActiveAbilityBar from "../components/game/ActiveAbilityBar";
 import CodexModal from "../components/game/CodexModal";
@@ -114,6 +115,7 @@ export default function Game() {
   const [skillPoints, setSkillPoints] = useState(0);
   const [showUpgradeMenu, setShowUpgradeMenu] = useState(false);
   const [showForgeShop, setShowForgeShop] = useState(false);
+  const [pendingMerge, setPendingMerge] = useState(null); // { t1, t2, resultType, newTowers, refundCost }
   const [forgeRanks, setForgeRanks] = useState({}); // { upgradeId: rank }
   const [unlockedAbilities, setUnlockedAbilities] = useState([]);
   const [divineShieldActive, setDivineShieldActive] = useState(false);
@@ -234,45 +236,22 @@ export default function Game() {
       }
       
       const newTowers = [...towersRef.current, tower];
-      towerMapRef.current.set(key, tower.id);
+        towerMapRef.current.set(key, tower.id);
 
-      // Check for any merge
-      const pair = findMergePair(newTowers);
-      if (pair) {
-        const [t1, t2, resultType] = pair;
-        const merged2 = mergeTowers(t1, t2, resultType);
-        const merged = newTowers.filter(t => t.id !== t1.id && t.id !== t2.id);
-        merged.push(merged2);
-        towerMapRef.current.delete(`${t1.gridX},${t1.gridY}`);
-        towerMapRef.current.delete(`${t2.gridX},${t2.gridY}`);
-        towerMapRef.current.set(`${merged2.gridX},${merged2.gridY}`, merged2.id);
-        applyForgeBonusToTower(merged2, forgeRanks);
-        towersRef.current = merged;
-        // Track merges for achievements
-        achStatsRef.current.totalMerges = (achStatsRef.current.totalMerges ?? 0) + 1;
-        if (!achStatsRef.current.mergedTypes.includes(resultType)) {
-          achStatsRef.current.mergedTypes = [...achStatsRef.current.mergedTypes, resultType];
+        // Check for any merge — show confirmation instead of auto-merging
+        const pair = findMergePair(newTowers);
+        if (pair) {
+          const [t1, t2, resultType] = pair;
+          towersRef.current = newTowers;
+          playPlaceSound();
+          forceRender(n => n + 1);
+          // Show confirmation modal — store pending merge info
+          setPendingMerge({ t1, t2, resultType, cost });
+          return prev - cost;
+        } else {
+          towersRef.current = newTowers;
+          playPlaceSound();
         }
-        checkAchievements({ ...achStatsRef.current });
-        playMergeSound(resultType);
-        playPlaceSound();
-        setMergeFlash(TOWER_TYPES[resultType]);
-        // Fire fusion visual at the merged tower's canvas position
-        setFusionEvent({
-          id: Math.random(),
-          x: merged2.x,
-          y: merged2.y,
-          emoji: TOWER_TYPES[resultType].emoji,
-          name: TOWER_TYPES[resultType].name,
-          color: "#a78bfa",
-        });
-        setTimeout(() => setFusionEvent(null), 1700);
-        addLog("merge", `✨ Merged into ${TOWER_TYPES[resultType].name}! (${TOWER_TYPES[resultType].emoji})`);
-        setTimeout(() => setMergeFlash(false), 1800);
-      } else {
-        towersRef.current = newTowers;
-        playPlaceSound();
-      }
 
       forceRender(n => n + 1);
       return prev - cost;
@@ -897,6 +876,44 @@ export default function Game() {
       return sp - 1;
     });
   }, [selectedCharacter]);
+
+  const handleConfirmMerge = useCallback(() => {
+    if (!pendingMerge) return;
+    const { t1, t2, resultType } = pendingMerge;
+    const merged2 = mergeTowers(t1, t2, resultType);
+    const merged = towersRef.current.filter(t => t.id !== t1.id && t.id !== t2.id);
+    merged.push(merged2);
+    towerMapRef.current.delete(`${t1.gridX},${t1.gridY}`);
+    towerMapRef.current.delete(`${t2.gridX},${t2.gridY}`);
+    towerMapRef.current.set(`${merged2.gridX},${merged2.gridY}`, merged2.id);
+    applyForgeBonusToTower(merged2, forgeRanks);
+    towersRef.current = merged;
+    achStatsRef.current.totalMerges = (achStatsRef.current.totalMerges ?? 0) + 1;
+    if (!achStatsRef.current.mergedTypes.includes(resultType)) {
+      achStatsRef.current.mergedTypes = [...achStatsRef.current.mergedTypes, resultType];
+    }
+    checkAchievements({ ...achStatsRef.current });
+    playMergeSound(resultType);
+    setMergeFlash(TOWER_TYPES[resultType]);
+    setFusionEvent({
+      id: Math.random(),
+      x: merged2.x,
+      y: merged2.y,
+      emoji: TOWER_TYPES[resultType].emoji,
+      name: TOWER_TYPES[resultType].name,
+      color: "#a78bfa",
+    });
+    setTimeout(() => setFusionEvent(null), 1700);
+    addLog("merge", `✨ Merged into ${TOWER_TYPES[resultType].name}! (${TOWER_TYPES[resultType].emoji})`);
+    setTimeout(() => setMergeFlash(false), 1800);
+    setPendingMerge(null);
+    forceRender(n => n + 1);
+  }, [pendingMerge, forgeRanks, checkAchievements]);
+
+  const handleCancelMerge = useCallback(() => {
+    // Just dismiss — the two towers stay as-is
+    setPendingMerge(null);
+  }, []);
 
   const handleBuyPathUpgrade = useCallback((tierId, cost) => {
     const tower = getSelectedTower();
@@ -1611,6 +1628,12 @@ export default function Game() {
         forgeRanks={forgeRanks}
         onBuy={handleForgeBuy}
         onClose={() => setShowForgeShop(false)}
+      />
+
+      <MergeConfirmModal
+        mergeInfo={pendingMerge}
+        onConfirm={handleConfirmMerge}
+        onCancel={handleCancelMerge}
       />
 
       <CampaignIntro show={showCampaignIntro} onBegin={() => setShowCampaignIntro(false)} />
