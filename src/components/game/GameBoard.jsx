@@ -945,48 +945,63 @@ export default function GameBoard({
     return () => cancelAnimationFrame(animFrameRef.current);
   }, [render]);
 
+  // Pointer events unify mouse / touch / pen handling and avoid the iOS
+  // 300ms click-delay path. We track `pressedRef` to distinguish between a
+  // tap (no movement) and a drag, replacing the legacy onClick handler.
+  const pressedRef = useRef(null); // { gx, gy, downAt, moved }
+
   const getCellFromEvent = (e) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
     const scaleX = BOARD_W / rect.width;
     const scaleY = BOARD_H / rect.height;
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const mx = (clientX - rect.left) * scaleX;
-    const my = (clientY - rect.top) * scaleY;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
     const gx = Math.floor(mx / CELL_SIZE);
     const gy = Math.floor(my / CELL_SIZE);
     if (gx >= 0 && gx < GRID_COLS && gy >= 0 && gy < GRID_ROWS) return { gx, gy };
     return null;
   };
 
-  const handleMouseDown = (e) => {
+  const handlePointerDown = (e) => {
+    // Only react to primary button presses (mouse) or any touch/pen.
+    if (e.pointerType === "mouse" && e.button !== 0) return;
     const cell = getCellFromEvent(e);
     if (!cell) return;
+    pressedRef.current = { gx: cell.gx, gy: cell.gy, moved: false };
     const key = `${cell.gx},${cell.gy}`;
     if (towerMap.has(key)) {
       dragRef.current = { towerId: towerMap.get(key), startGx: cell.gx, startGy: cell.gy };
     }
+    // Capture future moves on this pointer, even if it leaves the canvas.
+    if (canvasRef.current && e.pointerId != null) {
+      try { canvasRef.current.setPointerCapture(e.pointerId); } catch (_) { /* noop */ }
+    }
   };
 
-  const handleMouseMove = (e) => {
+  const handlePointerMove = (e) => {
     const cell = getCellFromEvent(e);
     if (!cell) { hoverRef.current = null; return; }
     const { gx, gy } = cell;
     const isPath = PATH_SET.has(`${gx},${gy}`);
     const hasTower = towerMap.has(`${gx},${gy}`);
     hoverRef.current = { gx, gy, valid: !isPath && !hasTower };
+    if (pressedRef.current && (gx !== pressedRef.current.gx || gy !== pressedRef.current.gy)) {
+      pressedRef.current.moved = true;
+    }
   };
 
-  const handleMouseUp = (e) => {
-    if (!dragRef.current) return;
+  const handlePointerUp = (e) => {
     const cell = getCellFromEvent(e);
-    if (cell) {
+    const drag = dragRef.current;
+    const pressed = pressedRef.current;
+    pressedRef.current = null;
+
+    if (drag && cell) {
       const { gx, gy } = cell;
-      const { startGx, startGy, towerId } = dragRef.current;
+      const { startGx, startGy, towerId } = drag;
       if (gx !== startGx || gy !== startGy) {
-        // Swap or move tower
         if (!PATH_SET.has(`${gx},${gy}`)) {
           onTowerSwap && onTowerSwap(towerId, startGx, startGy, gx, gy);
         }
@@ -995,18 +1010,21 @@ export default function GameBoard({
       }
     }
     dragRef.current = null;
+
+    // Treat as tap if pointer didn't move to a different cell.
+    if (cell && pressed && !pressed.moved) {
+      onCellClick(cell.gx, cell.gy);
+    }
   };
 
-  const handleClick = (e) => {
-    // Don't fire click if we were dragging
-    if (dragRef.current) { dragRef.current = null; return; }
-    const cell = getCellFromEvent(e);
-    if (cell) onCellClick(cell.gx, cell.gy);
+  const handlePointerLeave = () => {
+    hoverRef.current = null;
   };
 
-  const handleMouseLeave = () => {
+  const handlePointerCancel = () => {
     hoverRef.current = null;
     dragRef.current = null;
+    pressedRef.current = null;
   };
 
   const theme = getStageTheme(wave || 1);
@@ -1026,11 +1044,14 @@ export default function GameBoard({
         width={BOARD_W}
         height={BOARD_H}
         className="w-full h-auto cursor-crosshair block"
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onClick={handleClick}
-        onMouseLeave={handleMouseLeave}
+        // touch-action: manipulation kills the iOS double-tap-to-zoom delay
+        // on the board so taps register immediately instead of after ~300ms.
+        style={{ touchAction: "manipulation" }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerLeave}
+        onPointerCancel={handlePointerCancel}
       />
       {/* Entry indicator */}
       <div className="absolute top-0 left-0 w-6 h-full pointer-events-none flex items-center">
