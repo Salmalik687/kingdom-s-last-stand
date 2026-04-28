@@ -4,6 +4,12 @@ export const CELL_SIZE = 48;
 export const GRID_COLS = 16;
 export const GRID_ROWS = 10;
 
+// Monotonic entity ID counter — replaces Math.random().toString(36).substr(...)
+// for tower / enemy / projectile IDs. `substr` is deprecated and the random
+// approach can collide (especially for projectiles spawning at >100/sec).
+let _entitySeq = 0;
+export function nextEntityId() { return `e${++_entitySeq}`; }
+
 // 15 Lands — each has 5 waves (boss on final wave of each land)
 // Waves 1–5 to 71–75
 export const STAGE_THEMES = {
@@ -1465,7 +1471,7 @@ export function createEnemy(type, hpMultiplier = 1, modifier = null, speedMultip
   const mod = modifier ? ENEMY_MODIFIERS[modifier] : null;
   const hp = Math.floor(base.hp * hpMultiplier * (mod?.hpMult ?? 1));
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: nextEntityId(),
     type,
     modifier,
     hp,
@@ -1487,7 +1493,7 @@ export function createEnemy(type, hpMultiplier = 1, modifier = null, speedMultip
 export function createTower(type, gridX, gridY) {
   const base = TOWER_TYPES[type];
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: nextEntityId(),
     type,
     gridX,
     gridY,
@@ -1505,7 +1511,7 @@ export function createTower(type, gridX, gridY) {
 
 export function createProjectile(tower, enemy, overrideDamage = null) {
   const proj = {
-    id: Math.random().toString(36).substr(2, 9),
+    id: nextEntityId(),
     x: tower.x,
     y: tower.y,
     targetId: enemy.id,
@@ -1678,7 +1684,7 @@ export function findMergePair(towers) {
 export function mergeTowers(t1, t2, resultType) {
   const base = TOWER_TYPES[resultType];
   return {
-    id: Math.random().toString(36).substr(2, 9),
+    id: nextEntityId(),
     type: resultType,
     gridX: t2.gridX,
     gridY: t2.gridY,

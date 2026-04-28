@@ -3,7 +3,7 @@ import {
   TOWER_TYPES, PATH_SET, CELL_SIZE,
   generateWaves, createEnemy, createTower, createProjectile,
   distanceBetween, moveEnemy, moveProjectile, generateBossInfo,
-  findMergePair, mergeTowers, towerHasAbility,
+  findMergePair, mergeTowers, towerHasAbility, nextEntityId,
 } from "../lib/gameEngine";
 import { getCharacter } from "../lib/characters";
 import GameBoard, { spawnDeathParticles } from "../components/game/GameBoard";
@@ -100,7 +100,15 @@ export default function Game() {
   const [victory, setVictory] = useState(false);
   const [perkShop, setPerkShop] = useState(false);
   const [perksOwned, setPerksOwned] = useState({});
-  const [showIntro, setShowIntro] = useState(true);
+  // Show the long story intro only on first ever launch — returning players
+  // were getting it on every page load AND seeing it overlap the ModeSelect.
+  // Dismissing the intro persists `qls_intro_seen=1`. Clear that key in
+  // localStorage to see the intro again.
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return !window.localStorage.getItem("qls_intro_seen"); }
+    catch (_) { return true; }
+  });
   const [showCharacterSelect, setShowCharacterSelect] = useState(true);
   const [hallOfHeroes, setHallOfHeroes] = useState(false);
   const [armorUpgrade, setArmorUpgrade] = useState(null); // chapter number 2-5
@@ -266,7 +274,11 @@ export default function Game() {
       forceRender(n => n + 1);
       return prev - cost;
     });
-  }, [selectedTowerType]);
+    // Deps include selectedCharacter + forgeRanks so the closure picks up the
+    // current character's damage/range bonuses (and current forge ranks) when
+    // a new tower is placed. Without these the closure froze on the initial
+    // character and any later character pick was silently ignored.
+  }, [selectedTowerType, selectedCharacter, forgeRanks, characterData]);
 
   const handleUpgrade = useCallback((tower) => {
     const base = TOWER_TYPES[tower.type];
@@ -511,15 +523,21 @@ export default function Game() {
             const dmg = Math.floor(proj.damage * (1 - effectiveDR) * voidMult);
             target.hp -= dmg;
 
-            // Add damage popup
+            // Add damage popup — cap to MAX_DAMAGE_POPUPS so a multi-hit splash
+            // frame can't unboundedly grow the array (each popup is its own
+            // DOM node + cleanup timer).
             const isCritical = Math.random() < 0.15;
-            setDamagePopups(prev => [...prev, {
-              id: Math.random(),
-              damage: isCritical ? Math.floor(dmg * 1.5) : dmg,
-              x: target.x,
-              y: target.y - 30,
-              critical: isCritical,
-            }]);
+            setDamagePopups(prev => {
+              const next = [...prev, {
+                id: nextEntityId(),
+                damage: isCritical ? Math.floor(dmg * 1.5) : dmg,
+                x: target.x,
+                y: target.y - 30,
+                critical: isCritical,
+              }];
+              const MAX_DAMAGE_POPUPS = 40;
+              return next.length > MAX_DAMAGE_POPUPS ? next.slice(-MAX_DAMAGE_POPUPS) : next;
+            });
 
             // Stun (from upgrade path)
             if (proj.appliesStun) {
@@ -1172,6 +1190,27 @@ export default function Game() {
       perksOwned, forgeRanks, unlockedTowers, unlockedSkills, unlockedAbilities,
       skillPoints, gloryPoints, unlockedAchievements, seenEnemies]);
 
+  // Auto-save on tab close / page hide so a player who closes the tab
+  // mid-wave doesn't lose progress. localStorage.setItem is sync; beforeunload
+  // is the canonical hook. visibilitychange catches mobile background-tab
+  // teardown which doesn't always fire beforeunload. Defined HERE (not above
+  // the game loop) because doSave isn't initialized until this point —
+  // referencing it earlier hits a temporal-dead-zone ReferenceError.
+  useEffect(() => {
+    const onSave = () => {
+      try { doSave(); } catch (_) { /* noop */ }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") onSave();
+    };
+    window.addEventListener("beforeunload", onSave);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("beforeunload", onSave);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [doSave]);
+
   const handleContinueSave = useCallback(() => {
     const save = loadGame();
     if (!save) return;
@@ -1226,7 +1265,24 @@ export default function Game() {
   const handleDifficultySelect = (diff) => {
     setDifficulty(diff);
     setShowDifficultySelect(false);
+    // Initial-lives state was seeded from the DEFAULT character (Aldric) at
+    // component construction time, so picking a character with a healthBonus
+    // (e.g. Seraphine) had no effect on actual starting lives. Recompute from
+    // the chosen character now, before the game loop starts running.
+    const chosenChar = getCharacter(selectedCharacter);
+    setLives(Math.ceil(INITIAL_LIVES * (1 + (chosenChar.stats.healthBonus ?? 0))));
     setShowCampaignIntro(gameMode === "story");
+  };
+
+  // Back-navigation: lets players change their mind without refreshing.
+  const handleBackToMode = () => {
+    setShowCharacterSelect(false);
+    setShowDifficultySelect(false);
+    setShowModeSelect(true);
+  };
+  const handleBackToCharacter = () => {
+    setShowDifficultySelect(false);
+    setShowCharacterSelect(true);
   };
 
   const handleRestart = () => {
@@ -1284,13 +1340,22 @@ export default function Game() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0d0a1a 0%, #08051a 40%, #0d0a1f 100%)' }}>
       {/* Mode Select Modal */}
-      {showModeSelect && <ModeSelect onSelect={handleModeSelect} onContinue={handleContinueSave} />}
+      {!showIntro && showModeSelect && (
+        <ModeSelect
+          onSelect={handleModeSelect}
+          onContinue={handleContinueSave}
+          onReplayIntro={() => {
+            try { window.localStorage.removeItem("qls_intro_seen"); } catch (_) { /* noop */ }
+            setShowIntro(true);
+          }}
+        />
+      )}
 
       {/* Character Select Modal */}
-      {!showModeSelect && showCharacterSelect && <CharacterSelect onSelect={handleCharacterSelect} />}
+      {!showModeSelect && showCharacterSelect && <CharacterSelect onSelect={handleCharacterSelect} onBack={handleBackToMode} />}
 
       {/* Difficulty Select Modal */}
-      {!showCharacterSelect && showDifficultySelect && <DifficultySelect onSelect={handleDifficultySelect} />}
+      {!showCharacterSelect && showDifficultySelect && <DifficultySelect onSelect={handleDifficultySelect} onBack={handleBackToCharacter} />}
 
       {/* Header */}
       <div style={{
@@ -1692,7 +1757,14 @@ export default function Game() {
         }}
         onClose={() => setShowTowerShop(false)}
       />
-      <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} characterId={selectedCharacter} />
+      <IntroStoryModal
+        show={showIntro}
+        onBegin={() => {
+          try { window.localStorage.setItem("qls_intro_seen", "1"); } catch (_) { /* noop */ }
+          setShowIntro(false);
+        }}
+        characterId={selectedCharacter}
+      />
 
       <CharacterSkillTree
         show={showSkillTree}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { hasSave, getSaveSummary, deleteSave } from "../../lib/saveGame";
+import { getCharacter } from "../../lib/characters";
 
 const STAR_COUNT = 80;
 const stars = Array.from({ length: STAR_COUNT }, (_, i) => ({
@@ -20,7 +21,7 @@ const EMBERS = Array.from({ length: 20 }, (_, i) => ({
   color: i % 2 === 0 ? "#a78bfa" : "#d4af70",
 }));
 
-export default function ModeSelect({ onSelect, onContinue }) {
+export default function ModeSelect({ onSelect, onContinue, onReplayIntro }) {
   const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [hovered, setHovered] = useState(null);
@@ -287,6 +288,10 @@ export default function ModeSelect({ onSelect, onContinue }) {
                     💾 Saved Progress
                   </div>
                   <div style={{ fontSize: 13, color: "#e2d9f3", fontFamily: "'Cinzel', serif" }}>
+                    {(() => {
+                      const ch = saveInfo.character ? getCharacter(saveInfo.character) : null;
+                      return ch ? <span style={{ color: ch.color }}>{ch.name} · </span> : null;
+                    })()}
                     Wave {saveInfo.wave} · Score {saveInfo.score?.toLocaleString() ?? 0}
                     {saveInfo.difficulty && <span style={{ color: "#a78bfa" }}> · {saveInfo.difficulty.name}</span>}
                   </div>
@@ -353,6 +358,28 @@ export default function ModeSelect({ onSelect, onContinue }) {
         }}>
           ✦ &nbsp; Your legend begins with one choice &nbsp; ✦
         </p>
+        {/* Replay-intro link — gives returning players a way to see the
+            Royal Chronicler intro again without clearing localStorage. */}
+        {onReplayIntro && (
+          <div style={{ textAlign: "center", marginTop: 6, animation: "fadeInUp 1s ease 0.7s both" }}>
+            <button
+              onClick={onReplayIntro}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "rgba(167,139,250,0.65)",
+                fontSize: 10,
+                fontFamily: "'Cinzel', serif",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                textDecoration: "underline",
+                textUnderlineOffset: 4,
+              }}>
+              📖 Replay intro
+            </button>
+          </div>
+        )}
       </div>
 
       <style>{`

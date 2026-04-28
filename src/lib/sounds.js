@@ -1,10 +1,15 @@
 // Web Audio API sound effects — no external dependencies
-import { isMuted } from "./audioContext";
+import { isMuted, registerAudioContext } from "./audioContext";
 
 let ctx = null;
 
 function getCtx() {
-  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // iOS suspends new contexts until a user gesture. Register so the
+    // one-shot gesture listener in audioContext.js can resume it.
+    registerAudioContext(ctx);
+  }
   return ctx;
 }
 
