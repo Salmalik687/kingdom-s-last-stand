@@ -787,25 +787,6 @@ export default function Game() {
     };
   }, [gameOver, fastForward]);
 
-  // Auto-save on tab close / page hide so a player who closes the tab
-  // mid-wave doesn't lose progress. localStorage.setItem is sync; beforeunload
-  // is the canonical hook. visibilitychange catches mobile background-tab
-  // teardown which doesn't always fire beforeunload.
-  useEffect(() => {
-    const onSave = () => {
-      try { doSave(); } catch (_) { /* noop */ }
-    };
-    const onVisibility = () => {
-      if (document.visibilityState === "hidden") onSave();
-    };
-    window.addEventListener("beforeunload", onSave);
-    document.addEventListener("visibilitychange", onVisibility);
-    return () => {
-      window.removeEventListener("beforeunload", onSave);
-      document.removeEventListener("visibilitychange", onVisibility);
-    };
-  }, [doSave]);
-
   const handleActivateAbility = useCallback((abilityId) => {
     const abilityMods = getAbilityMods(selectedCharacter, unlockedSkills);
     if (abilityId === "rain_of_arrows") {
@@ -1208,6 +1189,27 @@ export default function Game() {
   }, [wave, gold, lives, score, selectedCharacter, difficulty, gameMode,
       perksOwned, forgeRanks, unlockedTowers, unlockedSkills, unlockedAbilities,
       skillPoints, gloryPoints, unlockedAchievements, seenEnemies]);
+
+  // Auto-save on tab close / page hide so a player who closes the tab
+  // mid-wave doesn't lose progress. localStorage.setItem is sync; beforeunload
+  // is the canonical hook. visibilitychange catches mobile background-tab
+  // teardown which doesn't always fire beforeunload. Defined HERE (not above
+  // the game loop) because doSave isn't initialized until this point —
+  // referencing it earlier hits a temporal-dead-zone ReferenceError.
+  useEffect(() => {
+    const onSave = () => {
+      try { doSave(); } catch (_) { /* noop */ }
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") onSave();
+    };
+    window.addEventListener("beforeunload", onSave);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("beforeunload", onSave);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [doSave]);
 
   const handleContinueSave = useCallback(() => {
     const save = loadGame();
