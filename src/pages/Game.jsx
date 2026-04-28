@@ -100,7 +100,15 @@ export default function Game() {
   const [victory, setVictory] = useState(false);
   const [perkShop, setPerkShop] = useState(false);
   const [perksOwned, setPerksOwned] = useState({});
-  const [showIntro, setShowIntro] = useState(true);
+  // Show the long story intro only on first ever launch — returning players
+  // were getting it on every page load AND seeing it overlap the ModeSelect.
+  // Dismissing the intro persists `qls_intro_seen=1`. Clear that key in
+  // localStorage to see the intro again.
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try { return !window.localStorage.getItem("qls_intro_seen"); }
+    catch (_) { return true; }
+  });
   const [showCharacterSelect, setShowCharacterSelect] = useState(true);
   const [hallOfHeroes, setHallOfHeroes] = useState(false);
   const [armorUpgrade, setArmorUpgrade] = useState(null); // chapter number 2-5
@@ -1284,7 +1292,7 @@ export default function Game() {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(180deg, #0d0a1a 0%, #08051a 40%, #0d0a1f 100%)' }}>
       {/* Mode Select Modal */}
-      {showModeSelect && <ModeSelect onSelect={handleModeSelect} onContinue={handleContinueSave} />}
+      {!showIntro && showModeSelect && <ModeSelect onSelect={handleModeSelect} onContinue={handleContinueSave} />}
 
       {/* Character Select Modal */}
       {!showModeSelect && showCharacterSelect && <CharacterSelect onSelect={handleCharacterSelect} />}
@@ -1692,7 +1700,14 @@ export default function Game() {
         }}
         onClose={() => setShowTowerShop(false)}
       />
-      <IntroStoryModal show={showIntro} onBegin={() => setShowIntro(false)} characterId={selectedCharacter} />
+      <IntroStoryModal
+        show={showIntro}
+        onBegin={() => {
+          try { window.localStorage.setItem("qls_intro_seen", "1"); } catch (_) { /* noop */ }
+          setShowIntro(false);
+        }}
+        characterId={selectedCharacter}
+      />
 
       <CharacterSkillTree
         show={showSkillTree}
