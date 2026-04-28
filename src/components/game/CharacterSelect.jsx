@@ -173,7 +173,7 @@ export default function CharacterSelect({ onSelect, onBack }) {
         {/* Top title */}
         <div style={{
           textAlign: "center",
-          marginBottom: 32,
+          marginBottom: 8,
           fontSize: "clamp(20px, 5vw, 36px)",
           fontFamily: "'Cinzel Decorative', serif",
           fontWeight: 900,
@@ -183,6 +183,19 @@ export default function CharacterSelect({ onSelect, onBack }) {
         }}>
           ⚔️ CHOOSE THY CHAMPION ⚔️
         </div>
+        {/* Character counter — gives players an immediate signal that there
+            are multiple characters and the chevrons navigate between them. */}
+        <div style={{
+          textAlign: "center",
+          marginBottom: 24,
+          fontSize: 12,
+          letterSpacing: "0.3em",
+          textTransform: "uppercase",
+          color: "rgba(167,139,250,0.7)",
+          fontFamily: "'Cinzel', serif",
+        }}>
+          ← Swipe through {characters.length} champions →&nbsp;&nbsp;<span style={{ color: current.color, fontWeight: 900 }}>{currentIndex + 1} / {characters.length}</span>
+        </div>
 
         <div style={{
           display: "flex",
@@ -190,20 +203,26 @@ export default function CharacterSelect({ onSelect, onBack }) {
           alignItems: "center",
           justifyContent: "center",
         }}>
-          {/* Left arrow */}
+          {/* Left arrow — animated pulse so it's obviously interactive. */}
           <button
             onClick={handlePrev}
+            title="Previous champion"
+            aria-label="Previous champion"
             style={{
               background: "linear-gradient(180deg, #7c3aed, #4c1d95)",
-              border: "2px solid #a78bfa",
+              border: "3px solid #a78bfa",
               color: "#e9d5ff",
-              width: 50, height: 50,
-              borderRadius: 12,
+              width: 64, height: 64,
+              borderRadius: 14,
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer",
-              transition: "all 0.3s",
+              transition: "all 0.2s",
+              flexShrink: 0,
+              boxShadow: "0 0 24px rgba(167,139,250,0.45), 0 4px 0 #2a1a5a",
+              animation: "navPulse 2.2s ease-in-out infinite",
+              zIndex: 25,
             }}>
-            <ChevronLeft size={24} />
+            <ChevronLeft size={32} />
           </button>
 
           {/* Character card */}
@@ -413,20 +432,27 @@ export default function CharacterSelect({ onSelect, onBack }) {
             )}
           </div>
 
-          {/* Right arrow */}
+          {/* Right arrow — animated pulse so it's obviously interactive. */}
           <button
             onClick={handleNext}
+            title="Next champion"
+            aria-label="Next champion"
             style={{
               background: "linear-gradient(180deg, #7c3aed, #4c1d95)",
-              border: "2px solid #a78bfa",
+              border: "3px solid #a78bfa",
               color: "#e9d5ff",
-              width: 50, height: 50,
-              borderRadius: 12,
+              width: 64, height: 64,
+              borderRadius: 14,
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer",
-              transition: "all 0.3s",
+              transition: "all 0.2s",
+              flexShrink: 0,
+              boxShadow: "0 0 24px rgba(167,139,250,0.45), 0 4px 0 #2a1a5a",
+              animation: "navPulse 2.2s ease-in-out infinite",
+              animationDelay: "1.1s",
+              zIndex: 25,
             }}>
-            <ChevronRight size={24} />
+            <ChevronRight size={32} />
           </button>
         </div>
 
@@ -454,15 +480,30 @@ export default function CharacterSelect({ onSelect, onBack }) {
           </button>
         )}
 
-        {/* Character indicator dots */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 24 }}>
-          {characters.map((_, i) => (
-            <div key={i} style={{
-              width: i === currentIndex ? 16 : 6,
-              height: 6, borderRadius: 9,
-              background: i === currentIndex ? current.color : "rgba(255,255,255,0.1)",
-              transition: "all 0.3s",
-            }} />
+        {/* Character indicator dots — clickable to jump directly. */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 24 }}>
+          {characters.map((c, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (i === currentIndex) return;
+                setCurrentIndex(i);
+                setShowDetails(false);
+                setSpeechBubble("");
+              }}
+              title={c.name}
+              aria-label={`Jump to ${c.name}`}
+              style={{
+                width: i === currentIndex ? 22 : 12,
+                height: 12,
+                borderRadius: 9,
+                background: i === currentIndex ? current.color : "rgba(255,255,255,0.18)",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                transition: "all 0.3s",
+              }}
+            />
           ))}
         </div>
       </div>
@@ -474,6 +515,10 @@ export default function CharacterSelect({ onSelect, onBack }) {
         @keyframes pulseBtn {
           0%,100% { box-shadow: 0 6px 0 ${current.color}44, 0 0 20px ${current.color}50; }
           50% { box-shadow: 0 6px 0 ${current.color}44, 0 0 40px ${current.color}80; }
+        }
+        @keyframes navPulse {
+          0%,100% { transform: scale(1); box-shadow: 0 0 24px rgba(167,139,250,0.45), 0 4px 0 #2a1a5a; }
+          50%     { transform: scale(1.08); box-shadow: 0 0 36px rgba(167,139,250,0.85), 0 4px 0 #2a1a5a; }
         }
       `}</style>
 
