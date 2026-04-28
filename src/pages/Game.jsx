@@ -190,6 +190,15 @@ export default function Game() {
   const [totalWaveEnemies, setTotalWaveEnemies] = useState(0); // true once at least one enemy has been spawned this wave
   const gameLoopRef = useRef(null);
   const lastTimeRef = useRef(0);
+  // Accumulating game-time clock (ms). Drives tower fire-rate so it scales with
+  // speedMult correctly (was previously gated against raw RAF timestamp, which
+  // doesn't speed up under fast-forward). Opt out via localStorage qls_clockv2_off=1.
+  const gameTimeRef = useRef(0);
+  // HUD throttle accumulator — replaces per-frame forceRender to drop React
+  // commits from ~60Hz to ~10Hz during gameplay. See Phase 2.1a.
+  const hudTickAccumRef = useRef(0);
+  // Combat log rate-limit (was Math.random gated; non-deterministic).
+  const lastKillLogRef = useRef(0);
 
   // Force re-render state
   const [, forceRender] = useState(0);
@@ -383,11 +392,20 @@ export default function Game() {
 
   // Game loop
   useEffect(() => {
+    // gameClockV2: tower fire-rate is gated against an accumulating game-clock
+    // (so fast-forward speeds towers too). Opt out by setting localStorage
+    // qls_clockv2_off=1 to fall back to legacy behavior (towers gated against
+    // raw RAF timestamp, which only speeds enemies under fast-forward).
+    const gameClockV2 = typeof window === "undefined"
+      || window.localStorage?.getItem("qls_clockv2_off") !== "1";
+
     const gameLoop = (timestamp) => {
       if (!lastTimeRef.current) lastTimeRef.current = timestamp;
       const speedMult = fastForward ? 2 : 1;
       const dt = Math.min((timestamp - lastTimeRef.current) / 1000, 0.05) * speedMult;
       lastTimeRef.current = timestamp;
+      // Accumulate game-clock (ms) — already speedMult-scaled via dt.
+      gameTimeRef.current += dt * 1000;
 
       // Spawn enemies from queue
       if (waveQueueRef.current.length > 0) {
@@ -436,8 +454,9 @@ export default function Game() {
         });
       }
 
-      // Tower firing
-      const now = timestamp;
+      // Tower firing — gated against gameTimeRef (speedMult-aware) when
+      // gameClockV2 is on, else raw RAF timestamp (legacy behavior).
+      const now = gameClockV2 ? gameTimeRef.current : timestamp;
       towersRef.current.forEach(tower => {
         if (now - tower.lastFire < tower.fireRate) return;
 
@@ -478,8 +497,9 @@ export default function Game() {
       const projSpeedMult = perkMultRef.current.projSpeedBonus ?? 1;
       let shouldShake = false;
       projectilesRef.current.forEach(proj => {
-        proj.speed = 5 * projSpeedMult;
-        const result = moveProjectile(proj, enemiesRef.current);
+        // px/sec — was 5 (per-frame * 3 multiplier in moveProjectile, frame-rate-coupled).
+        proj.speed = 900 * projSpeedMult;
+        const result = moveProjectile(proj, enemiesRef.current, dt);
         if (result.hit) {
           shouldShake = true;
           const target = enemiesRef.current.find(e => e.id === result.targetId);
@@ -589,7 +609,13 @@ export default function Game() {
                 setGloryPoints(gp => gp + 2);
                 addLog("boss", `BOSS SLAIN: ${target.emoji} ${target.type.replace("boss_", "").toUpperCase()} defeated! +${target.reward} gold`);
               } else {
-                if (Math.random() < 0.25) addLog("kill", `${target.emoji} ${target.type} slain! +${target.reward}g`);
+                // Rate-limit kill messages to ~3/sec instead of probabilistic
+                // (Math.random was non-deterministic and could spam during big
+                // splashes or starve during slow waves).
+                if (gameTimeRef.current - lastKillLogRef.current >= 333) {
+                  lastKillLogRef.current = gameTimeRef.current;
+                  addLog("kill", `${target.emoji} ${target.type} slain! +${target.reward}g`);
+                }
               }
               enemiesRef.current = enemiesRef.current.filter(e => e.id !== target.id);
             }
@@ -700,8 +726,13 @@ export default function Game() {
             setTimeout(() => playVictoryShout(), fanfareDuration);
             setWaveSuccess(s => !s);
             addLog("wave", `Wave ${wave} cleared! Bonus gold awarded.`);
-            // Auto-save after each wave
-            setTimeout(() => doSave(), 200);
+            // Auto-save after each wave — defer to idle so localStorage.setItem
+            // (sync, ~5-15ms on mid-range phones with a fat save) doesn't block
+            // the wave-end frame. Falls back to setTimeout on Safari.
+            const ric = (typeof window !== "undefined" && window.requestIdleCallback)
+              ? window.requestIdleCallback
+              : ((cb) => setTimeout(cb, 200));
+            ric(() => doSave(), { timeout: 1000 });
             // Check achievements after each wave
             checkAchievements({ ...achStatsRef.current });
             // Show perk shop every 2 waves
@@ -714,7 +745,17 @@ export default function Game() {
         });
       }
 
-      forceRender(n => n + 1);
+      // HUD throttle: was forceRender every RAF tick (~60Hz), which forced a
+      // React commit of the entire 1700-line Game.jsx every frame and burned
+      // input latency on mid-range phones. HUD numbers (gold/lives/wave) don't
+      // need 60Hz freshness — 10Hz is well under perception threshold and the
+      // canvas keeps animating at 60Hz via GameBoard's own RAF (which reads
+      // refs directly).
+      hudTickAccumRef.current += dt * 1000;
+      if (hudTickAccumRef.current >= 100) {
+        hudTickAccumRef.current = 0;
+        forceRender(n => n + 1);
+      }
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     };
 

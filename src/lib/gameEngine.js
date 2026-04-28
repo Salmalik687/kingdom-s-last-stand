@@ -1511,7 +1511,9 @@ export function createProjectile(tower, enemy, overrideDamage = null) {
     targetId: enemy.id,
     targetX: enemy.x,
     targetY: enemy.y,
-    speed: 5,
+    // px/sec. Old behavior was `speed: 5` * 3 frames = 15px/frame at 60Hz = 900px/s.
+    // dt-based math now (see moveProjectile).
+    speed: 900,
     damage: overrideDamage ?? tower.damage,
     towerType: tower.type,
     towerId: tower.id,
@@ -1726,7 +1728,7 @@ export function moveEnemy(enemy, dt) {
   return false;
 }
 
-export function moveProjectile(proj, enemies) {
+export function moveProjectile(proj, enemies, dt = 1 / 60) {
   const target = enemies.find(e => e.id === proj.targetId);
   if (target) {
     proj.targetX = target.x;
@@ -1739,8 +1741,10 @@ export function moveProjectile(proj, enemies) {
 
   if (dist < 8) return { hit: true, targetId: proj.targetId };
 
-  proj.x += (dx / dist) * proj.speed * 3;
-  proj.y += (dy / dist) * proj.speed * 3;
+  // proj.speed is px/sec (was px/frame * 3). dt is seconds.
+  const step = proj.speed * dt;
+  proj.x += (dx / dist) * step;
+  proj.y += (dy / dist) * step;
 
   return { hit: false };
 }
